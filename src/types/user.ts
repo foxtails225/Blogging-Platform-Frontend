@@ -1,7 +1,20 @@
 export interface User {
   id: string;
-  avatar: string;
-  email: string;
+  _id: string;
   name: string;
-  [key: string]: any;
+  email: string;
+  password: string;
+  avatar: string;
+  firstName: string;
+  lastName: string;
+  country: string;
+  state: string;
+  city: string;
+  phone: string;
+  lastLoggedIn: Date;
+  tier: string;
+  role: string;
+  isPublic: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }

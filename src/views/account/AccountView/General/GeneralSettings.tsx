@@ -1,5 +1,4 @@
-import React from 'react';
-import type { FC } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
@@ -20,8 +19,8 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import type { User } from 'src/types/user';
-import wait from 'src/utils/wait';
+import { User } from 'src/types/user';
+import axios from 'src/utils/axios';
 import countries from './countries';
 
 interface GeneralSettingsProps {
@@ -33,51 +32,69 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest }) => {
+const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
+const GeneralSettings: FC<GeneralSettingsProps> = props => {
+  const [user, setUser] = useState(props.user);
+  const [isLoading, setIsLoading] = useState(false);
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get<{ user: User }>('/account/me');
+      setUser(response.data.user);
+    };
+    fetchData();
+  }, [isLoading]);
+
+  const handleUpdate = async (values: any): Promise<void> => {
+    const country = countries.find(item => item.text === values.country)
+      ? values.country
+      : '';
+    let data = { ...values, country };
+    await axios.put<{ user: User }>('/account/update', {
+      userData: data
+    });
+  };
 
   return (
     <Formik
       enableReinitialize
       initialValues={{
-        canHire: user.canHire || false,
         city: user.city || '',
         country: user.country || '',
         email: user.email || '',
-        isPublic: user.isPublic || false,
+        isPublic: user.isPublic,
         name: user.name || '',
         phone: user.phone || '',
         state: user.state || '',
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        canHire: Yup.bool(),
         city: Yup.string().max(255),
         country: Yup.string().max(255),
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+        email: Yup.string()
+          .email('Must be a valid email')
+          .max(255)
+          .required('Email is required'),
         isPublic: Yup.bool(),
-        name: Yup.string().max(255).required('Name is required'),
-        phone: Yup.string(),
-        state: Yup.string()
+        name: Yup.string()
+          .max(255)
+          .required('Name is required'),
+        phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
+        state: Yup.string().max(255)
       })}
-      onSubmit={async (values, {
-        resetForm,
-        setErrors,
-        setStatus,
-        setSubmitting
-      }) => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          // NOTE: Make API request
-          await wait(200);
-          resetForm();
+          setIsLoading(true);
+          handleUpdate(values);
           setStatus({ success: true });
           setSubmitting(false);
           enqueueSnackbar('Profile updated', {
             variant: 'success'
           });
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);
@@ -94,22 +111,12 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
         values
       }) => (
         <form onSubmit={handleSubmit}>
-          <Card
-            className={clsx(classes.root, className)}
-            {...rest}
-          >
+          <Card className={clsx(classes.root, props.className)}>
             <CardHeader title="Profile" />
             <Divider />
             <CardContent>
-              <Grid
-                container
-                spacing={4}
-              >
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+              <Grid container spacing={4}>
+                <Grid item md={6} xs={12}>
                   <TextField
                     error={Boolean(touched.name && errors.name)}
                     fullWidth
@@ -122,15 +129,15 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     variant="outlined"
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+                <Grid item md={6} xs={12}>
                   <TextField
                     error={Boolean(touched.email && errors.email)}
                     fullWidth
-                    helperText={touched.email && errors.email ? errors.email : 'We will use this email to contact you'}
+                    helperText={
+                      touched.email && errors.email
+                        ? errors.email
+                        : 'We will use this email to contact you'
+                    }
                     label="Email Address"
                     name="email"
                     onBlur={handleBlur}
@@ -141,11 +148,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     variant="outlined"
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+                <Grid item md={6} xs={12}>
                   <TextField
                     error={Boolean(touched.phone && errors.phone)}
                     fullWidth
@@ -158,31 +161,30 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     variant="outlined"
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+                <Grid item md={6} xs={12}>
                   <Autocomplete
-                    getOptionLabel={(option) => option.text}
+                    getOptionLabel={option => option.text}
                     options={countries}
-                    renderInput={(params) => (
+                    filterSelectedOptions
+                    defaultValue={countries.find(
+                      option => option.text === user.country
+                    )}
+                    renderInput={params => (
                       <TextField
                         fullWidth
                         label="Country"
                         name="country"
                         onChange={handleChange}
+                        onBlur={handleBlur}
+                        onSelect={handleChange}
                         variant="outlined"
+                        value={user.country}
                         {...params}
                       />
                     )}
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+                <Grid item md={6} xs={12}>
                   <TextField
                     error={Boolean(touched.state && errors.state)}
                     fullWidth
@@ -195,11 +197,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     variant="outlined"
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
+                <Grid item md={6} xs={12}>
                   <TextField
                     error={Boolean(touched.city && errors.city)}
                     fullWidth
@@ -212,23 +210,13 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     variant="outlined"
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
-                  <Typography
-                    variant="h6"
-                    color="textPrimary"
-                  >
-                    Make Contact Info Public
+                <Grid item md={6} xs={12}>
+                  <Typography variant="h6" color="textPrimary">
+                    Make Profile Info Public
                   </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                  >
-                    Means that anyone viewing your profile will be able to see your
-                    contacts details
+                  <Typography variant="body2" color="textSecondary">
+                    Means that anyone viewing your profile will be able to see
+                    your details
                   </Typography>
                   <Switch
                     checked={values.isPublic}
@@ -237,46 +225,15 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({ className, user, ...rest })
                     onChange={handleChange}
                   />
                 </Grid>
-                <Grid
-                  item
-                  md={6}
-                  xs={12}
-                >
-                  <Typography
-                    variant="h6"
-                    color="textPrimary"
-                  >
-                    Available to hire
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    color="textSecondary"
-                  >
-                    Toggling this will let your teammates know that you are available
-                    for acquiring new projects
-                  </Typography>
-                  <Switch
-                    checked={values.canHire}
-                    edge="start"
-                    name="canHire"
-                    onChange={handleChange}
-                  />
-                </Grid>
               </Grid>
               {errors.submit && (
                 <Box mt={3}>
-                  <FormHelperText error>
-                    {errors.submit}
-                  </FormHelperText>
+                  <FormHelperText error>{errors.submit}</FormHelperText>
                 </Box>
               )}
             </CardContent>
             <Divider />
-            <Box
-              p={2}
-              display="flex"
-              justifyContent="flex-end"
-            >
+            <Box p={2} display="flex" justifyContent="flex-end">
               <Button
                 color="secondary"
                 disabled={isSubmitting}

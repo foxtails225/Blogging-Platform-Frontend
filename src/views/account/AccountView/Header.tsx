@@ -31,7 +31,7 @@ const Header: FC<HeaderProps> = ({ className, ...rest }) => {
         separator={<NavigateNextIcon fontSize="small" />}
         aria-label="breadcrumb"
       >
-        <Link color="inherit" to="/app" component={RouterLink}>
+        <Link color="inherit" to="/" component={RouterLink}>
           Dashboard
         </Link>
         <Typography color="textPrimary">

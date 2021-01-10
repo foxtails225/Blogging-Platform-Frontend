@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+// import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -10,7 +10,7 @@ import {
   Card,
   CardActions,
   CardContent,
-  Link,
+  // Link,
   Typography,
   makeStyles
 } from '@material-ui/core';
@@ -66,12 +66,12 @@ const ProfileDetails: FC<ProfileDetailsProps> = ({ className, user, ...rest }) =
           >
             Your tier:
             {' '}
-            <Link
+            {/* <Link
               component={RouterLink}
               to="/pricing"
-            >
+            > */}
               {user.tier}
-            </Link>
+            {/* </Link> */}
           </Typography>
         </Box>
       </CardContent>

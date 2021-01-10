@@ -340,7 +340,6 @@ mock.onGet('/api/chat/search').reply((config) => {
 
     return [200, { results }];
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });
@@ -371,7 +370,6 @@ mock.onGet('/api/chat/participants').reply((config) => {
 
     return [200, { participants }];
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });
@@ -404,7 +402,6 @@ mock.onGet('/api/chat/thread').reply((config) => {
       return [200, { thread }];
     }
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });

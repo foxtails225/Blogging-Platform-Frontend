@@ -17,10 +17,6 @@ import Logo from 'src/components/Logo';
 import useAuth from 'src/hooks/useAuth';
 import JWTLogin from './JWTLogin';
 
-const methodIcons = {
-  'JWT': '/static/images/jwt.svg'
-};
-
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.dark,
@@ -52,13 +48,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     flexDirection: 'column',
     minHeight: 400
   },
-  currentMethodIcon: {
-    height: 40,
-    '& > img': {
-      width: 'auto',
-      maxHeight: '100%'
-    }
-  }
 }));
 
 const LoginView: FC = () => {
@@ -105,12 +94,6 @@ const LoginView: FC = () => {
                 >
                   Sign in on the internal platform
                 </Typography>
-              </div>
-              <div className={classes.currentMethodIcon}>
-                <img
-                  alt="Auth method"
-                  src={methodIcons[method]}
-                />
               </div>
             </Box>
             <Box

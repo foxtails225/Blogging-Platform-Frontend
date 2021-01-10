@@ -31,9 +31,11 @@ const AccountView: FC = () => {
 
   const tabs = [
     { value: 'general', label: 'General' },
-    { value: 'subscription', label: 'Subscription' },
-    { value: 'notifications', label: 'Notifications' },
     { value: 'security', label: 'Security' }
+    
+    // TODO: activate in next dev cycle
+    // { value: 'subscription', label: 'Subscription' },
+    // { value: 'notifications', label: 'Notifications' },
   ];
 
   const handleTabsChange = (event: ChangeEvent<{}>, value: string): void => {

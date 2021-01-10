@@ -141,7 +141,6 @@ mock.onPost('/api/calendar/events/new').reply((request) => {
 
     return [200, { event }];
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });
@@ -162,7 +161,6 @@ mock.onPost('/api/calendar/events/update').reply((request) => {
 
     return [200, { event }];
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });
@@ -175,7 +173,6 @@ mock.onPost('/api/calendar/events/remove').reply((request) => {
 
     return [200, { eventId }];
   } catch (err) {
-    console.error(err);
     return [500, { message: 'Internal server error' }];
   }
 });

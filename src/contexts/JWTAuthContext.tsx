@@ -137,13 +137,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialAuthState);
 
   const login = async (email: string, password: string) => {
-    console.log('AAA');
     const response = await axios.post<{ accessToken: string; user: User }>(
       '/login',
-      { email, password }
+      { email, password, lastLoggedIn: Date.now() }
     );
-    console.log('BBB');
-    console.log(response);
+
     const { accessToken, user } = response.data;
 
     setSession(accessToken);
@@ -162,12 +160,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (email: string, name: string, password: string) => {
     const response = await axios.post<{ accessToken: string; user: User }>(
-      '/register',
-      {
-        email,
-        name,
-        password
-      }
+      '/signup',
+      { email, name, password, lastLoggedIn: Date.now() }
     );
     const { accessToken, user } = response.data;
 
@@ -189,7 +183,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
 
-          const response = await axios.get<{ user: User }>('/api/account/me');
+          const response = await axios.get<{ user: User }>('/account/me');
           const { user } = response.data;
 
           dispatch({
