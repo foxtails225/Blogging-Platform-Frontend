@@ -75,7 +75,6 @@ const Checklist: FC<ChecklistProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -94,7 +93,6 @@ const Checklist: FC<ChecklistProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

@@ -62,7 +62,6 @@ const CheckItemAdd: FC<CheckItemAddProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

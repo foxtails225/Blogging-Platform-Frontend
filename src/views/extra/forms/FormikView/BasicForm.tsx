@@ -53,7 +53,6 @@ const BasicForm: FC = () => {
           setStatus({ success: true });
           setSubmitting(false);
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

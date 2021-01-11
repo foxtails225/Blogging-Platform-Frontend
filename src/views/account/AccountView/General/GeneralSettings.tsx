@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FC } from 'react';
+import React, { FC } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import * as Yup from 'yup';
@@ -26,6 +26,7 @@ import countries from './countries';
 interface GeneralSettingsProps {
   className?: string;
   user: User;
+  onLoading(param: boolean): void;
 }
 
 const useStyles = makeStyles(() => ({
@@ -34,19 +35,14 @@ const useStyles = makeStyles(() => ({
 
 const phoneRegExp = /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
-const GeneralSettings: FC<GeneralSettingsProps> = props => {
-  const [user, setUser] = useState(props.user);
-  const [isLoading, setIsLoading] = useState(false);
+const GeneralSettings: FC<GeneralSettingsProps> = ({
+  user,
+  className,
+  onLoading,
+  ...rest
+}) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await axios.get<{ user: User }>('/account/me');
-      setUser(response.data.user);
-    };
-    fetchData();
-  }, [isLoading]);
 
   const handleUpdate = async (values: any): Promise<void> => {
     const country = countries.find(item => item.text === values.country)
@@ -87,7 +83,6 @@ const GeneralSettings: FC<GeneralSettingsProps> = props => {
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          setIsLoading(true);
           handleUpdate(values);
           setStatus({ success: true });
           setSubmitting(false);
@@ -99,6 +94,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = props => {
           setErrors({ submit: err.message });
           setSubmitting(false);
         }
+        onLoading(true);
       }}
     >
       {({
@@ -111,7 +107,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = props => {
         values
       }) => (
         <form onSubmit={handleSubmit}>
-          <Card className={clsx(classes.root, props.className)}>
+          <Card className={clsx(classes.root, className)} {...rest}>
             <CardHeader title="Profile" />
             <Divider />
             <CardContent>
@@ -166,7 +162,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = props => {
                     getOptionLabel={option => option.text}
                     options={countries}
                     filterSelectedOptions
-                    defaultValue={countries.find(
+                    value={countries.find(
                       option => option.text === user.country
                     )}
                     renderInput={params => (
@@ -174,11 +170,9 @@ const GeneralSettings: FC<GeneralSettingsProps> = props => {
                         fullWidth
                         label="Country"
                         name="country"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        onSelect={handleChange}
                         variant="outlined"
-                        value={user.country}
+                        onChange={handleChange}
+                        onSelect={handleChange}
                         {...params}
                       />
                     )}

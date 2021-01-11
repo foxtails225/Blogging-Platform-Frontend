@@ -61,7 +61,6 @@ const ListAdd: FC<ListAddProps> = ({ className, ...rest }) => {
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

@@ -56,7 +56,6 @@ const CommentAdd: FC<CommentAddProps> = ({ cardId, className, ...rest }) => {
         });
       }
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

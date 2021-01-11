@@ -58,7 +58,6 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
             setSubmitting(false);
           }
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

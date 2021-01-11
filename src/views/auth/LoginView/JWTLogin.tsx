@@ -52,7 +52,6 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
             setSubmitting(false);
           }
         } catch (err) {
-          console.error(err);
           if (isMountedRef.current) {
             setStatus({ success: false });
             setErrors({ submit: err.message });

@@ -17,7 +17,8 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core';
-import wait from 'src/utils/wait';
+import { User } from 'src/types/user';
+import axios from 'src/utils/axios';
 
 interface SecurityProps {
   className?: string;
@@ -54,8 +55,9 @@ const Security: FC<SecurityProps> = ({ className, ...rest }) => {
         setSubmitting
       }) => {
         try {
-          // NOTE: Make API request
-          await wait(500);
+          await axios.put<{ user: User }>('/account/update-password', {
+            userData: values
+          });
           resetForm();
           setStatus({ success: true });
           setSubmitting(false);
@@ -63,7 +65,6 @@ const Security: FC<SecurityProps> = ({ className, ...rest }) => {
             variant: 'success'
           });
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

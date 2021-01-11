@@ -123,7 +123,6 @@ const List: FC<ListProps> = ({ className, listId, ...rest }) => {
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -138,7 +137,6 @@ const List: FC<ListProps> = ({ className, listId, ...rest }) => {
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -153,7 +151,6 @@ const List: FC<ListProps> = ({ className, listId, ...rest }) => {
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

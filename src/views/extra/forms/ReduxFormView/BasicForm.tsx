@@ -53,7 +53,6 @@ const submit = async (): Promise<void> => {
     // NOTE: Make API request
     await wait(1000);
   } catch (err) {
-    console.error(err);
     throw new SubmissionError({
       _error: 'Login failed!'
     });

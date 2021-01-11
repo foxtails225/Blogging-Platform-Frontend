@@ -86,7 +86,6 @@ const Thread: FC = () => {
         // If thread key is not a valid key (thread id or username)
         // the server throws an error, this means that the user tried a shady route
         // and we redirect him on the compose route
-        console.error(err);
         history.push('/app/chat/new');
       }
     };

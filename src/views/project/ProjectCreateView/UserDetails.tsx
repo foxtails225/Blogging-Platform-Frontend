@@ -79,7 +79,6 @@ const UserDetails: FC<UserDetailsProps> = ({
         onNext();
       }
     } catch (err) {
-      console.error(err);
       setError(err.message);
     } finally {
       setSubmitting(false);

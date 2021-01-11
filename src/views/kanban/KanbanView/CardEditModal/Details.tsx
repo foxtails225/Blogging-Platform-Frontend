@@ -41,7 +41,6 @@ const Details: FC<DetailsProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

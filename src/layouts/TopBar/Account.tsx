@@ -51,7 +51,6 @@ const Account: FC = () => {
       await logout();
       history.push('/');
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Unable to logout', {
         variant: 'error'
       });

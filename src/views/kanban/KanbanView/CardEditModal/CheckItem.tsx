@@ -96,7 +96,6 @@ const CheckItem: FC<CheckItemProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -121,7 +120,6 @@ const CheckItem: FC<CheckItemProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -144,7 +142,6 @@ const CheckItem: FC<CheckItemProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

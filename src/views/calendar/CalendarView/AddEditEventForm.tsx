@@ -153,7 +153,6 @@ const AddEditEventForm: FC<AddEditEventModalProps> = ({
             onEditComplete();
           }
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

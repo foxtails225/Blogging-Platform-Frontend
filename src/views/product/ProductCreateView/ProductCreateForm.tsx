@@ -99,7 +99,6 @@ const ProductCreateForm: FC<ProductCreateFormProps> = ({ className, ...rest }) =
           });
           history.push('/app/products');
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

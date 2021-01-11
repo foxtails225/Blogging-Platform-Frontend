@@ -79,7 +79,6 @@ const CardEditModal: FC<CardEditModalProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -93,7 +92,6 @@ const CardEditModal: FC<CardEditModalProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -107,7 +105,6 @@ const CardEditModal: FC<CardEditModalProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });
@@ -121,7 +118,6 @@ const CardEditModal: FC<CardEditModalProps> = ({
         variant: 'success'
       });
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

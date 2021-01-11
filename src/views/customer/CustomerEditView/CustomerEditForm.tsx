@@ -78,7 +78,6 @@ const CustomerEditForm: FC<CustomerEditFormProps> = ({
             action: <Button>See all</Button>
           });
         } catch (err) {
-          console.error(err);
           setStatus({ success: false });
           setErrors({ submit: err.message });
           setSubmitting(false);

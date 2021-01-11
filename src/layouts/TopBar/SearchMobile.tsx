@@ -59,7 +59,6 @@ const Search: FC = () => {
 
       setResults(response.data.results);
     } catch (err) {
-      console.error(err);
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
       });

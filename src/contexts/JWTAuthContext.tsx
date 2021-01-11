@@ -21,6 +21,7 @@ interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (email: string, name: string, password: string) => Promise<void>;
+  setUser: (user: User) => void;
 }
 
 interface AuthProviderProps {
@@ -130,11 +131,21 @@ const AuthContext = createContext<AuthContextValue>({
   method: 'JWT',
   login: () => Promise.resolve(),
   logout: () => {},
-  register: () => Promise.resolve()
+  register: () => Promise.resolve(),
+  setUser: (user: User) => {}
 });
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialAuthState);
+
+  const setUser = (user: User) => {
+    dispatch({
+      type: 'LOGIN',
+      payload: {
+        user
+      }
+    });
+  };
 
   const login = async (email: string, password: string) => {
     const response = await axios.post<{ accessToken: string; user: User }>(
@@ -228,7 +239,8 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         method: 'JWT',
         login,
         logout,
-        register
+        register,
+        setUser
       }}
     >
       {children}
