@@ -102,7 +102,7 @@ const Security: FC<SecurityProps> = ({ className, ...rest }) => {
                     error={Boolean(touched.password && errors.password)}
                     fullWidth
                     helperText={touched.password && errors.password}
-                    label="Password"
+                    label="New Password"
                     name="password"
                     onBlur={handleBlur}
                     onChange={handleChange}

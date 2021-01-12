@@ -73,7 +73,7 @@ const isValidToken = (accessToken: string): boolean => {
   return decoded.exp > currentTime;
 };
 
-const setSession = (accessToken: string | null): void => {
+export const setSession = (accessToken: string | null): void => {
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken);
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
@@ -83,7 +83,7 @@ const setSession = (accessToken: string | null): void => {
   }
 };
 
-const reducer = (state: AuthState, action: Action): AuthState => {
+export const reducer = (state: AuthState, action: Action): AuthState => {
   switch (action.type) {
     case 'INITIALISE': {
       const { isAuthenticated, user } = action.payload;
@@ -214,7 +214,6 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
           });
         }
       } catch (err) {
-        console.error(err);
         dispatch({
           type: 'INITIALISE',
           payload: {

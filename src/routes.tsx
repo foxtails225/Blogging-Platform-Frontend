@@ -75,184 +75,34 @@ const routes: Routes = [
     component: lazy(() => import('src/views/auth/RegisterView'))
   },
   {
-    path: '/app',
+    exact: true,
+    path: '/profile/:user',
+    component: lazy(() => import('src/views/social/ProfileView'))
+  },
+  {
+    path: '/account',
     guard: AuthGuard,
     layout: MainLayout,
     routes: [
       {
         exact: true,
-        path: '/app/account',
+        path: '/account/me',
         component: lazy(() => import('src/views/account/AccountView'))
       },
       {
         exact: true,
-        path: '/app/calendar',
-        component: lazy(() => import('src/views/calendar/CalendarView'))
-      },
-      {
-        exact: true,
-        path: ['/app/chat/new', '/app/chat/:threadKey'],
-        component: lazy(() => import('src/views/chat/ChatView'))
-      },
-      {
-        exact: true,
-        path: '/app/chat',
-        component: () => <Redirect to="/app/chat/new" />
-      },
-      {
-        exact: true,
-        path: '/app/extra/charts/apex',
-        component: lazy(() => import('src/views/extra/charts/ApexChartsView'))
-      },
-      {
-        exact: true,
-        path: '/app/extra/forms/formik',
-        component: lazy(() => import('src/views/extra/forms/FormikView'))
-      },
-      {
-        exact: true,
-        path: '/app/extra/forms/redux',
-        component: lazy(() => import('src/views/extra/forms/ReduxFormView'))
-      },
-      {
-        exact: true,
-        path: '/app/extra/editors/draft-js',
-        component: lazy(() => import('src/views/extra/editors/DraftEditorView'))
-      },
-      {
-        exact: true,
-        path: '/app/extra/editors/quill',
-        component: lazy(() => import('src/views/extra/editors/QuillEditorView'))
-      },
-      {
-        exact: true,
-        path: '/app/kanban',
-        component: lazy(() => import('src/views/kanban/KanbanView'))
-      },
-      {
-        exact: true,
-        path: [
-          '/app/mail/label/:customLabel/:mailId?',
-          '/app/mail/:systemLabel/:mailId?'
-        ],
-        component: lazy(() => import('src/views/mail/MailView'))
-      },
-      {
-        exact: true,
-        path: '/app/mail',
-        component: () => <Redirect to="/app/mail/all" />
-      },
-      {
-        exact: true,
-        path: '/app/management/customers',
-        component: lazy(() => import('src/views/customer/CustomerListView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/customers/:customerId',
-        component: lazy(() => import('src/views/customer/CustomerDetailsView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/customers/:customerId/edit',
-        component: lazy(() => import('src/views/customer/CustomerEditView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/invoices',
-        component: lazy(() => import('src/views/invoice/InvoiceListView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/invoices/:invoiceId',
-        component: lazy(() => import('src/views/invoice/InvoiceDetailsView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/orders',
-        component: lazy(() => import('src/views/order/OrderListView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/orders/:orderId',
-        component: lazy(() => import('src/views/order/OrderDetailsView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/products',
-        component: lazy(() => import('src/views/product/ProductListView'))
-      },
-      {
-        exact: true,
-        path: '/app/management/products/create',
-        component: lazy(() => import('src/views/product/ProductCreateView'))
-      },
-      {
-        exact: true,
-        path: '/app/management',
-        component: () => <Redirect to="/app/management/customers" />
-      },
-      {
-        exact: true,
-        path: '/app/projects/overview',
-        component: lazy(() => import('src/views/project/OverviewView'))
-      },
-      {
-        exact: true,
-        path: '/app/projects/browse',
-        component: lazy(() => import('src/views/project/ProjectBrowseView'))
-      },
-      {
-        exact: true,
-        path: '/app/projects/create',
-        component: lazy(() => import('src/views/project/ProjectCreateView'))
-      },
-      {
-        exact: true,
-        path: '/app/projects/:id',
-        component: lazy(() => import('src/views/project/ProjectDetailsView'))
-      },
-      {
-        exact: true,
-        path: '/app/projects',
-        component: () => <Redirect to="/app/projects/browse" />
-      },
-      {
-        exact: true,
-        path: '/app/reports/dashboard',
-        component: lazy(() => import('src/views/reports/DashboardView'))
-      },
-      {
-        exact: true,
-        path: '/app/reports/dashboard-alternative',
-        component: lazy(() =>
-          import('src/views/reports/DashboardAlternativeView')
-        )
-      },
-      {
-        exact: true,
-        path: '/app/reports',
-        component: () => <Redirect to="/app/reports/dashboard" />
-      },
-      {
-        exact: true,
-        path: '/app/social/feed',
+        path: '/account/feed',
         component: lazy(() => import('src/views/social/FeedView'))
       },
       {
         exact: true,
-        path: '/app/social/profile',
+        path: '/account/profile',
         component: lazy(() => import('src/views/social/ProfileView'))
       },
       {
         exact: true,
-        path: '/app/social',
-        component: () => <Redirect to="/app/social/profile" />
-      },
-      {
-        exact: true,
-        path: '/app',
-        component: () => <Redirect to="/app/reports/dashboard" />
+        path: '/account',
+        component: () => <Redirect to="/account/profile" />
       },
       {
         component: () => <Redirect to="/404" />

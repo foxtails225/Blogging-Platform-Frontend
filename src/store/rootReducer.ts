@@ -1,4 +1,5 @@
 import { combineReducers } from '@reduxjs/toolkit';
+import { reducer as AuthReducer } from 'src/contexts/JWTAuthContext';
 import { reducer as calendarReducer } from 'src/slices/calendar';
 import { reducer as chatReducer } from 'src/slices/chat';
 import { reducer as formReducer } from 'redux-form';
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   form: formReducer,
   kanban: kanbanReducer,
   mail: mailReducer,
-  notifications: notificationReducer
+  notifications: notificationReducer,
+  Auth: AuthReducer
 });
 
 export default rootReducer;

@@ -5,7 +5,7 @@ import TrendStocks from './TrendStocks';
 import TrendAuthors from './TrendAuthors';
 import TrendNews from './TrendNews';
 import Market from './Market';
-import Features from './Features';
+import Features from './Futures';
 
 const useStyles = makeStyles(() => ({
   root: {

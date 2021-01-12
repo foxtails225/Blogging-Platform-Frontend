@@ -70,7 +70,7 @@ const Features: FC<FeaturesProps> = ({ className, ...rest }) => {
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Features" />
+      <CardHeader title="Futures" />
       <Divider />
       <PerfectScrollbar options={{ suppressScrollY: true }}>
         <List disablePadding className={classes.list}>

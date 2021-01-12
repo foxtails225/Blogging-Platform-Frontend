@@ -11,7 +11,6 @@ import {
   TextField,
   makeStyles
 } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 
@@ -120,21 +119,6 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
             >
               Log In
             </Button>
-          </Box>
-          <Box mt={2}>
-            <Alert
-              severity="info"
-            >
-              <div>
-                Use
-                {' '}
-                <b>demo@devias.io</b>
-                {' '}
-                and password
-                {' '}
-                <b>Password123</b>
-              </div>
-            </Alert>
           </Box>
         </form>
       )}

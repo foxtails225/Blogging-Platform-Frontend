@@ -58,13 +58,13 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
     <Formik
       enableReinitialize
       initialValues={{
-        city: user.city || '',
         country: user.country || '',
         email: user.email || '',
         isPublic: user.isPublic,
         name: user.name || '',
         phone: user.phone || '',
-        state: user.state || '',
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
         submit: null
       }}
       validationSchema={Yup.object().shape({
@@ -119,6 +119,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                     helperText={touched.name && errors.name}
                     label="Name"
                     name="name"
+                    required
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.name}
@@ -180,27 +181,27 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <TextField
-                    error={Boolean(touched.state && errors.state)}
+                    error={Boolean(touched.firstName && errors.firstName)}
                     fullWidth
-                    helperText={touched.state && errors.state}
-                    label="State/Region"
-                    name="state"
+                    helperText={touched.firstName && errors.firstName}
+                    label="First Name"
+                    name="firstName"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.state}
+                    value={values.firstName}
                     variant="outlined"
                   />
                 </Grid>
                 <Grid item md={6} xs={12}>
                   <TextField
-                    error={Boolean(touched.city && errors.city)}
+                    error={Boolean(touched.lastName && errors.lastName)}
                     fullWidth
-                    helperText={touched.city && errors.city}
-                    label="City"
-                    name="city"
+                    helperText={touched.lastName && errors.lastName}
+                    label="Last Name"
+                    name="lastName"
                     onBlur={handleBlur}
                     onChange={handleChange}
-                    value={values.city}
+                    value={values.lastName}
                     variant="outlined"
                   />
                 </Grid>

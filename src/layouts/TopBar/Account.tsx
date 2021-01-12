@@ -95,13 +95,13 @@ const Account: FC = () => {
       >
         <MenuItem
           component={RouterLink}
-          to="/app/social/profile"
+          to="/account/profile"
         >
           Profile
         </MenuItem>
         <MenuItem
           component={RouterLink}
-          to="/app/account"
+          to="/account/me"
         >
           Account
         </MenuItem>

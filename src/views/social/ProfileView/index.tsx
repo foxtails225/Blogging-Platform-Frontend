@@ -1,9 +1,10 @@
 import React, {
   useCallback,
   useState,
-  useEffect
+  useEffect,
+  FC,
+  ChangeEvent
 } from 'react';
-import type { FC, ChangeEvent } from 'react';
 import {
   Box,
   Container,
@@ -12,11 +13,11 @@ import {
   Tabs,
   makeStyles
 } from '@material-ui/core';
-import type { Theme } from 'src/theme';
+import { Theme } from 'src/theme';
 import axios from 'src/utils/axios-mock';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
-import type { Profile } from 'src/types/social';
+import { Profile } from 'src/types/social';
 import Header from './Header';
 import Timeline from './Timeline';
 import Connections from './Connections';
@@ -36,7 +37,7 @@ const ProfileView: FC = () => {
 
   const tabs = [
     { value: 'timeline', label: 'Timeline' },
-    { value: 'connections', label: 'Connections' },
+    { value: 'connections', label: 'Connections' }
   ];
 
   const handleTabsChange = (event: ChangeEvent, value: string): void => {
@@ -45,7 +46,9 @@ const ProfileView: FC = () => {
 
   const getPosts = useCallback(async () => {
     try {
-      const response = await axios.get<{ profile: Profile; }>('/api/social/profile');
+      const response = await axios.get<{ profile: Profile }>(
+        '/api/social/profile'
+      );
 
       if (isMountedRef.current) {
         setProfile(response.data.profile);
@@ -64,10 +67,7 @@ const ProfileView: FC = () => {
   }
 
   return (
-    <Page
-      className={classes.root}
-      title="Profile"
-    >
+    <Page className={classes.root} title="Profile">
       <Header profile={profile} />
       <Container maxWidth="lg">
         <Box mt={3}>
@@ -78,20 +78,13 @@ const ProfileView: FC = () => {
             textColor="secondary"
             variant="scrollable"
           >
-            {tabs.map((tab) => (
-              <Tab
-                key={tab.value}
-                label={tab.label}
-                value={tab.value}
-              />
+            {tabs.map(tab => (
+              <Tab key={tab.value} label={tab.label} value={tab.value} />
             ))}
           </Tabs>
         </Box>
         <Divider />
-        <Box
-          py={3}
-          pb={6}
-        >
+        <Box py={3} pb={6}>
           {currentTab === 'timeline' && <Timeline profile={profile} />}
           {currentTab === 'connections' && <Connections />}
         </Box>
