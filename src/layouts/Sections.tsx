@@ -60,8 +60,8 @@ export const sections: Section[] = [
     icon: UserIcon,
     items: [
       {
-        title: 'Account',
-        href: '/account/me'
+        title: 'Setting',
+        href: '/account/setting'
       },
       {
         title: 'Profile',

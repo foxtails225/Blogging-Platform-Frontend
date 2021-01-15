@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import type { FC } from 'react';
+import React, { FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -16,20 +15,20 @@ import {
   makeStyles
 } from '@material-ui/core';
 import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
-import MoreIcon from '@material-ui/icons/MoreVert';
-import type { Theme } from 'src/theme';
-import type { Profile } from 'src/types/social';
+import EditIcon from '@material-ui/icons/Edit';
+import { Theme } from 'src/theme';
+import { User } from 'src/types/user';
 
 interface HeaderProps {
   className?: string;
-  profile: Profile;
+  profile: User;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
   cover: {
     position: 'relative',
-    height: 460,
+    height: 260,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center',
@@ -40,7 +39,8 @@ const useStyles = makeStyles((theme: Theme) => ({
       left: 0,
       height: '100%',
       width: '100%',
-      backgroundImage: 'linear-gradient(-180deg, rgba(0,0,0,0.00) 58%, rgba(0,0,0,0.32) 100%)'
+      backgroundImage:
+        'linear-gradient(-180deg, rgba(0,0,0,0.00) 58%, rgba(0,0,0,0.32) 100%)'
     },
     '&:hover': {
       '& $changeButton': {
@@ -69,26 +69,29 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: 120,
     top: -60,
     left: theme.spacing(3),
-    position: 'absolute'
+    position: 'absolute',
+    [theme.breakpoints.down('sm')]: {
+      height: 100,
+      width: 100,
+      left: theme.spacing(1)
+    }
   },
   action: {
     marginLeft: theme.spacing(1)
+  },
+  bioBox: {
+    marginLeft: '160px',
+    [theme.breakpoints.down('sm')]: {
+      marginLeft: '120px'
+    }
   }
 }));
 
 const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
-  const [connectedStatus, setConnectedStatus] = useState<string>(profile.connectedStatus);
-
-  const handleConnectToggle = (): void => {
-    setConnectedStatus((prevConnectedStatus) => (prevConnectedStatus === 'not_connected' ? 'pending' : 'not_connected'));
-  };
 
   return (
-    <div
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
+    <div className={clsx(classes.root, className)} {...rest}>
       <div
         className={classes.cover}
         style={{ backgroundImage: `url(${profile.cover})` }}
@@ -102,70 +105,50 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
         </Button>
       </div>
       <Container maxWidth="lg">
-        <Box
-          position="relative"
-          mt={1}
-          display="flex"
-          alignItems="center"
-        >
+        <Box position="relative" mt={1} display="flex" alignItems="center">
           <Avatar
             alt="Person"
             className={classes.avatar}
             src={profile.avatar}
           />
-          <Box marginLeft="160px">
-            <Typography
-              variant="overline"
-              color="textSecondary"
-            >
-              {profile.bio}
-            </Typography>
-            <Typography
-              variant="h4"
-              color="textPrimary"
-            >
+          <Box className={classes.bioBox} mt={1}>
+            <Typography variant="h4" color="textPrimary">
               {profile.name}
             </Typography>
+            <Hidden smDown>
+              <Typography variant="overline" color="textSecondary">
+                {profile.bio}
+              </Typography>
+            </Hidden>
           </Box>
           <Box flexGrow={1} />
           <Hidden smDown>
-            {connectedStatus === 'not_connected' && (
-              <Button
-                onClick={handleConnectToggle}
-                size="small"
-                variant="outlined"
-                className={classes.action}
-              >
-                Connect
-              </Button>
-            )}
-            {connectedStatus === 'pending' && (
-              <Button
-                onClick={handleConnectToggle}
-                size="small"
-                variant="outlined"
-                className={classes.action}
-              >
-                Pending
-              </Button>
-            )}
             <Button
               color="secondary"
               component={RouterLink}
               size="small"
-              to="/app/chat"
+              to="/account/setting"
               variant="contained"
               className={classes.action}
             >
-              Send message
+              Edit Profile
             </Button>
           </Hidden>
-          <Tooltip title="More options">
-            <IconButton className={classes.action}>
-              <MoreIcon />
-            </IconButton>
-          </Tooltip>
+          <Hidden mdUp>
+            <Tooltip title="More options">
+              <IconButton className={classes.action}>
+                <EditIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Hidden>
         </Box>
+        <Hidden mdUp>
+          <Box textAlign="center">
+            <Typography variant="overline" color="textSecondary">
+              {profile.bio}
+            </Typography>
+          </Box>
+        </Hidden>
       </Container>
     </div>
   );

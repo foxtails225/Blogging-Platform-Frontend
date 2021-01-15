@@ -14,13 +14,14 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { Theme } from 'src/theme';
-import axios from 'src/utils/axios-mock';
+import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
-import { Profile } from 'src/types/social';
+import { User } from 'src/types/user';
 import Header from './Header';
-import Timeline from './Timeline';
-import Connections from './Connections';
+import Profile from './Profile';
+// import ReadingList from './ReadingList';
+// import Connections from './Connections';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -32,12 +33,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ProfileView: FC = () => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [currentTab, setCurrentTab] = useState<string>('timeline');
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [currentTab, setCurrentTab] = useState<string>('profile');
+  const [profile, setProfile] = useState<User | null>(null);
 
   const tabs = [
-    { value: 'timeline', label: 'Timeline' },
-    { value: 'connections', label: 'Connections' }
+    { value: 'profile', label: 'Profile' },
+    { value: 'reading', label: 'reading list' },
+    { value: 'dashboard', label: 'Dashboard' }
+    // { value: 'connections', label: 'Connections' }
   ];
 
   const handleTabsChange = (event: ChangeEvent, value: string): void => {
@@ -46,12 +49,10 @@ const ProfileView: FC = () => {
 
   const getPosts = useCallback(async () => {
     try {
-      const response = await axios.get<{ profile: Profile }>(
-        '/api/social/profile'
-      );
+      const response = await axios.get<{ user: User }>('/account/me');
 
       if (isMountedRef.current) {
-        setProfile(response.data.profile);
+        setProfile(response.data.user);
       }
     } catch (err) {
       console.error(err);
@@ -85,8 +86,9 @@ const ProfileView: FC = () => {
         </Box>
         <Divider />
         <Box py={3} pb={6}>
-          {currentTab === 'timeline' && <Timeline profile={profile} />}
-          {currentTab === 'connections' && <Connections />}
+          {currentTab === 'profile' && <Profile profile={profile} />}
+          {/* {currentTab === 'reading' && <ReadingList profile={profile} />} */}
+          {/* {currentTab === 'connections' && <Connections />} */}
         </Box>
       </Container>
     </Page>

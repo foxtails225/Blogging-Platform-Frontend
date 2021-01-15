@@ -65,6 +65,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
         phone: user.phone || '',
         firstName: user.firstName || '',
         lastName: user.lastName || '',
+        bio: user.bio || '',
         submit: null
       }}
       validationSchema={Yup.object().shape({
@@ -78,6 +79,9 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
         name: Yup.string()
           .max(255)
           .required('Name is required'),
+        firstName: Yup.string().max(255),
+        LastName: Yup.string().max(255),
+        bio: Yup.string().max(255),
         phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
         state: Yup.string().max(255)
       })}
@@ -117,7 +121,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                     error={Boolean(touched.name && errors.name)}
                     fullWidth
                     helperText={touched.name && errors.name}
-                    label="Name"
+                    label="Username"
                     name="name"
                     required
                     onBlur={handleBlur}
@@ -202,6 +206,19 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.lastName}
+                    variant="outlined"
+                  />
+                </Grid>
+                <Grid item md={12} xs={12}>
+                  <TextField
+                    error={Boolean(touched.bio && errors.bio)}
+                    fullWidth
+                    helperText={touched.bio && errors.bio}
+                    label="Bio"
+                    name="bio"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.bio}
                     variant="outlined"
                   />
                 </Grid>

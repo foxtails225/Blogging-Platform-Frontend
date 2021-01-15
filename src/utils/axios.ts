@@ -18,7 +18,6 @@ axiosInstance.interceptors.response.use(
   response => response,
   error => {
     if (error.response) {
-      console.log(error.response.status);
       if (error.response.status === 401) {
         setSession(null);
         store.dispatch({ type: 'LOGOUT' });

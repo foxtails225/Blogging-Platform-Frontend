@@ -77,7 +77,7 @@ const routes: Routes = [
   {
     exact: true,
     path: '/profile/:user',
-    component: lazy(() => import('src/views/social/ProfileView'))
+    component: lazy(() => import('src/views/account/ProfileView'))
   },
   {
     path: '/account',
@@ -86,7 +86,7 @@ const routes: Routes = [
     routes: [
       {
         exact: true,
-        path: '/account/me',
+        path: '/account/setting',
         component: lazy(() => import('src/views/account/AccountView'))
       },
       {
@@ -97,12 +97,12 @@ const routes: Routes = [
       {
         exact: true,
         path: '/account/profile',
-        component: lazy(() => import('src/views/social/ProfileView'))
+        component: lazy(() => import('src/views/account/ProfileView'))
       },
       {
         exact: true,
-        path: '/account',
-        component: () => <Redirect to="/account/profile" />
+        path: '/user',
+        component: () => <Redirect to="/user/profile" />
       },
       {
         component: () => <Redirect to="/404" />

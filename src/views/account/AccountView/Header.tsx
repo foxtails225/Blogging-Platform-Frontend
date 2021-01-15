@@ -38,12 +38,7 @@ const Header: FC<HeaderProps> = ({ className, ...rest }) => {
           Account
         </Typography>
       </Breadcrumbs>
-      <Typography
-        variant="h3"
-        color="textPrimary"
-      >
-        Settings
-      </Typography>
+      
     </div>
   );
 }

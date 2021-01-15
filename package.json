@@ -36,7 +36,6 @@
       "last 1 safari version"
     ]
   },
-  "types": "./typescript/main.d.ts",
   "dependencies": {
     "@date-io/core": "^2.8.0",
     "@date-io/moment": "^1.3.13",

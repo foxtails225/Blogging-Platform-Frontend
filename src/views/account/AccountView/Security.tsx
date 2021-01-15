@@ -55,7 +55,7 @@ const Security: FC<SecurityProps> = ({ className, ...rest }) => {
         setSubmitting
       }) => {
         try {
-          await axios.put<{ user: User }>('/account/update-password', {
+          await axios.put<{ user: User }>('/account/password', {
             userData: values
           });
           resetForm();
