@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import type { FC, FormEvent } from 'react';
+import React, { useState, FC, FormEvent } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -11,11 +10,11 @@ import {
   makeStyles
 } from '@material-ui/core';
 import QuillEditor from 'src/components/QuillEditor';
-import type { Theme } from 'src/theme';
+import { Theme } from 'src/theme';
 
-interface ProjectDescriprionProps {
+interface PostDisclosureProps {
   className?: string;
-  onComplete?: () => void;
+  onNext?: () => void;
   onBack?: () => void;
 }
 
@@ -31,10 +30,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const ProjectDescription: FC<ProjectDescriprionProps> = ({
+const PostDisclosure: FC<PostDisclosureProps> = ({
   className,
   onBack,
-  onComplete,
+  onNext,
   ...rest
 }) => {
   const classes = useStyles();
@@ -46,7 +45,9 @@ const ProjectDescription: FC<ProjectDescriprionProps> = ({
     setContent(value);
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
 
     try {
@@ -54,8 +55,8 @@ const ProjectDescription: FC<ProjectDescriprionProps> = ({
 
       // NOTE: Make API request
 
-      if (onComplete) {
-        onComplete();
+      if (onNext) {
+        onNext();
       }
     } catch (err) {
       setError(err.message);
@@ -70,25 +71,19 @@ const ProjectDescription: FC<ProjectDescriprionProps> = ({
       className={clsx(classes.root, className)}
       {...rest}
     >
-      <Typography
-        variant="h3"
-        color="textPrimary"
-      >
-        Please select one option
+      <Typography variant="h3" color="textPrimary">
+        Disclosure
       </Typography>
       <Box mt={2}>
-        <Typography
-          variant="subtitle1"
-          color="textSecondary"
-        >
-          Proin tincidunt lacus sed ante efficitur efficitur.
-          Quisque aliquam fringilla velit sit amet euismod.
+        <Typography variant="subtitle1" color="textSecondary">
+          Let the readers know if you hold or do not hold any position in the
+          companies you are talking about. Make sure to also let readers know if
+          you are receiving compensation for the article. You may receive one
+          from us if your article is approved and you may receive tips from
+          readers.
         </Typography>
       </Box>
-      <Paper
-        className={classes.editorContainer}
-        variant="outlined"
-      >
+      <Paper className={classes.editorContainer} variant="outlined">
         <QuillEditor
           handleChange={handleChange}
           value={content}
@@ -97,20 +92,12 @@ const ProjectDescription: FC<ProjectDescriprionProps> = ({
       </Paper>
       {error && (
         <Box mt={2}>
-          <FormHelperText error>
-            {FormHelperText}
-          </FormHelperText>
+          <FormHelperText error>{FormHelperText}</FormHelperText>
         </Box>
       )}
-      <Box
-        mt={6}
-        display="flex"
-      >
+      <Box mt={6} display="flex">
         {onBack && (
-          <Button
-            onClick={onBack}
-            size="large"
-          >
+          <Button onClick={onBack} size="large">
             Previous
           </Button>
         )}
@@ -122,22 +109,22 @@ const ProjectDescription: FC<ProjectDescriprionProps> = ({
           variant="contained"
           size="large"
         >
-          Complete
+          Next
         </Button>
       </Box>
     </form>
   );
 };
 
-ProjectDescription.propTypes = {
+PostDisclosure.propTypes = {
   className: PropTypes.string,
-  onComplete: PropTypes.func,
+  onNext: PropTypes.func,
   onBack: PropTypes.func
 };
 
-ProjectDescription.defaultProps = {
-  onComplete: () => {},
+PostDisclosure.defaultProps = {
+  onNext: () => {},
   onBack: () => {}
 };
 
-export default ProjectDescription;
+export default PostDisclosure;

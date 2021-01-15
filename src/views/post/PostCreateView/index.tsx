@@ -5,13 +5,11 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   Avatar,
   Box,
-  Breadcrumbs,
   Button,
   Card,
   CardContent,
   Container,
   Grid,
-  Link,
   Paper,
   Step,
   StepConnector,
@@ -22,18 +20,20 @@ import {
   makeStyles,
   withStyles
 } from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import {
-  User as UserIcon,
   Star as StarIcon,
   Briefcase as BriefcaseIcon,
   File as FileIcon
 } from 'react-feather';
+import GavelIcon from '@material-ui/icons/Gavel';
+import RateReviewIcon from '@material-ui/icons/RateReview';
 import { Theme } from 'src/theme';
+import { Post } from 'src/types/post';
 import Page from 'src/components/Page';
-import UserDetails from './UserDetails';
-import ProjectDetails from './ProjectDetails';
-import ProjectDescription from './ProjectDescription';
+import ProjectDetails from './PostDetails';
+import ProjectContent from './PostContent';
+import PostDisclosure from './PostDisclosure';
+import PostReview from './PostReview';
 
 interface CustomStepIconProps {
   active?: boolean;
@@ -43,16 +43,20 @@ interface CustomStepIconProps {
 
 const steps = [
   {
-    label: 'User Details',
-    icon: UserIcon
-  },
-  {
-    label: 'Project Details',
+    label: 'Details',
     icon: BriefcaseIcon
   },
   {
-    label: 'Project Description',
+    label: 'Content',
     icon: FileIcon
+  },
+  {
+    label: 'Disclosure',
+    icon: GavelIcon
+  },
+  {
+    label: 'Review',
+    icon: RateReviewIcon
   }
 ];
 
@@ -121,10 +125,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const PostView: FC = () => {
+const PostCreateView: FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [completed, setCompleted] = useState<boolean>(false);
+  const [post, setPost] = useState<Post>();
 
   const handleNext = (): void => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -138,28 +143,18 @@ const PostView: FC = () => {
     setCompleted(true);
   };
 
+  const handlePost = (values): void => {
+    setPost(prevState => ({ ...prevState, ...values }));
+  };
+
+  console.log(post)
+
   return (
     <Page className={classes.root} title="Project Create">
       <Container maxWidth="lg">
         <Box mb={3}>
-          <Breadcrumbs
-            separator={<NavigateNextIcon fontSize="small" />}
-            aria-label="breadcrumb"
-          >
-            <Link
-              variant="body1"
-              color="inherit"
-              to="/app"
-              component={RouterLink}
-            >
-              Dashboard
-            </Link>
-            <Typography variant="body1" color="textPrimary">
-              Projects
-            </Typography>
-          </Breadcrumbs>
           <Typography variant="h3" color="textPrimary">
-            Create Wizard &amp; Process
+            Post New Article
           </Typography>
         </Box>
         {!completed ? (
@@ -183,12 +178,21 @@ const PostView: FC = () => {
               </Grid>
               <Grid item xs={12} md={9}>
                 <Box p={3}>
-                  {activeStep === 0 && <UserDetails onNext={handleNext} />}
+                  {activeStep === 0 && (
+                    <ProjectDetails
+                      post={post}
+                      onPost={handlePost}
+                      onNext={handleNext}
+                    />
+                  )}
                   {activeStep === 1 && (
-                    <ProjectDetails onBack={handleBack} onNext={handleNext} />
+                    <ProjectContent onBack={handleBack} onNext={handleNext} />
                   )}
                   {activeStep === 2 && (
-                    <ProjectDescription
+                    <PostDisclosure onBack={handleBack} onNext={handleNext} />
+                  )}
+                  {activeStep === 3 && (
+                    <PostReview
                       onBack={handleBack}
                       onComplete={handleComplete}
                     />
@@ -217,8 +221,9 @@ const PostView: FC = () => {
                     color="textSecondary"
                     align="center"
                   >
-                    Donec ut augue sed nisi ullamcorper posuere sit amet eu
-                    mauris. Ut eget mauris scelerisque.
+                    Thank you for submitting your contribution to us. Your
+                    article is now in review and we will come back to you with
+                    our final decision.
                   </Typography>
                 </Box>
                 <Box mt={2} display="flex" justifyContent="center">
@@ -226,9 +231,9 @@ const PostView: FC = () => {
                     variant="contained"
                     color="secondary"
                     component={RouterLink}
-                    to="/app/projects/1"
+                    to="/account/profile"
                   >
-                    View your project
+                    Back to Profile
                   </Button>
                 </Box>
               </Box>
@@ -240,4 +245,4 @@ const PostView: FC = () => {
   );
 };
 
-export default PostView;
+export default PostCreateView;

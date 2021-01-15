@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useEffect
-} from 'react';
-import type { FC } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import Cookies from 'js-cookie';
 import {
   Box,
@@ -13,7 +9,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import useSettings from 'src/hooks/useSettings';
-import type { Theme } from 'src/theme';
+import { Theme } from 'src/theme';
 import { THEMES } from 'src/constants';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -35,7 +31,12 @@ const SettingsNotification: FC = () => {
   const { saveSettings } = useSettings();
 
   const handleSwitch = (): void => {
-    saveSettings({ theme: THEMES.LIGHT });
+    const storedData: string | null = window.localStorage.getItem('settings');
+    const setting = storedData
+      ? JSON.parse(storedData)
+      : { responsiveFontSizes: true, theme: THEMES.LIGHT };
+      
+    saveSettings(setting);
     Cookies.set('settingsUpdated', 'true');
     setOpen(false);
   };
@@ -59,37 +60,17 @@ const SettingsNotification: FC = () => {
 
   return (
     <Portal>
-      <Paper
-        className={classes.root}
-        elevation={3}
-      >
-        <Typography
-          variant="h4"
-          color="textPrimary"
-          gutterBottom
-        >
+      <Paper className={classes.root} elevation={3}>
+        <Typography variant="h4" color="textPrimary" gutterBottom>
           Settings Updated
         </Typography>
-        <Typography
-          variant="body2"
-          color="textSecondary"
-        >
-          We automatically updated your settings.
-          You change the settings any time from your dashboard settings.
+        <Typography variant="body2" color="textSecondary">
+          We automatically updated your settings. You change the settings any
+          time from your dashboard settings.
         </Typography>
-        <Box
-          mt={2}
-          display="flex"
-          justifyContent="space-between"
-        >
-          <Button onClick={handleClose}>
-            Close
-          </Button>
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={handleSwitch}
-          >
+        <Box mt={2} display="flex" justifyContent="space-between">
+          <Button onClick={handleClose}>Close</Button>
+          <Button color="secondary" variant="contained" onClick={handleSwitch}>
             Switch
           </Button>
         </Box>

@@ -8,7 +8,6 @@ import {
   useMediaQuery
 } from '@material-ui/core';
 import { Theme } from 'src/theme';
-import useAuth from 'src/hooks/useAuth';
 import TopBar from './TopBar';
 import NavBar from './NavBar';
 import FootBar from './FootBar';
@@ -46,21 +45,18 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const MainLayout: FC<LayoutProps> = ({ children }) => {
   const [isMobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
-  const { isAuthenticated } = useAuth();
   const matches = useMediaQuery('(min-width: 1280px)');
   const classes = useStyles();
-  
+
   return (
     <div className={classes.root}>
       <TopBar onMobileNavOpen={() => setMobileNavOpen(true)} />
-      {isAuthenticated && (
-        <Hidden lgUp>
-          <NavBar
-            onMobileClose={() => setMobileNavOpen(false)}
-            openMobile={isMobileNavOpen}
-          />
-        </Hidden>
-      )}
+      <Hidden lgUp>
+        <NavBar
+          onMobileClose={() => setMobileNavOpen(false)}
+          openMobile={isMobileNavOpen}
+        />
+      </Hidden>
       <div className={classes.wrapper}>
         <Container
           maxWidth="lg"

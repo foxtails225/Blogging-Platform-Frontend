@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import type { FC, FormEvent } from 'react';
+import React, { useState, FC, FormEvent } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -11,29 +10,31 @@ import {
   Button,
   makeStyles
 } from '@material-ui/core';
-import type { Theme } from 'src/theme';
+import { Theme } from 'src/theme';
 
-interface UserDetailsProps {
+interface PostReviewProps {
   className?: string;
-  onNext?: () => void;
+  onComplete?: () => void;
   onBack?: () => void;
 }
 
 const typeOptions = [
   {
     value: 'freelancer',
-    title: 'I\'m a freelancer',
-    description: 'I\'m looking for teamates to join in a personal project'
+    title: "I'm a freelancer",
+    description: "I'm looking for teamates to join in a personal project"
   },
   {
     value: 'projectOwner',
     title: 'I’m a project owner',
-    description: 'I\'m looking for freelancer or contractors to take care of my project'
+    description:
+      "I'm looking for freelancer or contractors to take care of my project"
   },
   {
     value: 'affiliate',
     title: 'I want to join affiliate',
-    description: 'I\'m looking for freelancer or contractors to take care of my project'
+    description:
+      "I'm looking for freelancer or contractors to take care of my project"
   }
 ];
 
@@ -52,10 +53,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const UserDetails: FC<UserDetailsProps> = ({
+const PostReview: FC<PostReviewProps> = ({
   className,
   onBack,
-  onNext,
+  onComplete,
   ...rest
 }) => {
   const classes = useStyles();
@@ -67,16 +68,18 @@ const UserDetails: FC<UserDetailsProps> = ({
     setType(newType);
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>): Promise<void> => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault();
-    
+
     try {
       setSubmitting(true);
 
       // NOTE: Make API request
 
-      if (onNext) {
-        onNext();
+      if (onComplete) {
+        onComplete();
       }
     } catch (err) {
       setError(err.message);
@@ -91,23 +94,16 @@ const UserDetails: FC<UserDetailsProps> = ({
       className={clsx(classes.root, className)}
       {...rest}
     >
-      <Typography
-        variant="h3"
-        color="textPrimary"
-      >
-        Please select one option
+      <Typography variant="h3" color="textPrimary">
+        Review
       </Typography>
       <Box mt={2}>
-        <Typography
-          variant="subtitle1"
-          color="textSecondary"
-        >
-          Proin tincidunt lacus sed ante efficitur efficitur.
-          Quisque aliquam fringilla velit sit amet euismod.
+        <Typography variant="subtitle1" color="textSecondary">
+          Make sure everything looks good.
         </Typography>
       </Box>
       <Box mt={2}>
-        {typeOptions.map((typeOption) => (
+        {typeOptions.map(typeOption => (
           <Paper
             className={classes.typeOption}
             elevation={type === typeOption.value ? 10 : 1}
@@ -118,17 +114,10 @@ const UserDetails: FC<UserDetailsProps> = ({
               onClick={() => handleChange(typeOption.value)}
             />
             <Box ml={2}>
-              <Typography
-                gutterBottom
-                variant="h5"
-                color="textPrimary"
-              >
+              <Typography gutterBottom variant="h5" color="textPrimary">
                 {typeOption.title}
               </Typography>
-              <Typography
-                variant="body1"
-                color="textPrimary"
-              >
+              <Typography variant="body1" color="textPrimary">
                 {typeOption.description}
               </Typography>
             </Box>
@@ -137,20 +126,12 @@ const UserDetails: FC<UserDetailsProps> = ({
       </Box>
       {error && (
         <Box mt={2}>
-          <FormHelperText error>
-            {error}
-          </FormHelperText>
+          <FormHelperText error>{error}</FormHelperText>
         </Box>
       )}
-      <Box
-        mt={6}
-        display="flex"
-      >
+      <Box mt={6} display="flex">
         {onBack && (
-          <Button
-            onClick={onBack}
-            size="large"
-          >
+          <Button onClick={onBack} size="large">
             Previous
           </Button>
         )}
@@ -162,22 +143,22 @@ const UserDetails: FC<UserDetailsProps> = ({
           variant="contained"
           size="large"
         >
-          Next
+          Complete
         </Button>
       </Box>
     </form>
   );
 };
 
-UserDetails.propTypes = {
+PostReview.propTypes = {
   className: PropTypes.string,
-  onNext: PropTypes.func,
+  onComplete: PropTypes.func,
   onBack: PropTypes.func
 };
 
-UserDetails.defaultProps = {
-  onNext: () => {},
+PostReview.defaultProps = {
+  onComplete: () => {},
   onBack: () => {}
 };
 
-export default UserDetails;
+export default PostReview;

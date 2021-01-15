@@ -76,7 +76,8 @@ const routes: Routes = [
   },
   {
     exact: true,
-    path: '/profile/:user',
+    layout: MainLayout,
+    path: '/profile/:id',
     component: lazy(() => import('src/views/account/ProfileView'))
   },
   {
@@ -103,6 +104,26 @@ const routes: Routes = [
         exact: true,
         path: '/user',
         component: () => <Redirect to="/user/profile" />
+      },
+      {
+        component: () => <Redirect to="/404" />
+      }
+    ]
+  },
+  {
+    path: '/post',
+    guard: AuthGuard,
+    layout: MainLayout,
+    routes: [
+      {
+        exact: true,
+        path: '/post/new',
+        component: lazy(() => import('src/views/post/PostCreateView'))
+      },
+      {
+        exact: true,
+        path: '/post/:id',
+        component: lazy(() => import('src/views/post/PostCreateView'))
       },
       {
         component: () => <Redirect to="/404" />

@@ -19,7 +19,7 @@ import {
 import Logo from 'src/components/Logo';
 import useAuth from 'src/hooks/useAuth';
 import NavItem from './NavItem';
-import {sections} from '../Sections';
+import { sections } from '../Sections';
 
 interface NavBarProps {
   onMobileClose: () => void;
@@ -99,7 +99,7 @@ const useStyles = makeStyles(() => ({
 const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
   const classes = useStyles();
   const location = useLocation();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
     if (openMobile && onMobileClose) {
@@ -111,47 +111,59 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
   const content = (
     <Box height="100%" display="flex" flexDirection="column">
       <PerfectScrollbar options={{ suppressScrollX: true }}>
-        <Hidden lgUp>
-          <Box p={2} display="flex" justifyContent="center">
-            <RouterLink to="/">
-              <Logo />
-            </RouterLink>
-          </Box>
-        </Hidden>
-        <Box p={2}>
-          <Box display="flex" justifyContent="center">
-            <RouterLink to="/app/account">
-              <Avatar alt="User" className={classes.avatar} src={user.avatar} />
-            </RouterLink>
-          </Box>
-          <Box mt={2} textAlign="center">
-            <Link
-              component={RouterLink}
-              to="/app/account"
-              variant="h5"
-              color="textPrimary"
-              underline="none"
-            >
-              {user.name}
-            </Link>
-            <Typography variant="body2" color="textSecondary">
-              Your tier: {/* <Link component={RouterLink} to="/pricing"> */}
-              {user.tier}
-              {/* </Link> */}
-            </Typography>
-          </Box>
-        </Box>
+        {isAuthenticated && (
+          <>
+            <Box p={2} display="flex" justifyContent="center">
+              <RouterLink to="/">
+                <Logo />
+              </RouterLink>
+            </Box>
+            <Box p={2}>
+              <Box display="flex" justifyContent="center">
+                <RouterLink to="/app/account">
+                  <Avatar
+                    alt="User"
+                    className={classes.avatar}
+                    src={user.avatar}
+                  />
+                </RouterLink>
+              </Box>
+              <Box mt={2} textAlign="center">
+                <Link
+                  component={RouterLink}
+                  to="/app/account"
+                  variant="h5"
+                  color="textPrimary"
+                  underline="none"
+                >
+                  {user.name}
+                </Link>
+                <Typography variant="body2" color="textSecondary">
+                  Your tier: {/* <Link component={RouterLink} to="/pricing"> */}
+                  {user.tier}
+                  {/* </Link> */}
+                </Typography>
+              </Box>
+            </Box>
+          </>
+        )}
         <Divider />
         <Box p={2}>
-          {sections.map(section => (
-            <React.Fragment key={section.title}>
-              {reduceChildRoutes({
-                pathname: location.pathname,
-                item: section,
-                depth: 0
-              })}
-            </React.Fragment>
-          ))}
+          {sections
+            .filter(
+              section =>
+                (!isAuthenticated && !section.href.includes('account')) ||
+                isAuthenticated
+            )
+            .map(section => (
+              <React.Fragment key={section.title}>
+                {reduceChildRoutes({
+                  pathname: location.pathname,
+                  item: section,
+                  depth: 0
+                })}
+              </React.Fragment>
+            ))}
         </Box>
         <Divider />
       </PerfectScrollbar>

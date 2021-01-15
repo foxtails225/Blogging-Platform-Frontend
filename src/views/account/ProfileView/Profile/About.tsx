@@ -1,4 +1,5 @@
 import React, { FC } from 'react';
+import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
@@ -43,7 +44,10 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
+  const history = useHistory();
   const classes = useStyles();
+
+  const handleClick = () => history.push('/post/new');
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
@@ -66,7 +70,12 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
                     color: 'textSecondary'
                   }}
                 />
-                <Chip color="secondary" size="small" label="Contribute" />
+                <Chip
+                  color="secondary"
+                  size="small"
+                  label="Contribute"
+                  onClick={handleClick}
+                />
               </ListItem>
               <ListItem disableGutters divider>
                 <ListItemAvatar>
