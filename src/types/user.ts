@@ -1,3 +1,10 @@
+export interface Status {
+  published: number;
+  comments: number;
+  pending: number;
+  tags: number;
+}
+
 export interface User {
   _id: string;
   name: string;

@@ -11,11 +11,14 @@ import {
 } from '@material-ui/core';
 import QuillEditor from 'src/components/QuillEditor';
 import { Theme } from 'src/theme';
+import { Post } from 'src/types/post';
 
 interface PostDisclosureProps {
   className?: string;
+  post: Post;
   onNext?: () => void;
   onBack?: () => void;
+  onPost: (param: any) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -25,24 +28,31 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   editor: {
     '& .ql-editor': {
-      height: 400
+      height: 300
+    },
+    '& .ql-toolbar': {
+      '& .ql-formats > .ql-picker': {
+        display: 'none'
+      }
     }
   }
 }));
 
 const PostDisclosure: FC<PostDisclosureProps> = ({
   className,
+  post,
+  onPost,
   onBack,
   onNext,
   ...rest
 }) => {
   const classes = useStyles();
-  const [content, setContent] = useState<string>('');
+  const [disclosure, setDisclosure] = useState<string>(post.disclosure || '');
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleChange = (value: string): void => {
-    setContent(value);
+    setDisclosure(value);
   };
 
   const handleSubmit = async (
@@ -52,8 +62,7 @@ const PostDisclosure: FC<PostDisclosureProps> = ({
 
     try {
       setSubmitting(true);
-
-      // NOTE: Make API request
+      onPost({ disclosure: disclosure.trim() });
 
       if (onNext) {
         onNext();
@@ -85,8 +94,8 @@ const PostDisclosure: FC<PostDisclosureProps> = ({
       </Box>
       <Paper className={classes.editorContainer} variant="outlined">
         <QuillEditor
-          handleChange={handleChange}
-          value={content}
+          onChange={handleChange}
+          value={disclosure}
           className={classes.editor}
         />
       </Paper>
@@ -118,11 +127,13 @@ const PostDisclosure: FC<PostDisclosureProps> = ({
 
 PostDisclosure.propTypes = {
   className: PropTypes.string,
+  onPost: PropTypes.func,
   onNext: PropTypes.func,
   onBack: PropTypes.func
 };
 
 PostDisclosure.defaultProps = {
+  onPost: () => {},
   onNext: () => {},
   onBack: () => {}
 };

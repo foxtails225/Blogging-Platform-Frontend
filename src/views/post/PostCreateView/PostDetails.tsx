@@ -16,12 +16,12 @@ import {
 } from '@material-ui/core';
 import { Plus as PlusIcon } from 'react-feather';
 import { Theme } from 'src/theme';
-import { Post } from 'src/types/post';
+import { Post, Tag } from 'src/types/post';
 
 interface PostDetailsProps {
   className?: string;
-  post: Post;
-  onPost: (param: any) => void;
+  post?: Post;
+  onPost?: (param: any) => void;
   onNext?: () => void;
 }
 
@@ -42,20 +42,31 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
+const initialTag: Tag = {
+  symbol: '',
+  name: ''
+};
+
 const PostDetails: FC<PostDetailsProps> = ({
   className,
+  post,
   onPost,
   onNext,
   ...rest
 }) => {
   const classes = useStyles();
-  const [tag, setTag] = useState<string>('');
+  const [tag, setTag] = useState<Tag>(initialTag);
+
+  const handleChangeTag = event => {
+    const { value } = event.target;
+    setTag({ symbol: value, name: value });
+  };
 
   return (
     <Formik
       initialValues={{
-        title: '',
-        tags: [],
+        title: post.title || '',
+        tags: post.tags || [],
         submit: null
       }}
       validationSchema={Yup.object().shape({
@@ -67,7 +78,7 @@ const PostDetails: FC<PostDetailsProps> = ({
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          onPost({ title: values.title, tags: values.tags });
+          onPost({ title: values.title.trim(), tags: values.tags });
           setStatus({ success: true });
           setSubmitting(false);
 
@@ -102,8 +113,9 @@ const PostDetails: FC<PostDetailsProps> = ({
           <Box mt={2}>
             <Typography variant="subtitle1" color="textSecondary">
               Do not spam tags. <br />
-              Title should not be spammy. Title and article contents may be
-              subject to grammatical and punctual editing to ensure quality.
+              Title should not be spammy. <br />
+              Title and article contents may be subject to grammatical and
+              punctual editing to ensure quality.
             </Typography>
           </Box>
           <Box mt={2}>
@@ -114,9 +126,9 @@ const PostDetails: FC<PostDetailsProps> = ({
               label="Article Title"
               name="title"
               placeholder="Please type article title."
+              value={values.title}
               onBlur={handleBlur}
               onChange={handleChange}
-              value={values.title}
               variant="outlined"
             />
             <Box mt={3} display="flex" alignItems="center">
@@ -124,20 +136,19 @@ const PostDetails: FC<PostDetailsProps> = ({
                 fullWidth
                 label="Article Tags"
                 name="tags"
-                value={tag}
+                value={tag.symbol}
                 placeholder="Please choose at least one tag."
-                onChange={event => setTag(event.target.value)}
+                onChange={handleChangeTag}
                 variant="outlined"
               />
               <IconButton
                 className={classes.addTab}
                 onClick={() => {
-                  if (!tag) {
+                  if (tag.symbol === '' || tag.name === '') {
                     return;
                   }
-
                   setFieldValue('tags', [...values.tags, tag]);
-                  setTag('');
+                  setTag(initialTag);
                 }}
               >
                 <SvgIcon>
@@ -150,10 +161,12 @@ const PostDetails: FC<PostDetailsProps> = ({
                 <Chip
                   variant="outlined"
                   key={i}
-                  label={tag}
+                  label={tag.symbol}
                   className={classes.tag}
                   onDelete={() => {
-                    const newTags = values.tags.filter(t => t !== tag);
+                    const newTags = values.tags.filter(
+                      t => t.symbol !== tag.symbol && t.name !== tag.name
+                    );
 
                     setFieldValue('tags', newTags);
                   }}

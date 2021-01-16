@@ -1,6 +1,6 @@
 import React from 'react';
 import type { FC } from 'react';
-import { Helmet } from 'react-helmet';
+import { Helmet } from 'react-helmet-async';
 
 const GA_MEASUREMENT_ID: string | undefined = process.env.REACT_APP_GA_MEASUREMENT_ID;
 

@@ -23,7 +23,7 @@ const General: FC<GeneralProps> = ({ className, ...rest }) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get<{ user: User }>('/account/me');
+      const response = await axios.get<{ user: User }>('/account/about');
       setUser(response.data.user);
     };
     isLoading && fetchData();

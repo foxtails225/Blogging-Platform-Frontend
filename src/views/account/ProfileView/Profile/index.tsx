@@ -1,14 +1,15 @@
-import React, { FC } from 'react';
+import React, { useState, useEffect, useCallback, FC } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { Grid, makeStyles } from '@material-ui/core';
-// import axios from 'src/utils/axios-mock';
-// import useIsMountedRef from 'src/hooks/useIsMountedRef';
-// import PostOverViewCard from 'src/components/PostOverViewCard';
-// import { Post } from 'src/types/social';
+import axios from 'src/utils/axios';
+import useAuth from 'src/hooks/useAuth';
+import useIsMountedRef from 'src/hooks/useIsMountedRef';
+import PostOverViewCard from 'src/components/PostOverViewCard';
+import { Post } from 'src/types/social';
 import { User } from 'src/types/user';
 import About from './About';
-// import Posts from './Posts';
+import Posts from './Posts';
 
 interface ProfileProps {
   className?: string;
@@ -21,25 +22,33 @@ const useStyles = makeStyles(() => ({
 
 const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
-  // const isMountedRef = useIsMountedRef();
-  // const [posts, setPosts] = useState<Post[]>([]);
+  const isMountedRef = useIsMountedRef();
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState<number>(1);
 
-  // const getPosts = useCallback(async () => {
-  //   try {
-  //     const response = await axios.get<{ posts: Post[] }>('/account/posts');
+  const getPosts = useCallback(async () => {
+    try {
+      const params = { email: user.email, page };
+      const response = await axios.get<{ posts: Post[]; page: number }>(
+        '/posts/all/',
+        { params }
+      );
 
-  //     if (isMountedRef.current) {
-  //       setPosts(response.data.posts);
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //   }
-  // }, [isMountedRef]);
+      if (isMountedRef.current) {
+        console.log(response)
+        setPosts(response.data.posts);
+        setPage(response.data.page);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }, [isMountedRef, user]);
 
-  // useEffect(() => {
-  //   getPosts();
-  // }, [getPosts]);
-
+  useEffect(() => {
+    getPosts();
+  }, [getPosts]);
+  
   return (
     <div className={clsx(classes.root, className)} {...rest}>
       <Grid container spacing={3}>

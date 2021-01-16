@@ -11,11 +11,14 @@ import {
 } from '@material-ui/core';
 import QuillEditor from 'src/components/QuillEditor';
 import { Theme } from 'src/theme';
+import { Post } from 'src/types/post';
 
 interface PostContentProps {
   className?: string;
+  post: Post;
   onNext?: () => void;
   onBack?: () => void;
+  onPost: (param: any) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -32,12 +35,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const PostContent: FC<PostContentProps> = ({
   className,
+  post,
+  onPost,
   onBack,
   onNext,
   ...rest
 }) => {
   const classes = useStyles();
-  const [content, setContent] = useState<string>('');
+  const [content, setContent] = useState<string>(post.content || '');
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -52,8 +57,7 @@ const PostContent: FC<PostContentProps> = ({
 
     try {
       setSubmitting(true);
-
-      // NOTE: Make API request
+      onPost({ content: content.trim() });
 
       if (onNext) {
         onNext();
@@ -77,12 +81,12 @@ const PostContent: FC<PostContentProps> = ({
       <Box mt={2}>
         <Typography variant="subtitle1" color="textSecondary">
           Do not advise people to make any financial decisions. <br />
-          Plagiarism is not tolerated
+          Plagiarism is not tolerated.
         </Typography>
       </Box>
       <Paper className={classes.editorContainer} variant="outlined">
         <QuillEditor
-          handleChange={handleChange}
+          onChange={handleChange}
           value={content}
           className={classes.editor}
         />
@@ -115,11 +119,13 @@ const PostContent: FC<PostContentProps> = ({
 
 PostContent.propTypes = {
   className: PropTypes.string,
+  onPost: PropTypes.func,
   onNext: PropTypes.func,
   onBack: PropTypes.func
 };
 
 PostContent.defaultProps = {
+  onPost: () => {},
   onNext: () => {},
   onBack: () => {}
 };

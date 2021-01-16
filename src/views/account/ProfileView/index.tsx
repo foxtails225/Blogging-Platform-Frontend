@@ -49,7 +49,7 @@ const ProfileView: FC = () => {
 
   const getPosts = useCallback(async () => {
     try {
-      const response = await axios.get<{ user: User }>('/account/me');
+      const response = await axios.get<{ user: User }>('/account/about');
 
       if (isMountedRef.current) {
         setProfile(response.data.user);

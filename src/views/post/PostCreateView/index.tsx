@@ -2,6 +2,7 @@ import React, { useState, FC } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
+import moment from 'moment';
 import {
   Avatar,
   Box,
@@ -27,11 +28,12 @@ import {
 } from 'react-feather';
 import GavelIcon from '@material-ui/icons/Gavel';
 import RateReviewIcon from '@material-ui/icons/RateReview';
+import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { Post } from 'src/types/post';
 import Page from 'src/components/Page';
-import ProjectDetails from './PostDetails';
-import ProjectContent from './PostContent';
+import PostDetails from './PostDetails';
+import PostContent from './PostContent';
 import PostDisclosure from './PostDisclosure';
 import PostReview from './PostReview';
 
@@ -59,6 +61,17 @@ const steps = [
     icon: RateReviewIcon
   }
 ];
+
+const initialPost = {
+  slug: '',
+  title: '',
+  content: '',
+  disclosure: '',
+  tags: [],
+  week: moment().week(),
+  month: moment().month(),
+  year: moment().year()
+};
 
 const CustomStepConnector = withStyles((theme: Theme) => ({
   vertical: {
@@ -129,7 +142,7 @@ const PostCreateView: FC = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [completed, setCompleted] = useState<boolean>(false);
-  const [post, setPost] = useState<Post>();
+  const [post, setPost] = useState<Post>(initialPost);
 
   const handleNext = (): void => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -139,7 +152,17 @@ const PostCreateView: FC = () => {
     setActiveStep(prevActiveStep => prevActiveStep - 1);
   };
 
-  const handleComplete = (): void => {
+  const handleComplete = async (): Promise<void> => {
+    const specialReg = /[^\w\s]/gi;
+    const slug = post.title
+      .replace(specialReg, '')
+      .replace('/', '-')
+      .split(' ')
+      .join('-')
+      .trim()
+      .toLowerCase();
+
+    await axios.post<{ post: Post }>('/posts/new', { ...post, slug });
     setCompleted(true);
   };
 
@@ -147,7 +170,7 @@ const PostCreateView: FC = () => {
     setPost(prevState => ({ ...prevState, ...values }));
   };
 
-  console.log(post)
+  console.log(post);
 
   return (
     <Page className={classes.root} title="Project Create">
@@ -179,20 +202,31 @@ const PostCreateView: FC = () => {
               <Grid item xs={12} md={9}>
                 <Box p={3}>
                   {activeStep === 0 && (
-                    <ProjectDetails
+                    <PostDetails
                       post={post}
                       onPost={handlePost}
                       onNext={handleNext}
                     />
                   )}
                   {activeStep === 1 && (
-                    <ProjectContent onBack={handleBack} onNext={handleNext} />
+                    <PostContent
+                      post={post}
+                      onPost={handlePost}
+                      onBack={handleBack}
+                      onNext={handleNext}
+                    />
                   )}
                   {activeStep === 2 && (
-                    <PostDisclosure onBack={handleBack} onNext={handleNext} />
+                    <PostDisclosure
+                      post={post}
+                      onPost={handlePost}
+                      onBack={handleBack}
+                      onNext={handleNext}
+                    />
                   )}
                   {activeStep === 3 && (
                     <PostReview
+                      post={post}
                       onBack={handleBack}
                       onComplete={handleComplete}
                     />

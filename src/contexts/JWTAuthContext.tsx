@@ -194,7 +194,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken);
 
-          const response = await axios.get<{ user: User }>('/account/me');
+          const response = await axios.get<{ user: User }>('/account/about');
           const { user } = response.data;
 
           dispatch({

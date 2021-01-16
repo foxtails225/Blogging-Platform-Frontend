@@ -1,42 +1,27 @@
 import React, { useState, FC, FormEvent } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import parse from 'html-react-parser';
 import {
   Box,
-  Paper,
   FormHelperText,
   Typography,
-  Radio,
   Button,
+  Grid,
+  Chip,
+  Divider,
+  colors,
   makeStyles
 } from '@material-ui/core';
 import { Theme } from 'src/theme';
+import { Post, Tag } from 'src/types/post';
 
 interface PostReviewProps {
   className?: string;
-  onComplete?: () => void;
+  post?: Post;
   onBack?: () => void;
+  onComplete?: () => void;
 }
-
-const typeOptions = [
-  {
-    value: 'freelancer',
-    title: "I'm a freelancer",
-    description: "I'm looking for teamates to join in a personal project"
-  },
-  {
-    value: 'projectOwner',
-    title: 'I’m a project owner',
-    description:
-      "I'm looking for freelancer or contractors to take care of my project"
-  },
-  {
-    value: 'affiliate',
-    title: 'I want to join affiliate',
-    description:
-      "I'm looking for freelancer or contractors to take care of my project"
-  }
-];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
@@ -50,23 +35,39 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& + &': {
       marginLeft: theme.spacing(2)
     }
+  },
+  chip: {
+    marginLeft: theme.spacing(1)
+  },
+  box: {
+    padding: theme.spacing(7),
+    [theme.breakpoints.down('sm')]: {
+      padding: theme.spacing(3)
+    }
+  },
+  content: {
+    fontFamily: theme.typography.fontFamily,
+    marginBottom: theme.spacing(2)
+  },
+  disclosure: {
+    fontFamily: theme.typography.fontFamily,
+    '& p': {
+      color: colors.grey[500],
+      fontSize: '0.9rem'
+    }
   }
 }));
 
 const PostReview: FC<PostReviewProps> = ({
   className,
+  post,
   onBack,
   onComplete,
   ...rest
 }) => {
   const classes = useStyles();
-  const [type, setType] = useState<string>(typeOptions[1].value);
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (newType: string): void => {
-    setType(newType);
-  };
 
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
@@ -75,8 +76,6 @@ const PostReview: FC<PostReviewProps> = ({
 
     try {
       setSubmitting(true);
-
-      // NOTE: Make API request
 
       if (onComplete) {
         onComplete();
@@ -102,27 +101,33 @@ const PostReview: FC<PostReviewProps> = ({
           Make sure everything looks good.
         </Typography>
       </Box>
-      <Box mt={2}>
-        {typeOptions.map(typeOption => (
-          <Paper
-            className={classes.typeOption}
-            elevation={type === typeOption.value ? 10 : 1}
-            key={typeOption.value}
-          >
-            <Radio
-              checked={type === typeOption.value}
-              onClick={() => handleChange(typeOption.value)}
-            />
-            <Box ml={2}>
-              <Typography gutterBottom variant="h5" color="textPrimary">
-                {typeOption.title}
-              </Typography>
-              <Typography variant="body1" color="textPrimary">
-                {typeOption.description}
-              </Typography>
+      <Box mt={3} border={1} className={classes.box}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h3" color="textPrimary">
+              {post.title}
+            </Typography>
+            <Box mt={3}>
+              <Box mt={1}>
+                {post.tags.map((tag: Tag) => (
+                  <Chip
+                    key={tag.symbol}
+                    variant="outlined"
+                    label={tag.symbol}
+                    className={classes.chip}
+                  />
+                ))}
+              </Box>
             </Box>
-          </Paper>
-        ))}
+          </Grid>
+        </Grid>
+        <Box mt={3} className={classes.content}>
+          {parse(post.content)}
+        </Box>
+        <Divider />
+        <Box mt={3} className={classes.disclosure}>
+          {parse(post.disclosure)}
+        </Box>
       </Box>
       {error && (
         <Box mt={2}>

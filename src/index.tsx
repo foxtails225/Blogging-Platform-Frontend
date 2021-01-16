@@ -14,6 +14,7 @@ import 'src/mixins/chartjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
+import { HelmetProvider } from 'react-helmet-async';
 import { enableES5 } from 'immer';
 import * as serviceWorker from 'src/serviceWorker';
 import store from 'src/store';
@@ -23,11 +24,13 @@ import App from 'src/App';
 enableES5();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <SettingsProvider>
-      <App />
-    </SettingsProvider>
-  </Provider>,
+  <HelmetProvider>
+    <Provider store={store}>
+      <SettingsProvider>
+        <App />
+      </SettingsProvider>
+    </Provider>
+  </HelmetProvider>,
   document.getElementById('root')
 );
 
