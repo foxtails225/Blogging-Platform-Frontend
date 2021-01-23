@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "start": "set PORT=9000 && react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cd ../blogging-platform-backend && rmdir /S build && cd ../blogging-platform-frontend && move build ../blogging-platform-backend",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -20,7 +20,7 @@
     "article",
     "magazine",
     "medium",
-    "walnut"
+    "stock"
   ],
   "browserslist": {
     "production": [

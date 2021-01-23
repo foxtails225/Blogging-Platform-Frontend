@@ -20,10 +20,10 @@ const HomeView: FC = () => {
     <Page className={classes.root} title="Dank Stock News">
       <Container maxWidth={false}>
         <Grid container spacing={3}>
-          <Grid item lg={5} xs={12}>
+          <Grid item lg={6} xs={12}>
             <Market />
           </Grid>
-          <Grid item lg={7} xs={12}>
+          <Grid item lg={6} xs={12}>
             <Features />
           </Grid>
           <Grid item lg={9} xs={12}>

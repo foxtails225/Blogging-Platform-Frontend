@@ -1,3 +1,5 @@
+import { User } from './user';
+
 export interface Tag {
   symbol: string;
   name: string;
@@ -6,7 +8,7 @@ export interface Tag {
 export interface Post {
   _id?: string;
   slug: string;
-  author?: string;
+  author?: string | User;
   title: string;
   content: string;
   disclosure: string;

@@ -13,7 +13,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Reactions from '../Reactions';
-import { Post } from 'src/types/social';
+import { Post } from 'src/types/post';
 import { Theme } from 'src/theme';
 
 interface ListItemCardProps {
@@ -54,14 +54,14 @@ const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
         <Avatar
           alt="Person"
           component={RouterLink}
-          src={post.author.avatar}
+          src={typeof post.author !== 'string' && post.author.avatar}
           to="#"
         />
       </ListItemAvatar>
       <ListItemText
         primary={
           <Link color="textPrimary" component={RouterLink} to="#" variant="h5">
-            {post.message}
+            {post.title}
           </Link>
         }
         primaryTypographyProps={{
@@ -76,7 +76,7 @@ const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
               to="#"
               variant="h6"
             >
-              {post.author.name}
+              {typeof post.author !== 'string' && post.author.name}
             </Link>
             {` `}
             {moment(post.createdAt).fromNow()}
@@ -89,7 +89,7 @@ const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
 };
 
 ListItemCard.propTypes = {
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 export default ListItemCard;

@@ -13,7 +13,7 @@ import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ShareIcon from '@material-ui/icons/Share';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
-import { Post } from 'src/types/social';
+import { Post } from 'src/types/post';
 
 interface ReactionsProps {
   className?: string;
@@ -35,9 +35,9 @@ const useStyles = makeStyles(() => ({
 
 const Reactions: FC<ReactionsProps> = ({ className, post, ...rest }) => {
   const classes = useStyles();
-  const [isLiked, setLiked] = useState<boolean>(post.isLiked);
+  const [isLiked, setLiked] = useState<boolean>(false);
   const [isBookmarked, setBookmarked] = useState<boolean>(true);
-  const [likes, setLikes] = useState<number>(post.likes);
+  const [likes, setLikes] = useState<number>(post.liked.count);
 
   const handleLike = (): void => {
     setLiked(true);

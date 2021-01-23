@@ -170,8 +170,6 @@ const PostCreateView: FC = () => {
     setPost(prevState => ({ ...prevState, ...values }));
   };
 
-  console.log(post);
-
   return (
     <Page className={classes.root} title="Project Create">
       <Container maxWidth="lg">

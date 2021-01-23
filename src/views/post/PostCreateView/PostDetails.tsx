@@ -105,6 +105,9 @@ const PostDetails: FC<PostDetailsProps> = ({
         <form
           onSubmit={handleSubmit}
           className={clsx(classes.root, className)}
+          onKeyPress={e => {
+            e.key === 'Enter' && e.preventDefault();
+          }}
           {...rest}
         >
           <Typography variant="h3" color="textPrimary">
@@ -139,6 +142,15 @@ const PostDetails: FC<PostDetailsProps> = ({
                 value={tag.symbol}
                 placeholder="Please choose at least one tag."
                 onChange={handleChangeTag}
+                onKeyPress={e => {
+                  if (e.key === 'Enter') {
+                    if (tag.symbol === '' || tag.name === '') {
+                      return;
+                    }
+                    setFieldValue('tags', [...values.tags, tag]);
+                    setTag(initialTag);
+                  }
+                }}
                 variant="outlined"
               />
               <IconButton
@@ -167,7 +179,6 @@ const PostDetails: FC<PostDetailsProps> = ({
                     const newTags = values.tags.filter(
                       t => t.symbol !== tag.symbol && t.name !== tag.name
                     );
-
                     setFieldValue('tags', newTags);
                   }}
                 />

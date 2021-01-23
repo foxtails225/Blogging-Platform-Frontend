@@ -9,16 +9,18 @@ import {
   Hidden,
   makeStyles
 } from '@material-ui/core';
-import axios from 'src/utils/axios-mock';
+import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import { Profile, Post } from 'src/types/social';
+import { Post } from 'src/types/post';
+import { User } from 'src/types/user';
+import { Bookmark } from 'src/types/bookmark';
 import { Theme } from 'src/theme';
 import ListItemCard from './ListItemCard';
 import ListItemMobileCard from './ListItemMobileCard';
 
 interface ReadingListProps {
   className?: string;
-  profile: Profile;
+  profile: User;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -49,15 +51,20 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [page, setPage] = useState<number>(1);
 
   const getPosts = useCallback(async () => {
     try {
-      const response = await axios.get<{ posts: Post[] }>(
-        '/api/social/posts-demo'
+      const params = { page };
+      const response = await axios.get<{ posts: Bookmark[]; page: number }>(
+        '/bookmarks/all',
+        {
+          params
+        }
       );
-
+      console.log(response);
       if (isMountedRef.current) {
-        setPosts(response.data.posts);
+        // setPosts(response.data.posts);
       }
     } catch (err) {
       console.error(err);
@@ -76,7 +83,7 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
             <CardContent style={cardContentStyle}>
               <List>
                 {posts.map(post => (
-                  <React.Fragment key={post.id}>
+                  <React.Fragment key={post._id}>
                     <Hidden smDown>
                       <ListItemCard post={post} />
                     </Hidden>

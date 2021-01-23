@@ -92,11 +92,6 @@ const routes: Routes = [
       },
       {
         exact: true,
-        path: '/account/feed',
-        component: lazy(() => import('src/views/social/FeedView'))
-      },
-      {
-        exact: true,
         path: '/account/profile',
         component: lazy(() => import('src/views/account/ProfileView'))
       },

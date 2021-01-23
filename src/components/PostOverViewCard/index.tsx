@@ -15,12 +15,13 @@ import {
   makeStyles
 } from '@material-ui/core';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import { Post } from 'src/types/social';
+import { Post } from 'src/types/post';
 import Reactions from './Reactions';
 import { Theme } from 'src/theme';
 
 interface PostOverViewCardProps {
   className?: string;
+  author: boolean;
   post: Post;
 }
 
@@ -45,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const PostOverViewCard: FC<PostOverViewCardProps> = ({
   className,
+  author,
   post,
   ...rest
 }) => {
@@ -59,7 +61,7 @@ const PostOverViewCard: FC<PostOverViewCardProps> = ({
             <Avatar
               alt="Person"
               component={RouterLink}
-              src={post.author.avatar}
+              src={typeof post.author !== 'string' && post.author.avatar}
               to="#"
             />
           }
@@ -83,17 +85,17 @@ const PostOverViewCard: FC<PostOverViewCardProps> = ({
               to="#"
               variant="h6"
             >
-              {post.author.name}
+              {typeof post.author !== 'string' && post.author.name}
             </Link>
           }
         />
         <Box px={3} pb={1} className={classes.title}>
           <Link color="textPrimary" component={RouterLink} to="#" variant="h3">
-            {post.message}
+            {post.title}
           </Link>
         </Box>
         <Box mt={2} pb={2} px={3}>
-          <Reactions post={post} />
+          <Reactions post={post} author={author} />
         </Box>
       </Card>
       {selectedImage && (
@@ -109,7 +111,8 @@ const PostOverViewCard: FC<PostOverViewCardProps> = ({
 PostOverViewCard.propTypes = {
   className: PropTypes.string,
   // @ts-ignore
-  post: PropTypes.object.isRequired
+  post: PropTypes.object.isRequired,
+  author: PropTypes.bool
 };
 
 export default PostOverViewCard;

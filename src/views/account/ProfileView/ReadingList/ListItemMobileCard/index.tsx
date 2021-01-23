@@ -13,7 +13,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Reactions from '../Reactions';
-import { Post } from 'src/types/social';
+import { Post } from 'src/types/post';
 import { Theme } from 'src/theme';
 
 interface ListItemMobileCardProps {
@@ -59,7 +59,7 @@ const ListItemMobileCard: FC<ListItemMobileCardProps> = ({
         <Avatar
           alt="Person"
           component={RouterLink}
-          src={post.author.avatar}
+          src={typeof post.author !== 'string' && post.author.avatar}
           to="#"
         />
       </ListItemAvatar>
@@ -67,7 +67,7 @@ const ListItemMobileCard: FC<ListItemMobileCardProps> = ({
         disableTypography
         primary={
           <Link color="textPrimary" component={RouterLink} to="#" variant="h5">
-            {post.message}
+            {post.title}
           </Link>
         }
         primaryTypographyProps={{
@@ -83,7 +83,7 @@ const ListItemMobileCard: FC<ListItemMobileCardProps> = ({
                 to="#"
                 variant="h6"
               >
-                {post.author.name}
+                {typeof post.author !== 'string' && post.author.name}
               </Link>
               {` `}
               {moment(post.createdAt).fromNow()}

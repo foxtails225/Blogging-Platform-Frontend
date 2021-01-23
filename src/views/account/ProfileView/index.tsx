@@ -20,7 +20,7 @@ import Page from 'src/components/Page';
 import { User } from 'src/types/user';
 import Header from './Header';
 import Profile from './Profile';
-// import ReadingList from './ReadingList';
+import ReadingList from './ReadingList';
 // import Connections from './Connections';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -87,7 +87,7 @@ const ProfileView: FC = () => {
         <Divider />
         <Box py={3} pb={6}>
           {currentTab === 'profile' && <Profile profile={profile} />}
-          {/* {currentTab === 'reading' && <ReadingList profile={profile} />} */}
+          {currentTab === 'reading' && <ReadingList profile={profile} />}
           {/* {currentTab === 'connections' && <Connections />} */}
         </Box>
       </Container>

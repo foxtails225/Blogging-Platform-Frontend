@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, FC } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid, Box, makeStyles } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import PostOverViewCard from 'src/components/PostOverViewCard';
-import { Post } from 'src/types/social';
+import { Post } from 'src/types/post';
 import { User } from 'src/types/user';
 import About from './About';
 import Posts from './Posts';
@@ -25,30 +25,34 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
   const isMountedRef = useIsMountedRef();
   const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
 
   const getPosts = useCallback(async () => {
     try {
       const params = { email: user.email, page };
-      const response = await axios.get<{ posts: Post[]; page: number }>(
-        '/posts/all/',
-        { params }
-      );
+      const response = await axios.post<{
+        posts: Post[];
+        page: number;
+        isAuthor: boolean;
+      }>('/posts/all/', params);
 
       if (isMountedRef.current) {
-        console.log(response)
-        setPosts(response.data.posts);
-        setPage(response.data.page);
+        const data = response.data;
+
+        setPosts(data.posts);
+        setIsAuthor(data.isAuthor);
+        setPage(data.page);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef, user]);
+  }, [isMountedRef, user, page]);
 
   useEffect(() => {
     getPosts();
   }, [getPosts]);
-  
+
   return (
     <div className={clsx(classes.root, className)} {...rest}>
       <Grid container spacing={3}>
@@ -58,17 +62,17 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
               <About profile={profile} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
-              {/* <Posts /> */}
+              <Posts />
             </Grid>
           </Grid>
         </Grid>
-        {/* <Grid item xs={12} md={6} lg={8}>
+        <Grid item xs={12} md={6} lg={8}>
           {posts.map(post => (
-            <Box mt={2} key={post.id}>
-              <PostOverViewCard post={post} />
+            <Box mt={2} key={post._id}>
+              <PostOverViewCard post={post} author={isAuthor} />
             </Box>
           ))}
-        </Grid> */}
+        </Grid>
       </Grid>
     </div>
   );
