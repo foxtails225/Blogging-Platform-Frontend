@@ -154,7 +154,7 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
         </Hidden>
         <Hidden mdDown>
           <RouterLink to="/">
-            <Logo />
+            <Logo static="true" />
           </RouterLink>
         </Hidden>
         <Hidden mdDown>

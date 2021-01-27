@@ -103,7 +103,7 @@ const PostReview: FC<PostReviewProps> = ({
       </Box>
       <Box mt={3} border={1} className={classes.box}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={10}>
             <Typography variant="h3" color="textPrimary">
               {post.title}
             </Typography>

@@ -60,7 +60,12 @@ const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
       </ListItemAvatar>
       <ListItemText
         primary={
-          <Link color="textPrimary" component={RouterLink} to="#" variant="h5">
+          <Link
+            color="textPrimary"
+            component={RouterLink}
+            to={'/posts/public/' + post.slug}
+            variant="h5"
+          >
             {post.title}
           </Link>
         }

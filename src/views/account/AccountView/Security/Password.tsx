@@ -28,7 +28,7 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const Security: FC<SecurityProps> = ({ className, ...rest }) => {
+const Password: FC<SecurityProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -161,8 +161,8 @@ const Security: FC<SecurityProps> = ({ className, ...rest }) => {
   );
 };
 
-Security.propTypes = {
+Password.propTypes = {
   className: PropTypes.string
 };
 
-export default Security;
+export default Password;

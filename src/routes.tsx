@@ -81,6 +81,12 @@ const routes: Routes = [
     component: lazy(() => import('src/views/account/ProfileView'))
   },
   {
+    exact: true,
+    layout: MainLayout,
+    path: '/posts/public/:id',
+    component: lazy(() => import('src/views/post/PostView'))
+  },
+  {
     path: '/account',
     guard: AuthGuard,
     layout: MainLayout,
@@ -113,11 +119,6 @@ const routes: Routes = [
       {
         exact: true,
         path: '/posts/new',
-        component: lazy(() => import('src/views/post/PostCreateView'))
-      },
-      {
-        exact: true,
-        path: '/posts/:id',
         component: lazy(() => import('src/views/post/PostCreateView'))
       },
       {

@@ -141,6 +141,7 @@ const PostDetails: FC<PostDetailsProps> = ({
                 name="tags"
                 value={tag.symbol}
                 placeholder="Please choose at least one tag."
+                autoComplete="off"
                 onChange={handleChangeTag}
                 onKeyPress={e => {
                   if (e.key === 'Enter') {

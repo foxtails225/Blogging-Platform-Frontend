@@ -5,8 +5,6 @@ import ReactQuill from 'react-quill';
 import { makeStyles } from '@material-ui/core';
 import { Theme } from 'src/theme';
 
-// NOTE: At this moment, this ReactQuill does not export
-// the types for props and we cannot extend them
 interface QuillEditorProps {
   className?: string;
   [key: string]: any;

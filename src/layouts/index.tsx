@@ -28,7 +28,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     display: 'flex',
     flex: '1 1 auto',
-    overflow: 'hidden',
     paddingTop: 64
   },
   footer: {

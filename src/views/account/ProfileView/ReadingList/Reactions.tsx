@@ -29,7 +29,7 @@ const useStyles = makeStyles(() => ({
     color: colors.red[600]
   },
   commentIcon: {
-    color: colors.grey[500]
+    color: colors.grey[700]
   }
 }));
 

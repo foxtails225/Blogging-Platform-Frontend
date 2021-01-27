@@ -2,11 +2,11 @@ import React, { useState, useEffect, FC } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Grid, makeStyles } from '@material-ui/core';
+import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import ProfileDetails from './ProfileDetails';
 import GeneralSettings from './GeneralSettings';
 import { User } from 'src/types/user';
-import axios from 'src/utils/axios';
 
 interface GeneralProps {
   className?: string;

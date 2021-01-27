@@ -11,9 +11,8 @@ import {
 } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import { Post } from 'src/types/post';
 import { User } from 'src/types/user';
-import { Bookmark } from 'src/types/bookmark';
+import { Bookmark, BookmarkWithPost } from 'src/types/bookmark';
 import { Theme } from 'src/theme';
 import ListItemCard from './ListItemCard';
 import ListItemMobileCard from './ListItemMobileCard';
@@ -50,21 +49,21 @@ const cardContentStyle = {
 const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [page, setPage] = useState<number>(1);
 
   const getPosts = useCallback(async () => {
     try {
       const params = { page };
-      const response = await axios.get<{ posts: Bookmark[]; page: number }>(
+      const response = await axios.get<{ bookmarks: Bookmark[]; page: number }>(
         '/bookmarks/all',
         {
           params
         }
       );
-      console.log(response);
       if (isMountedRef.current) {
-        // setPosts(response.data.posts);
+        console.log(response.data.bookmarks)
+        setBookmarks(response.data.bookmarks);
       }
     } catch (err) {
       console.error(err);
@@ -82,13 +81,13 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
           <Card>
             <CardContent style={cardContentStyle}>
               <List>
-                {posts.map(post => (
-                  <React.Fragment key={post._id}>
+                {bookmarks.map((bookmark: BookmarkWithPost) => (
+                  <React.Fragment key={bookmark._id}>
                     <Hidden smDown>
-                      <ListItemCard post={post} />
+                      <ListItemCard post={bookmark.post} />
                     </Hidden>
                     <Hidden mdUp>
-                      <ListItemMobileCard post={post} />
+                      <ListItemMobileCard post={bookmark.post} />
                     </Hidden>
                   </React.Fragment>
                 ))}

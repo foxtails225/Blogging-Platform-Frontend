@@ -1,4 +1,5 @@
 import { User } from './user';
+import { Comments } from './comment';
 
 export interface Tag {
   symbol: string;
@@ -19,9 +20,10 @@ export interface Post {
     users: string[];
   };
   status?: string;
-  week: number;
-  month: number;
-  year: number;
+  week?: number;
+  month?: number;
+  year?: number;
+  comments?: Comments[];
   createdAt?: Date;
   updatedAt?: Date;
 }

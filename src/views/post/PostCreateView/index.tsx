@@ -2,7 +2,6 @@ import React, { useState, FC } from 'react';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import { Link as RouterLink } from 'react-router-dom';
-import moment from 'moment';
 import {
   Avatar,
   Box,
@@ -68,9 +67,7 @@ const initialPost = {
   content: '',
   disclosure: '',
   tags: [],
-  week: moment().week(),
-  month: moment().month(),
-  year: moment().year()
+  
 };
 
 const CustomStepConnector = withStyles((theme: Theme) => ({
