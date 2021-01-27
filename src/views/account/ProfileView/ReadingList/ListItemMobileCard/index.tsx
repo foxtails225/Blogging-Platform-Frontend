@@ -19,6 +19,7 @@ import { Theme } from 'src/theme';
 interface ListItemMobileCardProps {
   className?: string;
   post: Post;
+  onFetch: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -43,6 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const ListItemMobileCard: FC<ListItemMobileCardProps> = ({
   className,
   post,
+  onFetch,
   ...rest
 }) => {
   const classes = useStyles();
@@ -88,7 +90,7 @@ const ListItemMobileCard: FC<ListItemMobileCardProps> = ({
               {` `}
               {moment(post.createdAt).fromNow()}
             </Typography>
-            <Reactions post={post} />
+            <Reactions post={post} onFetch={onFetch} />
           </>
         }
       />

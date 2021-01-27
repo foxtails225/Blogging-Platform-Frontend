@@ -19,6 +19,7 @@ import { Theme } from 'src/theme';
 interface ListItemCardProps {
   className?: string;
   post: Post;
+  onFetch: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -40,7 +41,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
+const ListItemCard: FC<ListItemCardProps> = ({
+  className,
+  post,
+  onFetch,
+  ...rest
+}) => {
   const classes = useStyles();
 
   return (
@@ -88,7 +94,7 @@ const ListItemCard: FC<ListItemCardProps> = ({ className, post, ...rest }) => {
           </Typography>
         }
       />
-      <Reactions post={post} />
+      <Reactions post={post} onFetch={onFetch} />
     </ListItem>
   );
 };

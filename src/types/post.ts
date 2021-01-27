@@ -27,3 +27,7 @@ export interface Post {
   createdAt?: Date;
   updatedAt?: Date;
 }
+
+export interface PostWithAuthor extends Post {
+  author: User;
+}

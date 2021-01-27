@@ -77,7 +77,7 @@ const routes: Routes = [
   {
     exact: true,
     layout: MainLayout,
-    path: '/profile/:id',
+    path: '/users/:id',
     component: lazy(() => import('src/views/account/ProfileView'))
   },
   {

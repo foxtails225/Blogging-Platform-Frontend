@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { Grid, Box, makeStyles } from '@material-ui/core';
 import axios from 'src/utils/axios';
-import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import PostOverViewCard from 'src/components/PostOverViewCard';
 import { Post } from 'src/types/post';
@@ -23,14 +22,13 @@ const useStyles = makeStyles(() => ({
 const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const { user } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [page, setPage] = useState<number>(1);
 
   const getPosts = useCallback(async () => {
     try {
-      const params = { email: user.email, page };
+      const params = { email: profile.email, page };
       const response = await axios.post<{
         posts: Post[];
         page: number;
@@ -38,16 +36,14 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
       }>('/posts/all/', params);
 
       if (isMountedRef.current) {
-        const data = response.data;
-
-        setPosts(data.posts);
-        setIsAuthor(data.isAuthor);
-        setPage(data.page);
+        setPosts(response.data.posts);
+        setIsAuthor(response.data.isAuthor);
+        setPage(response.data.page);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef, user, page]);
+  }, [isMountedRef, page, profile]);
 
   useEffect(() => {
     getPosts();

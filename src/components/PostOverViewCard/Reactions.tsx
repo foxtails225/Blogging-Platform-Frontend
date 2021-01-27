@@ -95,7 +95,7 @@ const Reactions: FC<ReactionsProps> = ({
         <MessageCircleIcon className={classes.commentIcon} size="20" />
       </Box>
       <Typography color="textSecondary" variant="h6">
-        {likes}
+        {post.comments.length}
       </Typography>
       <Box flexGrow={1} />
       <IconButton>

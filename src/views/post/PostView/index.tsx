@@ -19,23 +19,21 @@ import {
 import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
-import { Post, Tag } from 'src/types/post';
-import { Comments, CommentsWithUser, ReplyWithUser } from 'src/types/comment';
+import { PostWithAuthor, Tag } from 'src/types/post';
+import { Comments, CommentsWithUser } from 'src/types/comment';
 import Page from 'src/components/Page';
 import Reactions from './Reactions';
 import Comment from './Comment';
 import CommentAdd from './CommentAdd';
 
-interface ReplyStatus {
-  value: string | null;
+interface Status {
   depth: number;
-  commentId: string | null;
+  parent: string | null;
 }
 
-const initialReply: ReplyStatus = {
-  value: null,
+const initialStatus: Status = {
   depth: 0,
-  commentId: null
+  parent: null
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -95,9 +93,8 @@ const PostView: FC = () => {
   const location = useLocation();
   const { user, isAuthenticated } = useAuth();
   const matches = useMediaQuery(theme.breakpoints.down('md'));
-  const [post, setPost] = useState<Post>();
-  const [comments, setComments] = useState<Comments[]>([]);
-  const [reply, setReply] = useState<ReplyStatus>(initialReply);
+  const [post, setPost] = useState<PostWithAuthor>();
+  const [status, setStatus] = useState<Status>(initialStatus);
   const [isBookmarked, setBookmarked] = useState<boolean>(false);
 
   useEffect(() => {
@@ -106,33 +103,33 @@ const PostView: FC = () => {
   }, []);
 
   const handleFetch = async (): Promise<void> => {
-    const path = location.pathname.split('/')[3];
-    const params = isAuthenticated && { user: user._id };
-    const response = await axios.get<{
-      post: Post;
-      comments: Comments[];
-      isBookmark: boolean;
-    }>(`/posts/get/${path}`, {
-      params
-    });
+    try {
+      const path = location.pathname.split('/')[3];
+      const params = isAuthenticated && { user: user._id };
+      const response = await axios.get<{
+        post: PostWithAuthor;
+        comments: Comments[];
+        isBookmark: boolean;
+      }>(`/posts/get/${path}`, {
+        params
+      });
 
-    if (response.data.post) {
       setPost(response.data.post);
       setBookmarked(response.data.isBookmark);
-      setComments(response.data.comments);
-      setReply(initialReply);
-    } else {
+    } catch (err) {
       history.push('/404');
     }
+
+    setStatus(initialStatus);
   };
 
   const handleBookmark = (value: boolean): void => {
     setBookmarked(value);
   };
 
-  const handleReply = (id: string, depth: number, commentId: string): void => {
-    const value = reply.value !== id ? id : null;
-    setReply({ value, depth, commentId });
+  const handleComment = (id: string, depth: number): void => {
+    const parent = status.parent !== id ? id : null;
+    setStatus({ parent, depth });
   };
 
   return (
@@ -140,7 +137,6 @@ const PostView: FC = () => {
       {post && !matches && (
         <Reactions
           post={post}
-          comments={comments.length}
           isBookmarked={isBookmarked}
           onBookmarked={handleBookmark}
           className="div"
@@ -155,12 +151,14 @@ const PostView: FC = () => {
             <Box mt={3} className={classes.box}>
               <Grid container spacing={3}>
                 {matches && (
-                  <Reactions
-                    post={post}
-                    comments={comments.length}
-                    isBookmarked={isBookmarked}
-                    onBookmarked={handleBookmark}
-                  />
+                  <>
+                    <Box flexGrow={1} />
+                    <Reactions
+                      post={post}
+                      isBookmarked={isBookmarked}
+                      onBookmarked={handleBookmark}
+                    />
+                  </>
                 )}
                 <Grid item xs={12} md={10}>
                   <Typography
@@ -175,20 +173,18 @@ const PostView: FC = () => {
                     <Avatar
                       alt="Person"
                       component={RouterLink}
-                      src={
-                        typeof post.author !== 'string' && post.author.avatar
-                      }
+                      src={post.author.avatar}
                       className={classes.avatar}
-                      to="#"
+                      to={'/users/' + post.author.name}
                     />
                     <Typography variant="caption" color="textSecondary">
                       <Link
                         color="textSecondary"
                         component={RouterLink}
-                        to="#"
+                        to={'/users/' + post.author.name}
                         variant="h6"
                       >
-                        {typeof post.author !== 'string' && post.author.name}
+                        {post.author.name}
                       </Link>
                       {` `}
                       {moment(post.createdAt).fromNow()}
@@ -221,33 +217,24 @@ const PostView: FC = () => {
             <Box mt={3} className={classes.box}>
               <Grid container spacing={3}>
                 <Grid item xs={12} md={12}>
-                  {comments.map((comment: CommentsWithUser) => (
+                  {post.comments.map((comment: CommentsWithUser) => (
                     <React.Fragment key={comment._id}>
                       <Comment
                         user={user}
                         comment={comment}
-                        commentId={comment._id}
-                        reply={reply.value}
-                        depth={0}
-                        onReply={handleReply}
+                        reply={status.parent}
+                        onComment={handleComment}
                       />
-                      {comment.reply.map((item: ReplyWithUser) => (
-                        <Comment
-                          user={user}
-                          key={item._id}
-                          comment={item}
-                          commentId={comment._id}
-                          reply={reply.value}
-                          depth={item.depth}
-                          onReply={handleReply}
-                        />
-                      ))}
                     </React.Fragment>
                   ))}
                   <Box my={2}>
                     <Divider />
                   </Box>
-                  <CommentAdd post={post} reply={reply} onFetch={handleFetch} />
+                  <CommentAdd
+                    post={post}
+                    status={status}
+                    onFetch={handleFetch}
+                  />
                 </Grid>
               </Grid>
             </Box>

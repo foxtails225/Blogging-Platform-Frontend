@@ -62,13 +62,13 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
         }
       );
       if (isMountedRef.current) {
-        console.log(response.data.bookmarks)
         setBookmarks(response.data.bookmarks);
+        setPage(response.data.page);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef]);
+  }, [isMountedRef, page]);
 
   useEffect(() => {
     getPosts();
@@ -76,26 +76,31 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={12} lg={12}>
-          <Card>
-            <CardContent style={cardContentStyle}>
-              <List>
-                {bookmarks.map((bookmark: BookmarkWithPost) => (
-                  <React.Fragment key={bookmark._id}>
-                    <Hidden smDown>
-                      <ListItemCard post={bookmark.post} />
-                    </Hidden>
-                    <Hidden mdUp>
-                      <ListItemMobileCard post={bookmark.post} />
-                    </Hidden>
-                  </React.Fragment>
-                ))}
-              </List>
-            </CardContent>
-          </Card>
+      {bookmarks.length > 0 && (
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={12} lg={12}>
+            <Card>
+              <CardContent style={cardContentStyle}>
+                <List>
+                  {bookmarks.map((bookmark: BookmarkWithPost) => (
+                    <React.Fragment key={bookmark._id}>
+                      <Hidden smDown>
+                        <ListItemCard post={bookmark.post} onFetch={getPosts} />
+                      </Hidden>
+                      <Hidden mdUp>
+                        <ListItemMobileCard
+                          post={bookmark.post}
+                          onFetch={getPosts}
+                        />
+                      </Hidden>
+                    </React.Fragment>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
-      </Grid>
+      )}
     </div>
   );
 };

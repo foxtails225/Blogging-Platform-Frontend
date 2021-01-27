@@ -1,5 +1,5 @@
 import React, { useState, useEffect, FC } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
@@ -24,6 +24,7 @@ import {
   MessageCircle as MessageCircleIcon
 } from 'react-feather';
 import axios from 'src/utils/axios';
+import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
 import { User, Status } from 'src/types/user';
 
@@ -53,17 +54,33 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
-  const [status, setStatus] = useState<Status>(initialStatus);
   const history = useHistory();
+  const location = useLocation();
   const classes = useStyles();
+  const { user } = useAuth();
+  const [status, setStatus] = useState<Status>(initialStatus);
+  const [disabled, setDisabled] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await axios.get<{ status: Status }>('/account/status');
+      let response: any;
+
+      if (location.pathname === '/account/profile') {
+        response = await axios.get<{ user: User }>('/account/status');
+      } else {
+        response = await axios.get<{ user: User }>(
+          location.pathname + '/status'
+        );
+      }
       setStatus(response.data.status);
     };
     fetchData();
-  }, []);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const disable = user.email !== profile.email;
+    setDisabled(disable);
+  }, [user, profile]);
 
   const handleClick = () => history.push('/posts/new');
 
@@ -88,12 +105,14 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
                     color: 'textSecondary'
                   }}
                 />
-                <Chip
-                  color="secondary"
-                  size="small"
-                  label="Contribute"
-                  onClick={handleClick}
-                />
+                {!disabled && (
+                  <Chip
+                    color="secondary"
+                    size="small"
+                    label="Contribute"
+                    onClick={handleClick}
+                  />
+                )}
               </ListItem>
               <ListItem disableGutters divider>
                 <ListItemAvatar>

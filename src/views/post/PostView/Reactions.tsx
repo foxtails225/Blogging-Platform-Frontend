@@ -22,7 +22,6 @@ import { Theme } from 'src/theme';
 interface ReactionsProps {
   className?: string;
   post: Post;
-  comments: number;
   isBookmarked: boolean;
   onBookmarked: (param: boolean) => void;
 }
@@ -67,7 +66,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Reactions: FC<ReactionsProps> = ({
   className,
   post,
-  comments,
   isBookmarked,
   onBookmarked,
   ...rest
@@ -165,7 +163,7 @@ const Reactions: FC<ReactionsProps> = ({
         <MessageCircleIcon className={classes.commentIcon} size="20" />
       </Box>
       <Typography color="textSecondary" variant="h6">
-        {comments}
+        {post.comments.length}
       </Typography>
       <Box className={classes.iconBox}>
         {isBookmarked ? (

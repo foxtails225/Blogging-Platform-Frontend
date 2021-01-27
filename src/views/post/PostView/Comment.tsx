@@ -17,16 +17,15 @@ import {
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import { Theme } from 'src/theme';
 import { User } from 'src/types/user';
-import { CommentsWithUser, ReplyWithUser } from 'src/types/comment';
+import { CommentsWithUser } from 'src/types/comment';
 
 interface CommentProps {
   className?: string;
   user: User;
   reply: string;
-  depth?: number;
   commentId?: string;
-  comment: CommentsWithUser | ReplyWithUser;
-  onReply: (id: string, depth: number, cid: string) => void;
+  comment: CommentsWithUser;
+  onComment: (parent: string, depth: number) => void;
 }
 
 interface Status {
@@ -79,11 +78,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Comment: FC<CommentProps> = ({
   className,
   user,
-  commentId,
   comment,
-  depth,
   reply,
-  onReply,
+  onComment,
   ...rest
 }) => {
   const classes = useStyles();
@@ -91,7 +88,7 @@ const Comment: FC<CommentProps> = ({
   const match = useMediaQuery(theme.breakpoints.down('sm'));
   const [status, setStatus] = useState<Status>(initialStatus);
   const style = {
-    marginLeft: theme.typography.pxToRem((match ? 10 : 20) * depth)
+    marginLeft: theme.typography.pxToRem((match ? 10 : 20) * comment.depth)
   };
 
   useEffect(() => {
@@ -103,12 +100,8 @@ const Comment: FC<CommentProps> = ({
   }, [reply, comment, user]);
 
   const handleClick = (event): void => {
-    const depth = Object.keys(comment).includes('depth')
-      ? //@ts-ignore
-        comment.depth + 1
-      : 1;
-
-    onReply(event.currentTarget.id, depth, commentId);
+    const depth = comment.depth + 1;
+    onComment(event.currentTarget.id, depth);
   };
 
   return (

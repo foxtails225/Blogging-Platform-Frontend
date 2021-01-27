@@ -22,16 +22,15 @@ import { Theme } from 'src/theme';
 import { Comments } from 'src/types/comment';
 import { Post } from 'src/types/post';
 
-interface ReplyStatus {
-  value: string | null;
+interface Status {
   depth: number;
-  commentId: string | null;
+  parent: string | null;
 }
 
 interface CommentAddProps {
   className?: string;
   post?: Post;
-  reply: ReplyStatus;
+  status: Status;
   onFetch?: () => void;
 }
 
@@ -66,7 +65,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const CommentAdd: FC<CommentAddProps> = ({
   className,
   post,
-  reply,
+  status,
   onFetch,
   ...rest
 }) => {
@@ -82,25 +81,16 @@ const CommentAdd: FC<CommentAddProps> = ({
     event.persist();
     setValue(event.target.value);
   };
-
+  
   const handleClick = async () => {
     try {
-      if (!reply.value) {
-        const params = { slug: post.slug, post: post._id, comment: value };
-        await axios.post<{ comment: Comments }>('/comments/create', params);
-      } else {
-        const params = {
-          parent: reply.value,
-          commentId: reply.commentId,
-          comment: value,
-          depth: reply.depth
-        };
-
-        await axios.post<{ comment: Comments }>(
-          '/comments/reply/create',
-          params
-        );
-      }
+      const params = {
+        parent: status.parent,
+        post: post._id,
+        depth: status.depth,
+        comment: value
+      };
+      await axios.post<{ comment: Comments }>('/comments/create', params);
       setValue('');
     } catch (err) {
       err.message &&
@@ -117,7 +107,7 @@ const CommentAdd: FC<CommentAddProps> = ({
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
-      {match ?? <Avatar alt="Person" src={user ? user.avatar : ''} />}
+      {!match && <Avatar alt="Person" src={user ? user.avatar : ''} />}
       <Paper className={classes.inputContainer} variant="outlined">
         <Input
           value={value}

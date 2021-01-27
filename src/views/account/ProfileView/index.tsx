@@ -5,6 +5,7 @@ import React, {
   FC,
   ChangeEvent
 } from 'react';
+import { useLocation, useHistory } from 'react-router-dom';
 import {
   Box,
   Container,
@@ -15,13 +16,14 @@ import {
 } from '@material-ui/core';
 import { Theme } from 'src/theme';
 import axios from 'src/utils/axios';
+import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
 import { User } from 'src/types/user';
 import Header from './Header';
 import Profile from './Profile';
 import ReadingList from './ReadingList';
-// import Connections from './Connections';
+import Dashboard from './Dashboard';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -32,32 +34,51 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const ProfileView: FC = () => {
   const classes = useStyles();
+  const history = useHistory();
+  const location = useLocation();
   const isMountedRef = useIsMountedRef();
-  const [currentTab, setCurrentTab] = useState<string>('profile');
+  const { user } = useAuth();
+  const [tabs, setTabs] = useState<any[]>([]);
+  const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [profile, setProfile] = useState<User | null>(null);
 
-  const tabs = [
-    { value: 'profile', label: 'Profile' },
-    { value: 'reading', label: 'reading list' },
-    { value: 'dashboard', label: 'Dashboard' }
-    // { value: 'connections', label: 'Connections' }
-  ];
+  useEffect(() => {
+    if (profile) {
+      let values =
+        profile.email === user.email
+          ? [
+              { value: 'profile', label: 'Profile' },
+              { value: 'reading', label: 'reading list' },
+              { value: 'dashboard', label: 'Dashboard' }
+            ]
+          : [{ value: 'profile', label: 'Profile' }];
+      setTabs(values);
+    }
+  }, [user, profile]);
 
   const handleTabsChange = (event: ChangeEvent, value: string): void => {
     setCurrentTab(value);
   };
 
   const getPosts = useCallback(async () => {
+    let response: any;
+
     try {
-      const response = await axios.get<{ user: User }>('/account/about');
+      if (location.pathname === '/account/profile') {
+        response = await axios.get<{ user: User }>('/account/about');
+      } else {
+        response = await axios.get<{ user: User }>(
+          location.pathname + '/about'
+        );
+      }
 
       if (isMountedRef.current) {
         setProfile(response.data.user);
       }
     } catch (err) {
-      console.error(err);
+      history.push('/404');
     }
-  }, [isMountedRef]);
+  }, [isMountedRef, location.pathname, history]);
 
   useEffect(() => {
     getPosts();
@@ -88,7 +109,7 @@ const ProfileView: FC = () => {
         <Box py={3} pb={6}>
           {currentTab === 'profile' && <Profile profile={profile} />}
           {currentTab === 'reading' && <ReadingList profile={profile} />}
-          {/* {currentTab === 'connections' && <Connections />} */}
+          {currentTab === 'dashboard' && <Dashboard profile={profile} />}
         </Box>
       </Container>
     </Page>
