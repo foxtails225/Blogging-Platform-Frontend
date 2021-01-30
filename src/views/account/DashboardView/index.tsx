@@ -87,6 +87,7 @@ const OverviewView: FC = () => {
             textColor="secondary"
             variant="scrollable"
           >
+            
             {tabs.map(tab => (
               <Tab key={tab.value} label={tab.label} value={tab.value} />
             ))}
