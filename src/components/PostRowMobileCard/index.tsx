@@ -12,11 +12,11 @@ import {
   Link,
   makeStyles
 } from '@material-ui/core';
-import Reactions from '../Reactions';
+import Reactions from './Reactions';
 import { Post } from 'src/types/post';
 import { Theme } from 'src/theme';
 
-interface ListItemCardProps {
+interface PostRowMobileCardProps {
   className?: string;
   post: Post;
   onFetch: () => void;
@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const ListItemCard: FC<ListItemCardProps> = ({
+const PostRowMobileCard: FC<PostRowMobileCardProps> = ({
   className,
   post,
   onFetch,
@@ -53,6 +53,7 @@ const ListItemCard: FC<ListItemCardProps> = ({
     <ListItem
       disableGutters
       divider
+      alignItems="flex-start"
       className={clsx(classes.root, className)}
       {...rest}
     >
@@ -65,13 +66,9 @@ const ListItemCard: FC<ListItemCardProps> = ({
         />
       </ListItemAvatar>
       <ListItemText
+        disableTypography
         primary={
-          <Link
-            color="textPrimary"
-            component={RouterLink}
-            to={'/posts/public/' + post.slug}
-            variant="h5"
-          >
+          <Link color="textPrimary" component={RouterLink} to="#" variant="h5">
             {post.title}
           </Link>
         }
@@ -80,27 +77,29 @@ const ListItemCard: FC<ListItemCardProps> = ({
           color: 'textPrimary'
         }}
         secondary={
-          <Typography variant="caption" color="textSecondary">
-            <Link
-              color="textSecondary"
-              component={RouterLink}
-              to="#"
-              variant="h6"
-            >
-              {typeof post.author !== 'string' && post.author.name}
-            </Link>
-            {` `}
-            {moment(post.createdAt).fromNow()}
-          </Typography>
+          <>
+            <Typography variant="caption" color="textSecondary" component={'p'}>
+              <Link
+                color="textSecondary"
+                component={RouterLink}
+                to="#"
+                variant="h6"
+              >
+                {typeof post.author !== 'string' && post.author.name}
+              </Link>
+              {` `}
+              {moment(post.createdAt).fromNow()}
+            </Typography>
+            <Reactions post={post} onFetch={onFetch} />
+          </>
         }
       />
-      <Reactions post={post} onFetch={onFetch} />
     </ListItem>
   );
 };
 
-ListItemCard.propTypes = {
+PostRowMobileCard.propTypes = {
   className: PropTypes.string
 };
 
-export default ListItemCard;
+export default PostRowMobileCard;

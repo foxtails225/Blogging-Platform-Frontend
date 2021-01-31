@@ -103,6 +103,11 @@ const routes: Routes = [
       },
       {
         exact: true,
+        path: '/account/dashboard',
+        component: lazy(() => import('src/views/account/DashboardView'))
+      },
+      {
+        exact: true,
         path: '/user',
         component: () => <Redirect to="/user/profile" />
       },

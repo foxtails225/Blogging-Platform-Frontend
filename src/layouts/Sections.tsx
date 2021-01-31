@@ -67,6 +67,10 @@ export const sections: Section[] = [
         title: 'Profile',
         href: '/account/profile',
         info: () => <Chip color="secondary" size="small" label="Updated" />
+      },
+      {
+        title: 'Dashboard',
+        href: '/account/dashboard',
       }
     ]
   }

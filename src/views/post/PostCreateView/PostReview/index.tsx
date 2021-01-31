@@ -51,10 +51,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   disclosure: {
     fontFamily: theme.typography.fontFamily,
-    '& p': {
-      color: colors.grey[500],
-      fontSize: '0.9rem'
-    }
+    color: colors.grey[500],
+    fontSize: '0.9rem',
   }
 }));
 

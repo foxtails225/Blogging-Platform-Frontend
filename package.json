@@ -1,7 +1,7 @@
 {
-  "name": "blogging-platform-frontend",
+  "name": "dankstocks-client",
   "version": "1.0.0",
-  "description": "The Blogging Platform",
+  "description": "Dankstock news and articles - best publishing platform",
   "private": true,
   "repository": {
     "type": "git",

@@ -14,10 +14,10 @@ import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import { User } from 'src/types/user';
 import { Bookmark, BookmarkWithPost } from 'src/types/bookmark';
 import { Theme } from 'src/theme';
-import ListItemCard from './ListItemCard';
-import ListItemMobileCard from './ListItemMobileCard';
+import ListItemCard from 'src/components/PostRowCard';
+import ListItemMobileCard from 'src/components/PostRowMobileCard';
 
-interface ReadingListProps {
+interface ArchiveProps {
   className?: string;
   profile: User;
 }
@@ -46,7 +46,7 @@ const cardContentStyle = {
   paddingBottom: 0
 };
 
-const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
+const Archive: FC<ArchiveProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
@@ -56,7 +56,7 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
     try {
       const params = { page };
       const response = await axios.get<{ bookmarks: Bookmark[]; page: number }>(
-        '/bookmarks/all',
+        '/bookmarks/archived-all',
         {
           params
         }
@@ -105,8 +105,8 @@ const ReadingList: FC<ReadingListProps> = ({ className, profile, ...rest }) => {
   );
 };
 
-ReadingList.propTypes = {
+Archive.propTypes = {
   className: PropTypes.string
 };
 
-export default ReadingList;
+export default Archive;

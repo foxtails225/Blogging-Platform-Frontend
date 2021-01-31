@@ -1,29 +1,13 @@
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  FC,
-  ChangeEvent
-} from 'react';
+import React, { useCallback, useState, useEffect, FC } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
-import {
-  Box,
-  Container,
-  Divider,
-  Tab,
-  Tabs,
-  makeStyles
-} from '@material-ui/core';
+import { Box, Container, Divider, makeStyles } from '@material-ui/core';
 import { Theme } from 'src/theme';
 import axios from 'src/utils/axios';
-import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
 import { User } from 'src/types/user';
 import Header from './Header';
 import Profile from './Profile';
-import ReadingList from './ReadingList';
-import Dashboard from './Dashboard';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -37,28 +21,7 @@ const ProfileView: FC = () => {
   const history = useHistory();
   const location = useLocation();
   const isMountedRef = useIsMountedRef();
-  const { user } = useAuth();
-  const [tabs, setTabs] = useState<any[]>([]);
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
   const [profile, setProfile] = useState<User | null>(null);
-
-  useEffect(() => {
-    if (profile) {
-      let values =
-        profile.email === user.email
-          ? [
-              { value: 'profile', label: 'Profile' },
-              { value: 'reading', label: 'reading list' },
-              { value: 'dashboard', label: 'Dashboard' }
-            ]
-          : [{ value: 'profile', label: 'Profile' }];
-      setTabs(values);
-    }
-  }, [user, profile]);
-
-  const handleTabsChange = (event: ChangeEvent, value: string): void => {
-    setCurrentTab(value);
-  };
 
   const getPosts = useCallback(async () => {
     let response: any;
@@ -92,25 +55,10 @@ const ProfileView: FC = () => {
     <Page className={classes.root} title="Profile">
       <Header profile={profile} />
       <Container maxWidth="lg">
-        <Box mt={3}>
-          <Tabs
-            onChange={handleTabsChange}
-            scrollButtons="auto"
-            value={currentTab}
-            textColor="secondary"
-            variant="scrollable"
-          >
-            {tabs.map(tab => (
-              <Tab key={tab.value} label={tab.label} value={tab.value} />
-            ))}
-          </Tabs>
+        <Box py={3} pb={6}>
+          <Profile profile={profile} />
         </Box>
         <Divider />
-        <Box py={3} pb={6}>
-          {currentTab === 'profile' && <Profile profile={profile} />}
-          {currentTab === 'reading' && <ReadingList profile={profile} />}
-          {currentTab === 'dashboard' && <Dashboard profile={profile} />}
-        </Box>
       </Container>
     </Page>
   );

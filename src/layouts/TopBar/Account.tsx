@@ -88,6 +88,9 @@ const Account: FC = () => {
         <MenuItem component={RouterLink} to="/account/setting">
           Setting
         </MenuItem>
+        <MenuItem component={RouterLink} to="/account/dashboard">
+          Dashboard
+        </MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>
