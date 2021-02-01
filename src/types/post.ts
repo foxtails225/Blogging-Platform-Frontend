@@ -1,6 +1,8 @@
 import { User } from './user';
 import { Comments } from './comment';
 
+export type PostStatus = 'approved' | 'pending' | 'rejected';
+
 export interface Tag {
   symbol: string;
   name: string;
@@ -19,7 +21,7 @@ export interface Post {
     count: number;
     users: string[];
   };
-  status?: string;
+  status?: PostStatus;
   day?: number;
   week?: number;
   month?: number;

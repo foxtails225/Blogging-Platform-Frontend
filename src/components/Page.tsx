@@ -41,7 +41,7 @@ const Page = forwardRef<HTMLDivElement, PageProps>(({
       {...rest}
     >
       <Helmet>
-        <title>{title}</title>
+        <title>{`${title} - Dank Stocks`}</title>
       </Helmet>
       {children}
     </div>

@@ -1,13 +1,10 @@
-import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { FC, useEffect, useState, ChangeEvent } from 'react';
 import clsx from 'clsx';
 import moment from 'moment';
-import numeral from 'numeral';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import {
   Box,
-  Button,
   Card,
   CardHeader,
   Divider,
@@ -17,22 +14,24 @@ import {
   TableHead,
   TableRow,
   TableSortLabel,
-  Tooltip,
+  TablePagination,
   makeStyles
 } from '@material-ui/core';
-import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import Label from 'src/components/Label';
 import GenericMoreButton from 'src/components/GenericMoreButton';
-import axios from 'src/utils/axios-mock';
-import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import { Order, OrderStatus } from 'src/types/reports';
+import axios from 'src/utils/axios';
+import { Post, PostStatus } from 'src/types/post';
+import { User } from 'src/types/user';
 
-interface LatestOrdersProps {
+interface PostsProps {
   className?: string;
+  profile: User;
 }
 
-const labelColors: Record<OrderStatus, 'success' | 'warning' | 'error'> = {
-  complete: 'success',
+type OrderByStatus = 'desc' | 'asc';
+
+const labelColors: Record<PostStatus, 'success' | 'warning' | 'error'> = {
+  approved: 'success',
   pending: 'warning',
   rejected: 'error'
 };
@@ -50,32 +49,57 @@ const useStyles = makeStyles(() => ({
   root: {}
 }));
 
-const LatestOrders: FC<LatestOrdersProps> = ({ className, ...rest }) => {
+const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
-  const isMountedRef = useIsMountedRef();
-  const [orders, setOrders] = useState<Order[]>([]);
-
-  const getOrders = useCallback(async () => {
-    try {
-      const response = await axios.get<{ orders: Order[] }>(
-        '/api/reports/latest-orders'
-      );
-
-      if (isMountedRef.current) {
-        setOrders(response.data.orders);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMountedRef]);
-
+  const [page, setPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(5);
+  const [order, setOrder] = useState<string>('createdAt');
+  const [orderBy, setOrderBy] = useState<OrderByStatus>('desc');
+  const [posts, setPosts] = useState<Post[]>([]);
+  
   useEffect(() => {
-    getOrders();
-  }, [getOrders]);
+    const getPosts = async () => {
+      try {
+        const sortBy = { [order]: orderBy === 'desc' ? -1 : 1 };
+        const params = { email: profile.email, page, sortBy, limit };
+        const response = await axios.post<{
+          posts: Post[];
+          page: number;
+          isAuthor: boolean;
+        }>('/posts/all/', params);
+        
+        setPosts(response.data.posts);
+        setPage(response.data.page);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getPosts();
+  }, [page, profile.email, order, orderBy, limit]);
+
+  const createSortHandler = (event): void => {
+    const value = orderBy !== 'desc' ? 'desc' : 'asc';
+    setOrder(event.currentTarget.id);
+    setOrderBy(value);
+  };
+
+  const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleSortDirection = (name: string): OrderByStatus => {
+    const direction = order === name && orderBy ? orderBy : 'desc';
+    return direction;
+  };
+
+  const handleChangeLimit = (event: ChangeEvent<HTMLInputElement>): void => {
+    setLimit(parseInt(event.target.value, 10));
+    setPage(0);
+  };
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader action={<GenericMoreButton />} title="Latest Orders" />
+      <CardHeader action={<GenericMoreButton />} title="Latest Posts" />
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
@@ -83,64 +107,59 @@ const LatestOrders: FC<LatestOrdersProps> = ({ className, ...rest }) => {
             <TableHead>
               <TableRow>
                 {columns.map(column => (
-                  //@ts-ignore
-                  <TableCell align="center">{column.value}</TableCell>
-                ))}
-                {/* <TableCell sortDirection="desc">
-                  <Tooltip enterDelay={300} title="Sort">
-                    <TableSortLabel active direction="desc">
-                      No
+                  <TableCell key={column.name} align="center">
+                    <TableSortLabel
+                      id={column.name}
+                      active={order === column.name}
+                      onClick={createSortHandler}
+                      direction={handleSortDirection(column.name)}
+                      disabled={column.name === 'no'}
+                    >
+                      {column.value}
                     </TableSortLabel>
-                  </Tooltip>
-                </TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Tags</TableCell>
-                <TableCell>Total</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell align="right">Date</TableCell> */}
+                  </TableCell>
+                ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map(order => (
-                <TableRow hover key={order.id}>
-                  <TableCell align="center">{order.number}</TableCell>
-                  <TableCell align="center">{order.customer.name}</TableCell>
-                  <TableCell align="center">{order.items}</TableCell>
+              {posts.map((post: Post, idx: number) => (
+                <TableRow hover key={post._id}>
+                  <TableCell align="center">{idx + 1}</TableCell>
+                  <TableCell align="center">{post.title}</TableCell>
+                  <TableCell align="center">{post.tags.length}</TableCell>
+                  <TableCell align="center">$0</TableCell>
                   <TableCell align="center">
-                    {numeral(order.totalAmount).format(
-                      `${order.currency}0,0.00`
-                    )}
-                  </TableCell>
-                  <TableCell align="center">
-                    <Label color={labelColors[order.status]}>
-                      {order.status}
+                    <Label color={labelColors[post.status]}>
+                      {post.status}
                     </Label>
                   </TableCell>
                   <TableCell align="center">
-                    {moment(order.createdAt).format('DD MMM, YYYY hh:mm:ss')}
+                    {moment(post.createdAt).format('DD MMM, YYYY hh:mm:ss')}
                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Table>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={posts.length}
+            rowsPerPage={limit}
+            page={page}
+            onChangePage={handleChangePage}
+            onChangeRowsPerPage={handleChangeLimit}
+          />
         </Box>
       </PerfectScrollbar>
-      <Box p={2} display="flex" justifyContent="flex-end">
-        <Button
-          component={RouterLink}
-          size="small"
-          to="/app/management/orders"
-          endIcon={<NavigateNextIcon />}
-        >
-          See all
-        </Button>
-      </Box>
+      <Box p={2} display="flex" justifyContent="flex-end"></Box>
     </Card>
   );
 };
 
-LatestOrders.propTypes = {
-  className: PropTypes.string
+Posts.propTypes = {
+  className: PropTypes.string,
+  //@ts-ignore
+  profile: PropTypes.object
 };
 
-export default LatestOrders;
+export default Posts;

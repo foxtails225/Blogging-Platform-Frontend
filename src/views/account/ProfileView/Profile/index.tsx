@@ -24,11 +24,11 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
   const isMountedRef = useIsMountedRef();
   const [posts, setPosts] = useState<Post[]>([]);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
 
   const getPosts = useCallback(async () => {
     try {
-      const params = { email: profile.email, page };
+      const params = { email: profile.email, page: page ? page : 0 };
       const response = await axios.post<{
         posts: Post[];
         page: number;

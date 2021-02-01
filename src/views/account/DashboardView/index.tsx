@@ -19,7 +19,6 @@ import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
 import { User } from 'src/types/user';
 import Header from './Header';
-import Statistics from './Statistics';
 import Notifications from './Notifications';
 import Posts from './Posts';
 import Reading from './Reading';
@@ -70,12 +69,9 @@ const OverviewView: FC = () => {
   }
 
   return (
-    <Page className={classes.root} title="Overview">
+    <Page className={classes.root} title="Dashboard">
       <Container maxWidth="lg">
         <Header />
-        <Box mt={3}>
-          <Statistics />
-        </Box>
         <Box mt={6}>
           <Notifications />
         </Box>
@@ -87,7 +83,6 @@ const OverviewView: FC = () => {
             textColor="secondary"
             variant="scrollable"
           >
-            
             {tabs.map(tab => (
               <Tab key={tab.value} label={tab.label} value={tab.value} />
             ))}
@@ -97,7 +92,7 @@ const OverviewView: FC = () => {
         <Box py={3} pb={6}>
           {currentTab === 'reading' && <Reading profile={profile} />}
           {currentTab === 'archive' && <Archive profile={profile} />}
-          {currentTab === 'posts' && <Posts />}
+          {currentTab === 'posts' && <Posts profile={profile} />}
         </Box>
       </Container>
     </Page>

@@ -11,7 +11,7 @@
   "scripts": {
     "lint": "eslint ./src",
     "start": "set PORT=9000 && react-scripts start",
-    "build": "react-scripts build && cd ../blogging-platform-backend && rmdir /S build && cd ../blogging-platform-frontend && move build ../blogging-platform-backend",
+    "build": "react-scripts build && cd ../dankstocks-server && rmdir /S build && cd ../dankstocks-client && move build ../dankstocks-server",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
