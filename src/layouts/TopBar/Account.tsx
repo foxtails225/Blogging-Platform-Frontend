@@ -91,6 +91,16 @@ const Account: FC = () => {
         <MenuItem component={RouterLink} to="/account/dashboard">
           Dashboard
         </MenuItem>
+        {user.role === 'admin' && (
+          <MenuItem component={RouterLink} to="/admin">
+            Administrator
+          </MenuItem>
+        )}
+        {user.role === 'sub-admin' && (
+          <MenuItem component={RouterLink} to="/sub-admin">
+            Administrator
+          </MenuItem>
+        )}
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
     </>

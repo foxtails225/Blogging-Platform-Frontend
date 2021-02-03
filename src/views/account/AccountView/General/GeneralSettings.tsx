@@ -81,7 +81,7 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
           .required('Name is required'),
         firstName: Yup.string().max(255),
         LastName: Yup.string().max(255),
-        bio: Yup.string().max(255),
+        bio: Yup.string().max(50),
         phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
         state: Yup.string().max(255)
       })}

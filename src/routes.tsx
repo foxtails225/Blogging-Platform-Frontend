@@ -5,6 +5,8 @@ import HomeView from 'src/views/home/HomeView';
 import LoadingScreen from 'src/components/LoadingScreen';
 import AuthGuard from 'src/components/AuthGuard';
 import GuestGuard from 'src/components/GuestGuard';
+import AdminGuard from './components/AdminGuard';
+import SubAdminGuard from './components/SubAdminGuard';
 
 type Routes = {
   exact?: boolean;
@@ -85,6 +87,20 @@ const routes: Routes = [
     layout: MainLayout,
     path: '/posts/public/:id',
     component: lazy(() => import('src/views/post/PostView'))
+  },
+  {
+    exact: true,
+    guard: AdminGuard,
+    layout: MainLayout,
+    path: '/admin',
+    component: lazy(() => import('src/views/admin/AdminView'))
+  },
+  {
+    exact: true,
+    guard: SubAdminGuard,
+    layout: MainLayout,
+    path: '/sub-admin',
+    component: lazy(() => import('src/views/admin/SubAdminView'))
   },
   {
     path: '/account',
