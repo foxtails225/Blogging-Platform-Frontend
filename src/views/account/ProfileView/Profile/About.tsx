@@ -78,7 +78,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
   }, [location.pathname]);
 
   useEffect(() => {
-    const disable = user.email !== profile.email;
+    const disable = user && user.email !== profile.email;
     setDisabled(disable);
   }, [user, profile]);
 

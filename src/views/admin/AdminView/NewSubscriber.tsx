@@ -9,11 +9,11 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import GroupAddIcon from '@material-ui/icons/GroupAdd';
 import type { Theme } from 'src/theme';
 import Label from 'src/components/Label';
 
-interface TodaysMoneyProps {
+interface NewSubscriberProps {
   className?: string;
 }
 
@@ -35,11 +35,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const TodaysMoney: FC<TodaysMoneyProps> = ({ className, ...rest }) => {
+const NewSubscriber: FC<NewSubscriberProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const data = {
-    value: '24,000',
-    currency: '$',
+    value: '29',
     difference: 4
   };
 
@@ -55,7 +54,7 @@ const TodaysMoney: FC<TodaysMoneyProps> = ({ className, ...rest }) => {
           variant="overline"
           color="textSecondary"
         >
-          Todays money
+          New Subscribers
         </Typography>
         <Box
           display="flex"
@@ -66,7 +65,6 @@ const TodaysMoney: FC<TodaysMoneyProps> = ({ className, ...rest }) => {
             variant="h3"
             color="textPrimary"
           >
-            {data.currency}
             {data.value}
           </Typography>
           <Label
@@ -80,14 +78,14 @@ const TodaysMoney: FC<TodaysMoneyProps> = ({ className, ...rest }) => {
         </Box>
       </Box>
       <Avatar className={classes.avatar}>
-        <AttachMoneyIcon />
+        <GroupAddIcon />
       </Avatar>
     </Card>
   );
 };
 
-TodaysMoney.propTypes = {
+NewSubscriber.propTypes = {
   className: PropTypes.string
 };
 
-export default TodaysMoney;
+export default NewSubscriber;

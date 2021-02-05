@@ -53,6 +53,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
+  const [count, setCount] = useState<number>(0);
   const [order, setOrder] = useState<string>('createdAt');
   const [orderBy, setOrderBy] = useState<OrderByStatus>('desc');
   const [posts, setPosts] = useState<Post[]>([]);
@@ -64,12 +65,12 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
         const params = { email: profile.email, page, sortBy, limit };
         const response = await axios.post<{
           posts: Post[];
-          page: number;
+          count: number;
           isAuthor: boolean;
         }>('/posts/all/', params);
         
         setPosts(response.data.posts);
-        setPage(response.data.page);
+        setCount(response.data.count);
       } catch (err) {
         console.error(err);
       }
@@ -143,7 +144,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={posts.length}
+            count={count}
             rowsPerPage={limit}
             page={page}
             onChangePage={handleChangePage}
@@ -151,7 +152,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           />
         </Box>
       </PerfectScrollbar>
-      <Box p={2} display="flex" justifyContent="flex-end"></Box>
+      <Box p={2} display="flex" justifyContent="flex-end" />
     </Card>
   );
 };

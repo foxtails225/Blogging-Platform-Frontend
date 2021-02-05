@@ -22,6 +22,7 @@ export interface Post {
     users: string[];
   };
   status?: PostStatus;
+  reason?: string;
   day?: number;
   week?: number;
   month?: number;

@@ -1,5 +1,5 @@
-import React, { FC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { FC, useEffect, useState } from 'react';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -89,6 +89,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
+  const location = useLocation();
+  const [disable, setDisable] = useState(false);
+
+  useEffect(() => {
+    setDisable(location.pathname !== '/account/profile');
+  }, [location.pathname]);
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
@@ -122,25 +128,29 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
             </Hidden>
           </Box>
           <Box flexGrow={1} />
-          <Hidden smDown>
-            <Button
-              color="secondary"
-              component={RouterLink}
-              size="small"
-              to="/account/setting"
-              variant="contained"
-              className={classes.action}
-            >
-              Edit Profile
-            </Button>
-          </Hidden>
-          <Hidden mdUp>
-            <Tooltip title="More options">
-              <IconButton className={classes.action}>
-                <EditIcon fontSize="small" />
-              </IconButton>
-            </Tooltip>
-          </Hidden>
+          {!disable && (
+            <>
+              <Hidden smDown>
+                <Button
+                  color="secondary"
+                  component={RouterLink}
+                  size="small"
+                  to="/account/setting"
+                  variant="contained"
+                  className={classes.action}
+                >
+                  Edit Profile
+                </Button>
+              </Hidden>
+              <Hidden mdUp>
+                <Tooltip title="More options">
+                  <IconButton className={classes.action}>
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Hidden>
+            </>
+          )}
         </Box>
         <Hidden mdUp>
           <Box textAlign="center">

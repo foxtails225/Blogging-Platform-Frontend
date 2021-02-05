@@ -2,12 +2,12 @@ import React, { FC } from 'react';
 import { Container, Grid, makeStyles } from '@material-ui/core';
 import Page from 'src/components/Page';
 import { Theme } from 'src/theme';
-import LatestProjects from './LatestProjects';
-import NewProjects from './NewProjects';
-import RoiPerCustomer from './RoiPerCustomer';
+import Posts from './Posts';
+import NewProjects from './NewPosts';
+import RoiPerCustomer from './TotalIncome';
 import SystemHealth from './SystemHealth';
 import TeamTasks from './TeamTasks';
-import TodaysMoney from './NewUsers';
+import NewSubscriber from './NewSubscriber';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -22,11 +22,11 @@ const DashboardView: FC = () => {
   const classes = useStyles();
 
   return (
-    <Page className={classes.root} title="Dashboard">
+    <Page className={classes.root} title="Administrator">
       <Container maxWidth={false}>
         <Grid container spacing={3}>
           <Grid item lg={3} sm={6} xs={12}>
-            <TodaysMoney />
+            <NewSubscriber />
           </Grid>
           <Grid item lg={3} sm={6} xs={12}>
             <NewProjects />
@@ -37,11 +37,11 @@ const DashboardView: FC = () => {
           <Grid item lg={3} sm={6} xs={12}>
             <RoiPerCustomer />
           </Grid>
+          <Grid item lg={12} xl={12} xs={12}>
+            <Posts />
+          </Grid>
           <Grid item lg={5} xl={4} xs={12}>
             <TeamTasks />
-          </Grid>
-          <Grid item lg={7} xl={8} xs={12}>
-            <LatestProjects />
           </Grid>
         </Grid>
       </Container>

@@ -13,7 +13,7 @@ import FolderOpenIcon from '@material-ui/icons/FolderOpenOutlined';
 import type { Theme } from 'src/theme';
 import Label from 'src/components/Label';
 
-interface NewProjectsProps {
+interface NewPostsProps {
   className?: string;
 }
 
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const NewProjects: FC<NewProjectsProps> = ({ className, ...rest }) => {
+const NewPosts: FC<NewPostsProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const data = {
     value: 12,
@@ -54,7 +54,7 @@ const NewProjects: FC<NewProjectsProps> = ({ className, ...rest }) => {
           variant="overline"
           color="textSecondary"
         >
-          New projects
+          New posts
         </Typography>
         <Box
           display="flex"
@@ -84,8 +84,8 @@ const NewProjects: FC<NewProjectsProps> = ({ className, ...rest }) => {
   );
 };
 
-NewProjects.propTypes = {
+NewPosts.propTypes = {
   className: PropTypes.string
 };
 
-export default NewProjects;
+export default NewPosts;
