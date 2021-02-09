@@ -218,7 +218,6 @@ const PostView: FC = () => {
                   {post.comments.map((comment: CommentsWithUser) => (
                     <React.Fragment key={comment._id}>
                       <Comment
-                        user={user}
                         comment={comment}
                         reply={status.parent}
                         onComment={handleComment}

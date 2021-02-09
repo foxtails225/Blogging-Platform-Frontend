@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState, ChangeEvent } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import moment from 'moment';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -8,6 +9,7 @@ import {
   Card,
   CardHeader,
   Divider,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -57,7 +59,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   const [order, setOrder] = useState<string>('createdAt');
   const [orderBy, setOrderBy] = useState<OrderByStatus>('desc');
   const [posts, setPosts] = useState<Post[]>([]);
-  
+
   useEffect(() => {
     const getPosts = async () => {
       try {
@@ -68,7 +70,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           count: number;
           isAuthor: boolean;
         }>('/posts/all/', params);
-        
+
         setPosts(response.data.posts);
         setCount(response.data.count);
       } catch (err) {
@@ -126,7 +128,16 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
               {posts.map((post: Post, idx: number) => (
                 <TableRow hover key={post._id}>
                   <TableCell align="center">{idx + 1}</TableCell>
-                  <TableCell align="center">{post.title}</TableCell>
+                  <TableCell align="center">
+                    <Link
+                      color="textPrimary"
+                      component={RouterLink}
+                      to={'/posts/public/' + post.slug}
+                      variant="body2"
+                    >
+                      {post.title}
+                    </Link>
+                  </TableCell>
                   <TableCell align="center">{post.tags.length}</TableCell>
                   <TableCell align="center">$0</TableCell>
                   <TableCell align="center">
