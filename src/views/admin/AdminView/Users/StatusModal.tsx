@@ -13,11 +13,11 @@ import {
 import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
-import { Post, PostStatus } from 'src/types/post';
+import { User } from 'src/types/user';
 
 interface Modal {
   _id: string;
-  status: PostStatus;
+  status: boolean;
   reason: string;
 }
 
@@ -29,22 +29,11 @@ interface StatusProps {
   onFetch: () => void;
 }
 
-interface Status {
-  name: PostStatus;
-  text: string;
-}
-
-const buttons: Status[] = [
-  { name: 'pending', text: 'pending' },
-  { name: 'approved', text: 'approve' },
-  { name: 'rejected', text: 'reject' }
-];
-
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
   toggleBtn: {
     '&.MuiToggleButton-root': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.primary
     },
     '&.Mui-selected': {
       backgroundColor: theme.palette.secondary.main,
@@ -62,12 +51,12 @@ const StatusModal: FC<StatusProps> = ({
   ...rest
 }) => {
   const classes = useStyles();
-  const [status, setStatus] = useState<string>(data.status);
+  const [status, setStatus] = useState<boolean>(data.status);
   const [value, setValue] = useState<string>(data.reason);
 
   const handleConfirm = async () => {
     const params = { _id: data._id, status, reason: value };
-    await axios.put<{ post: Post }>('/posts/update/status', params);
+    await axios.put<{ user: User }>('/users/update/status', params);
     onFetch();
     onOpen();
   };
@@ -76,9 +65,9 @@ const StatusModal: FC<StatusProps> = ({
     event: React.MouseEvent<HTMLElement>,
     newAlignment: string | null
   ) => {
-    setStatus(newAlignment);
+    setStatus(Boolean(newAlignment));
   };
-
+  
   const handleClose = () => {
     onOpen();
   };
@@ -95,24 +84,21 @@ const StatusModal: FC<StatusProps> = ({
         onClose={handleClose}
         aria-labelledby="status-dialog"
       >
-        <DialogTitle>Post Status</DialogTitle>
+        <DialogTitle>User Status</DialogTitle>
         <DialogContent>
           <ToggleButtonGroup
             value={status}
             exclusive
             size="small"
             onChange={handleClick}
-            aria-label="text alignment"
+            aria-label="user alignment"
           >
-            {buttons.map((item: Status, idx: number) => (
-              <ToggleButton
-                key={item.name + idx}
-                value={item.name}
-                className={classes.toggleBtn}
-              >
-                {item.text}
-              </ToggleButton>
-            ))}
+            <ToggleButton value={true} className={classes.toggleBtn}>
+              Active
+            </ToggleButton>
+            <ToggleButton value={false} className={classes.toggleBtn}>
+              Block
+            </ToggleButton>
           </ToggleButtonGroup>
           <TextField
             value={value}

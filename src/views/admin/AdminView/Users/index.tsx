@@ -2,10 +2,10 @@ import React, { FC, ChangeEvent, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import moment from 'moment';
-import numeral from 'numeral';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import {
+  Avatar,
   Box,
   Card,
   CardHeader,
@@ -21,13 +21,14 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Label from 'src/components/Label';
+import getInitials from 'src/utils/getInitials';
 import { Theme } from 'src/theme';
 import axios from 'src/utils/axios';
 import GenericMoreButton from 'src/components/GenericMoreButton';
-import { PostWithAuthor, PostStatus } from 'src/types/post';
+import { User } from 'src/types/user';
 import StatusModal from './StatusModal';
 
-interface PostsProps {
+interface UsersProps {
   className?: string;
 }
 
@@ -43,20 +44,14 @@ interface Status {
 
 interface Modal {
   _id: string;
-  status: PostStatus;
+  status: boolean;
   reason: string;
 }
 
-const labelColors: Record<PostStatus, 'success' | 'warning' | 'error'> = {
-  approved: 'success',
-  pending: 'warning',
-  rejected: 'error'
-};
-
 const columns = [
-  { name: 'title', value: 'Title' },
-  { name: 'author', value: 'Author' },
-  { name: 'total', value: 'Total' },
+  { name: 'name', value: 'Name' },
+  { name: 'email', value: 'Email' },
+  { name: 'role', value: 'Role' },
   { name: 'status', value: 'Status' },
   { name: 'createdAt', value: 'Date' }
 ];
@@ -73,32 +68,32 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {}
 }));
 
-const Posts: FC<PostsProps> = ({ className, ...rest }) => {
+const Users: FC<UsersProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
   const [modal, setModal] = useState<Modal>();
   const [status, setStatus] = useState<Status>(initialStatus);
-  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const getPosts = async () => {
+  const getUsers = async () => {
     try {
       const sortBy = { [status.order]: status.orderBy === 'desc' ? -1 : 1 };
       const params = { page: status.page, sortBy, limit: status.limit };
       const response = await axios.post<{
-        posts: PostWithAuthor[];
+        users: User[];
         count: number;
-      }>('/admin/posts/all/', params);
+      }>('/admin/users/all/', params);
 
-      setPosts(response.data.posts);
+      setUsers(response.data.users);
       setStatus(prevState => ({ ...prevState, count: response.data.count }));
     } catch (err) {
       setStatus(initialStatus);
-      setPosts([]);
+      setUsers([]);
     }
   };
 
   useEffect(() => {
-    getPosts();
+    getUsers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.page, status.limit, status.order, status.orderBy]);
 
@@ -123,7 +118,7 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
     setStatus(prevState => ({ ...prevState, limit, page: 0 }));
   };
 
-  const handleStatus = (data: PostWithAuthor) => {
+  const handleStatus = (data: User) => {
     setModal({ _id: data._id, status: data.status, reason: data.reason });
     setOpen(!open);
   };
@@ -134,7 +129,7 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader action={<GenericMoreButton />} title="All Posts" />
+      <CardHeader action={<GenericMoreButton />} title="All Users" />
       <Divider />
       <PerfectScrollbar>
         <Box minWidth={700}>
@@ -157,38 +152,43 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {posts.map(post => (
-                <TableRow hover key={post._id}>
-                  <TableCell align="center">
-                    <Link
-                      color="textPrimary"
-                      component={RouterLink}
-                      to={'/posts/public/' + post.slug}
-                      variant="body2"
-                    >
-                      {post.title}
-                    </Link>
-                  </TableCell>
+              {users.map(user => (
+                <TableRow hover key={user._id}>
                   <TableCell>
-                    <Link
-                      color="textPrimary"
-                      component={RouterLink}
-                      to={'/users/' + post.author.name}
-                      variant="body2"
-                    >
-                      {post.author.name}
-                    </Link>
+                    <Box display="flex" alignItems="center">
+                      <Avatar
+                        alt="Author"
+                        src={user.avatar}
+                        component={RouterLink}
+                        to={'/users/' + user.name}
+                      >
+                        {getInitials(user.name)}
+                      </Avatar>
+                      <Box ml={1}>
+                        <Link
+                          color="textPrimary"
+                          component={RouterLink}
+                          to={'/users/' + user.name}
+                          variant="body2"
+                        >
+                          {user.name}
+                        </Link>
+                      </Box>
+                    </Box>
                   </TableCell>
                   <TableCell align="center">
-                    {numeral(0).format(`$0,0.00`)}
+                    {user.email}
                   </TableCell>
-                  <TableCell align="center" onClick={() => handleStatus(post)}>
-                    <Label color={labelColors[post.status]}>
-                      {post.status}
+                  <TableCell align="center">
+                    {user.role}
+                  </TableCell>
+                  <TableCell align="center" onClick={() => handleStatus(user)}>
+                    <Label color={user.status ? 'success' : 'error'}>
+                      {user.status ? 'Active' : 'Banned'}
                     </Label>
                   </TableCell>
                   <TableCell align="center">
-                    {moment(post.createdAt).format('DD MMM, YYYY hh:mm:ss')}
+                    {moment(user.createdAt).format('DD MMM, YYYY hh:mm:ss')}
                   </TableCell>
                 </TableRow>
               ))}
@@ -211,15 +211,15 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
           open={open}
           data={modal}
           onOpen={handleOpen}
-          onFetch={getPosts}
+          onFetch={getUsers}
         />
       )}
     </Card>
   );
 };
 
-Posts.propTypes = {
+Users.propTypes = {
   className: PropTypes.string
 };
 
-export default Posts;
+export default Users;
