@@ -131,11 +131,6 @@ const Comment: FC<CommentProps> = ({
     await axios.put<{ comment: CommentsWithUser }>('/comments/liked', params);
   };
 
-  const updateFlag = async (): Promise<void> => {
-    // const params = { commentId: comment._id, isLiked: !isLiked };
-    // await axios.put<{ comment: CommentsWithUser }>('/comments/liked', params);
-  };
-
   const handleReply = (): void => {
     const depth = comment.depth + 1;
     onComment(comment._id, depth);
