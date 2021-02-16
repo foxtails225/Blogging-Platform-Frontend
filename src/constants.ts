@@ -19,3 +19,9 @@ export const LOGOS = {
   LIGHT: '/static/light-logo.svg',
   ONE_DARK: '/static/dark-logo.svg'
 };
+
+export const FLAG_OPTIONS = [
+  { name: 'market', label: 'Market Manipulation' },
+  { name: 'abuse', label: 'Abuse' },
+  { name: 'other', label: 'Other' }
+];
