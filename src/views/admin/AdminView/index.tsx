@@ -7,7 +7,7 @@ import Users from './Users';
 import NewProjects from './NewPosts';
 import TotalIncome from './TotalIncome';
 import SystemHealth from './SystemHealth';
-import TeamTasks from './TeamTasks';
+import Comments from './Comments';
 import NewSubscriber from './NewSubscriber';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -42,7 +42,7 @@ const AdminView: FC = () => {
             <Posts />
           </Grid>
           <Grid item lg={4} xl={4} xs={12}>
-            <TeamTasks />
+            <Comments />
           </Grid>
           <Grid item lg={8} xl={8} xs={12}>
             <Users />
