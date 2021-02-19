@@ -17,8 +17,10 @@ import {
 } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
-import { Comments, CommentsWithUser } from 'src/types/comment';
+import { CommentsWithUser } from 'src/types/comment';
 import { User } from 'src/types/user';
+import { Flag } from 'src/types/flag';
+import { FLAG_OPTIONS } from 'src/constants';
 
 interface FlagProps {
   className?: string;
@@ -28,12 +30,6 @@ interface FlagProps {
   onOpen: () => void;
   onFlag: () => void;
 }
-
-const buttons = [
-  { name: 'market', label: 'Market Manipulation' },
-  { name: 'abuse', label: 'Abuse' },
-  { name: 'other', label: 'Other' }
-];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
@@ -62,8 +58,13 @@ const FlagModal: FC<FlagProps> = ({
   const [value, setValue] = useState<string>('');
 
   const handleConfirm = async () => {
-    const params = { _id: comment._id, user: user._id };
-    // await axios.put<{ comment: Comments }>('/comments/update/status', params);
+    const reason = value !== '' ? value : option;
+    const params = {
+      comment: comment._id,
+      reason,
+      type: 'comment'
+    };
+    await axios.put<{ flag: Flag }>('/comments/flag', params);
     onOpen();
     onFlag();
   };
@@ -73,6 +74,7 @@ const FlagModal: FC<FlagProps> = ({
   };
 
   const handleOption = (event: ChangeEvent<HTMLInputElement>): void => {
+    setValue('');
     setOption(event.target.value);
   };
 
@@ -98,7 +100,7 @@ const FlagModal: FC<FlagProps> = ({
               value={option}
               onChange={handleOption}
             >
-              {buttons.map((item, idx: number) => (
+              {FLAG_OPTIONS.map((item, idx: number) => (
                 <FormControlLabel
                   key={item.name + idx}
                   value={item.name}
