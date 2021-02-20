@@ -24,6 +24,7 @@ import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
 import { CommentsWithUser } from 'src/types/comment';
 import FlagModal from './FlagModal';
+import { Flag } from 'src/types/flag';
 
 interface CommentProps {
   className?: string;
@@ -117,6 +118,15 @@ const Comment: FC<CommentProps> = ({
       comment.liked.users.forEach(item => item === user._id && setLiked(true));
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comment.liked.users]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      // @ts-ignore
+      const value = comment.flags.find((item: Flag) => item.user === user._id);
+      setFlag(Boolean(value));
+    }
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [comment.flags]);
 
   useEffect(() => {
     if (user) {
