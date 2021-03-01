@@ -9,6 +9,8 @@ export const LOCAL_URL = 'http://127.0.0.1:8080/api';
 export const BASE_URL =
   process.env.NODE_ENV === 'production' ? SEVER_URL : LOCAL_URL;
 
+export const IEX_BASE_URL = 'https://cloud.iexapis.com/beta';
+
 export const THEMES = {
   LIGHT: 'LIGHT',
   ONE_DARK: 'ONE_DARK',
