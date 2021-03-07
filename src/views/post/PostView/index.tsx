@@ -25,6 +25,7 @@ import Page from 'src/components/Page';
 import Reactions from './Reactions';
 import Comment from './Comment';
 import CommentAdd from './CommentAdd';
+import { socket } from 'src/constants';
 
 interface Status {
   depth: number;
@@ -97,6 +98,9 @@ const PostView: FC = () => {
 
   useEffect(() => {
     handleFetch();
+    socket.on('fetchPost', data => {
+      handleFetch();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
