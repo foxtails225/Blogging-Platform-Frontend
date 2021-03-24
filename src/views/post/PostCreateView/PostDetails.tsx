@@ -1,8 +1,9 @@
-import React, { useState, FC } from 'react';
+import React, { useState, useEffect, FC } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -14,9 +15,12 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Plus as PlusIcon } from 'react-feather';
 import { Theme } from 'src/theme';
 import { Post, Tag } from 'src/types/post';
+import { IEX_BASE_URL } from 'src/constants';
+import { env } from 'src/config';
 
 interface PostDetailsProps {
   className?: string;
@@ -44,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const initialTag: Tag = {
   symbol: '',
-  name: ''
+  securityName: ''
 };
 
 const PostDetails: FC<PostDetailsProps> = ({
@@ -55,11 +59,32 @@ const PostDetails: FC<PostDetailsProps> = ({
   ...rest
 }) => {
   const classes = useStyles();
+  const [options, setOptions] = useState<Tag[]>([]);
+  const [search, setSearch] = useState<string>('');
   const [tag, setTag] = useState<Tag>(initialTag);
 
-  const handleChangeTag = event => {
-    const { value } = event.target;
-    setTag({ symbol: value, name: value });
+  useEffect(() => {
+    const fecthData = async () => {
+      const response = await axios.get<Tag[]>(
+        `${IEX_BASE_URL}/search/${search}`,
+        {
+          params: { token: env.IEX_TOKEN }
+        }
+      );
+
+      if (response.data && response.data.length > 0) {
+        let data = response.data.map(item => {
+          return { symbol: item.symbol, securityName: item.securityName };
+        });
+        setOptions(data);
+      }
+    };
+    search !== '' ? fecthData() : setOptions([]);
+  }, [search]);
+
+  const handleChangeTag = (event, value) => {
+    const val = value.split(': ');
+    setTag({ symbol: val[0], securityName: val[1] });
   };
 
   return (
@@ -78,6 +103,7 @@ const PostDetails: FC<PostDetailsProps> = ({
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
+          console.log(values.tags);
           onPost({ title: values.title.trim(), tags: values.tags });
           setStatus({ success: true });
           setSubmitting(false);
@@ -135,33 +161,49 @@ const PostDetails: FC<PostDetailsProps> = ({
               variant="outlined"
             />
             <Box mt={3} display="flex" alignItems="center">
-              <TextField
-                fullWidth
-                label="Article Tags"
-                name="tags"
-                value={tag.symbol}
-                placeholder="Please choose at least one tag."
-                autoComplete="off"
+              <Autocomplete
+                freeSolo
+                disableClearable
+                options={options.map(
+                  option => option.symbol + ': ' + option.securityName
+                )}
                 onChange={handleChangeTag}
                 onKeyPress={e => {
                   if (e.key === 'Enter') {
-                    if (tag.symbol === '' || tag.name === '') {
+                    if (tag.symbol === '' || tag.securityName === '') {
                       return;
                     }
                     setFieldValue('tags', [...values.tags, tag]);
                     setTag(initialTag);
+                    setSearch('');
                   }
                 }}
-                variant="outlined"
+                value={search}
+                renderInput={params => (
+                  <TextField
+                    {...params}
+                    fullWidth
+                    name="tags"
+                    label="Article Tags"
+                    placeholder="Please choose at least one tag."
+                    variant="outlined"
+                    InputProps={{
+                      ...params.InputProps
+                    }}
+                    style={{ width: '52vw' }}
+                    onChange={event => setSearch(event.target.value)}
+                  />
+                )}
               />
               <IconButton
                 className={classes.addTab}
                 onClick={() => {
-                  if (tag.symbol === '' || tag.name === '') {
+                  if (tag.symbol === '' || tag.securityName === '') {
                     return;
                   }
                   setFieldValue('tags', [...values.tags, tag]);
                   setTag(initialTag);
+                  setSearch('');
                 }}
               >
                 <SvgIcon>
@@ -178,7 +220,9 @@ const PostDetails: FC<PostDetailsProps> = ({
                   className={classes.tag}
                   onDelete={() => {
                     const newTags = values.tags.filter(
-                      t => t.symbol !== tag.symbol && t.name !== tag.name
+                      t =>
+                        t.symbol !== tag.symbol &&
+                        t.securityName !== tag.securityName
                     );
                     setFieldValue('tags', newTags);
                   }}
