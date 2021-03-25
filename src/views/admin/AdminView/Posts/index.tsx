@@ -26,6 +26,7 @@ import axios from 'src/utils/axios';
 import GenericMoreButton from 'src/components/GenericMoreButton';
 import { PostWithAuthor, PostStatus } from 'src/types/post';
 import StatusModal from './StatusModal';
+import { socket } from 'src/constants';
 
 interface PostsProps {
   className?: string;
@@ -99,6 +100,9 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
 
   useEffect(() => {
     getPosts();
+    socket.on('adminPost', data => {
+      getPosts();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status.page, status.limit, status.order, status.orderBy]);
 
