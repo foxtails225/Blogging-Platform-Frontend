@@ -15,6 +15,7 @@ import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import GenericMoreButton from 'src/components/GenericMoreButton';
 import { FlagWithUser } from 'src/types/flag';
 import FlagItem from './FlagItem';
+import { socket } from 'src/constants';
 
 interface TeamTasksProps {
   className?: string;
@@ -45,6 +46,9 @@ const TeamTasks: FC<TeamTasksProps> = ({ className, ...rest }) => {
 
   useEffect(() => {
     getFlags();
+    socket.on('adminComment', data => {
+      getFlags();
+    });
   }, [getFlags]);
 
   return (
