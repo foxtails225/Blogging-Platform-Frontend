@@ -5,7 +5,7 @@ export type PostStatus = 'approved' | 'pending' | 'rejected';
 
 export interface Tag {
   symbol: string;
-  name: string;
+  securityName: string;
 }
 
 export interface Post {
