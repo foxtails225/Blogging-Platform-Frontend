@@ -1,4 +1,5 @@
 import React, { FC, useState, useEffect } from 'react';
+import { useHistory } from 'react-router';
 import axios from 'axios';
 import {
   Box,
@@ -13,11 +14,7 @@ import { Search as SearchIcon } from 'react-feather';
 import { IEX_BASE_URL, THEMES } from '../../constants';
 import { Theme } from 'src/theme';
 import { env } from 'src/config';
-
-interface Option {
-  symbol: string;
-  securityName: string;
-}
+import { Tag } from 'src/types/post';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -30,13 +27,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 }));
 
 const Search: FC = () => {
-  const [value, setValue] = useState<string>('');
-  const [options, setOptions] = useState<Option[]>([]);
+  const history = useHistory();
   const classes = useStyles();
+  const [value, setValue] = useState<string>('');
+  const [options, setOptions] = useState<Tag[]>([]);
 
   useEffect(() => {
     const fecthData = async () => {
-      const response = await axios.get<Option[]>(
+      const response = await axios.get<Tag[]>(
         `${IEX_BASE_URL}/search/${value}`,
         {
           params: { token: env.IEX_TOKEN }
@@ -53,6 +51,11 @@ const Search: FC = () => {
     value !== '' ? fecthData() : setOptions([]);
   }, [value]);
 
+  const handleChangeTag = (event, value) => {
+    const symbol = value.split(': ')[0];
+    history.push(`/symbol/${symbol}`);
+  };
+
   return (
     <Box ml={12}>
       <Autocomplete
@@ -61,6 +64,7 @@ const Search: FC = () => {
         options={options.map(
           option => option.symbol + ': ' + option.securityName
         )}
+        onChange={handleChangeTag}
         renderInput={params => (
           <TextField
             {...params}
