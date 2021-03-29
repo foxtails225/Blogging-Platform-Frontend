@@ -4,7 +4,7 @@ import { createBrowserHistory } from 'history';
 import { create } from 'jss';
 import rtl from 'jss-rtl';
 import MomentUtils from '@date-io/moment';
-import { SnackbarProvider } from 'notistack';
+import { SnackbarProvider } from 'notistack'
 import { jssPreset, StylesProvider, ThemeProvider } from '@material-ui/core';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import GlobalStyles from 'src/components/GlobalStyles';
@@ -15,7 +15,7 @@ import SettingsNotification from 'src/components/SettingsNotification';
 import { AuthProvider } from 'src/contexts/JWTAuthContext';
 import useSettings from 'src/hooks/useSettings';
 import { createTheme } from 'src/theme';
-import routes, { renderRoutes } from 'src/routes';
+import routes, { renderRoutes } from 'src/routes'
 
 const jss = create({ plugins: [...jssPreset().plugins, rtl()] });
 const history = createBrowserHistory();
