@@ -90,6 +90,12 @@ const routes: Routes = [
   },
   {
     exact: true,
+    layout: MainLayout,
+    path: '/symbol/:id',
+    component: lazy(() => import('src/views/symbol/SymbolView'))
+  },
+  {
+    exact: true,
     guard: AdminGuard,
     layout: MainLayout,
     path: '/admin',
