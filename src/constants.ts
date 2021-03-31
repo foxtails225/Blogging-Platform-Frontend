@@ -16,8 +16,6 @@ export const BASE_URL =
 export const BASE_SOCKET_URL =
   process.env.NODE_ENV === 'production' ? SEVER_URL : LOCAL_URL;
 
-export const IEX_BASE_URL = 'https://cloud.iexapis.com/beta';
-
 export const socket = io(BASE_SOCKET_URL, { transports: ['websocket'] });
 
 export const THEMES = {
