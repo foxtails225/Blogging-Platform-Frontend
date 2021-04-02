@@ -1,4 +1,4 @@
-import { io } from 'socket.io-client';
+import { io } from 'socket.io-client/dist/socket.io';
 
 export const APP_VERSION = '3.1.0';
 
@@ -14,9 +14,12 @@ export const BASE_URL =
     : LOCAL_URL + '/api';
 
 export const BASE_SOCKET_URL =
-  process.env.NODE_ENV === 'production' ? SEVER_URL : LOCAL_URL;
+  process.env.NODE_ENV === 'production' ? 'https://www.dankstocks.com' : LOCAL_URL;
 
-export const socket = io(BASE_SOCKET_URL, { transports: ['websocket'] });
+export const socket = io(BASE_SOCKET_URL, {
+  transports: ['websocket', 'polling', 'flashsocket'],
+  secure: true
+});
 
 export const THEMES = {
   LIGHT: 'LIGHT',
