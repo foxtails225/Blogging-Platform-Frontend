@@ -1,6 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useHistory } from 'react-router';
-import axios from 'axios';
+import axios from 'src/utils/axios';
 import {
   Box,
   InputAdornment,
@@ -11,9 +11,8 @@ import {
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { grey } from '@material-ui/core/colors';
 import { Search as SearchIcon } from 'react-feather';
-import { IEX_BASE_URL, THEMES } from '../../constants';
+import { THEMES } from '../../constants';
 import { Theme } from 'src/theme';
-import { env } from 'src/config';
 import { Tag } from 'src/types/post';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -30,25 +29,20 @@ const Search: FC = () => {
   const history = useHistory();
   const classes = useStyles();
   const [value, setValue] = useState<string>('');
-  const [options, setOptions] = useState<Tag[]>([]);
+  const [results, setResults] = useState<Tag[]>([]);
 
   useEffect(() => {
     const fecthData = async () => {
-      const response = await axios.get<Tag[]>(
-        `${IEX_BASE_URL}/search/${value}`,
-        {
-          params: { token: env.IEX_TOKEN }
-        }
-      );
+      const response = await axios.get<Tag[]>(`/stock/search/${value}`);
 
       if (response.data && response.data.length > 0) {
         let data = response.data.map(item => {
           return { symbol: item.symbol, securityName: item.securityName };
         });
-        setOptions(data);
+        setResults(data);
       }
     };
-    value !== '' ? fecthData() : setOptions([]);
+    value !== '' ? fecthData() : setResults([]);
   }, [value]);
 
   const handleChangeTag = (event, value) => {
@@ -61,7 +55,7 @@ const Search: FC = () => {
       <Autocomplete
         freeSolo
         disableClearable
-        options={options.map(
+        options={results.map(
           option => option.symbol + ': ' + option.securityName
         )}
         onChange={handleChangeTag}

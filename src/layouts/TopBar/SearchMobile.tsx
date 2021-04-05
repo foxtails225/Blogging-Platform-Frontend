@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import type { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useSnackbar } from 'notistack';
+import axios from 'src/utils/axios';
 import {
   Box,
   Button,
@@ -15,18 +15,11 @@ import {
   TextField,
   Tooltip,
   Typography,
-  makeStyles
+  makeStyles,
+  Divider
 } from '@material-ui/core';
-import {
-  Search as SearchIcon,
-  XCircle as XIcon
-} from 'react-feather';
-import axios from 'src/utils/axios-mock';
-
-interface Result {
-  description: string;
-  title: string;
-}
+import { Search as SearchIcon, XCircle as XIcon } from 'react-feather';
+import { Tag } from 'src/types/post';
 
 const useStyles = makeStyles(() => ({
   drawer: {
@@ -41,7 +34,7 @@ const Search: FC = () => {
   const [value, setValue] = useState<string>('');
   const [isOpen, setOpen] = useState<boolean>(false);
   const [isLoading, setLoading] = useState<boolean>(false);
-  const [results, setResults] = useState<Result[]>([]);
+  const [results, setResults] = useState<Tag[]>([]);
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -55,9 +48,14 @@ const Search: FC = () => {
     try {
       setLoading(true);
 
-      const response = await axios.get<{ results: Result[]; }>('/api/search');
+      const response = await axios.get<Tag[]>(`/stock/search/${value}`);
 
-      setResults(response.data.results);
+      if (response.data && response.data.length > 0) {
+        let data = response.data.map(item => {
+          return { symbol: item.symbol, securityName: item.securityName };
+        });
+        setResults(data);
+      }
     } catch (err) {
       enqueueSnackbar('Something went wrong', {
         variant: 'error'
@@ -70,10 +68,7 @@ const Search: FC = () => {
   return (
     <>
       <Tooltip title="Search">
-        <IconButton
-          color="inherit"
-          onClick={handleOpen}
-        >
+        <IconButton color="inherit" onClick={handleOpen}>
           <SvgIcon fontSize="small">
             <SearchIcon />
           </SvgIcon>
@@ -94,10 +89,7 @@ const Search: FC = () => {
               justifyContent="space-between"
               alignItems="center"
             >
-              <Typography
-                variant="h4"
-                color="textPrimary"
-              >
+              <Typography variant="h4" color="textPrimary">
                 Search
               </Typography>
               <IconButton onClick={handleClose}>
@@ -112,26 +104,19 @@ const Search: FC = () => {
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <SvgIcon
-                        fontSize="small"
-                        color="action"
-                      >
+                      <SvgIcon fontSize="small" color="action">
                         <SearchIcon />
                       </SvgIcon>
                     </InputAdornment>
                   )
                 }}
-                onChange={(event) => setValue(event.target.value)}
+                onChange={event => setValue(event.target.value)}
                 placeholder="Search people &amp; places"
                 value={value}
                 variant="outlined"
               />
             </Box>
-            <Box
-              mt={2}
-              display="flex"
-              justifyContent="flex-end"
-            >
+            <Box mt={2} display="flex" justifyContent="flex-end">
               <Button
                 color="secondary"
                 variant="contained"
@@ -142,34 +127,28 @@ const Search: FC = () => {
             </Box>
             <Box mt={4}>
               {isLoading ? (
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                >
+                <Box display="flex" justifyContent="center">
                   <CircularProgress />
                 </Box>
               ) : (
                 <>
                   {results.map((result, i) => (
-                    <Box
-                      key={i}
-                      mb={2}
-                    >
-                      <Link
-                        variant="h4"
-                        color="textPrimary"
-                        component={RouterLink}
-                        to="/app"
-                      >
-                        {result.title}
-                      </Link>
-                      <Typography
-                        variant="body2"
-                        color="textPrimary"
-                      >
-                        {result.description}
-                      </Typography>
-                    </Box>
+                    <React.Fragment key={i}>
+                      <Box mb={1} mt={1}>
+                        <Link
+                          variant="h4"
+                          color="textPrimary"
+                          component={RouterLink}
+                          to={`/symbol/${result.symbol}`}
+                        >
+                          {result.symbol}
+                        </Link>
+                        <Typography variant="body2" color="textPrimary">
+                          {result.securityName}
+                        </Typography>
+                      </Box>
+                      <Divider />
+                    </React.Fragment>
                   ))}
                 </>
               )}
