@@ -19,8 +19,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { Plus as PlusIcon } from 'react-feather';
 import { Theme } from 'src/theme';
 import { Post, Tag } from 'src/types/post';
-import { IEX_BASE_URL } from 'src/constants';
-import { env } from 'src/config';
 
 interface PostDetailsProps {
   className?: string;
@@ -65,12 +63,7 @@ const PostDetails: FC<PostDetailsProps> = ({
 
   useEffect(() => {
     const fecthData = async () => {
-      const response = await axios.get<Tag[]>(
-        `${IEX_BASE_URL}/search/${search}`,
-        {
-          params: { token: env.IEX_TOKEN }
-        }
-      );
+      const response = await axios.get<Tag[]>(`/stock/search/${search}`);
 
       if (response.data && response.data.length > 0) {
         let data = response.data.map(item => {

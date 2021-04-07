@@ -10,6 +10,7 @@ export interface Quote {
 
 export interface Chart {
   date: string;
+  minute: string;
   close: number;
 }
 
@@ -35,4 +36,16 @@ export interface KeyStats {
   marketcap: number;
   sharesOutstanding: number;
   beta: number;
+}
+
+export interface StockNews {
+  news_url: string;
+  image_url: string;
+  title: string;
+  text: string;
+  source_name: string;
+  date: string;
+  topics: string[];
+  sentiment: string;
+  tickers: string[];
 }
