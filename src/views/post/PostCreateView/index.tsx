@@ -1,7 +1,7 @@
-import React, { useState, FC } from 'react';
+import React, { useState, FC, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
-import { Link as RouterLink } from 'react-router-dom';
 import {
   Avatar,
   Box,
@@ -28,6 +28,7 @@ import {
 import GavelIcon from '@material-ui/icons/Gavel';
 import RateReviewIcon from '@material-ui/icons/RateReview';
 import axios from 'src/utils/axios';
+import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
 import { Post } from 'src/types/post';
 import Page from 'src/components/Page';
@@ -35,6 +36,7 @@ import PostDetails from './PostDetails';
 import PostContent from './PostContent';
 import PostDisclosure from './PostDisclosure';
 import PostReview from './PostReview';
+import LoadingScreen from 'src/components/LoadingScreen';
 
 interface CustomStepIconProps {
   active?: boolean;
@@ -66,8 +68,7 @@ const initialPost = {
   title: '',
   content: '',
   disclosure: '',
-  tags: [],
-  
+  tags: []
 };
 
 const CustomStepConnector = withStyles((theme: Theme) => ({
@@ -137,9 +138,20 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const PostCreateView: FC = () => {
   const classes = useStyles();
+  const { user } = useAuth();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [completed, setCompleted] = useState<boolean>(false);
   const [post, setPost] = useState<Post>(initialPost);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.post<{ data: string }>('/stripe/create', {
+        returnUrl: '/posts/new'
+      });
+      window.location.replace(response.data.data);
+    };
+    !user.stripeId && fetchData();
+  }, [user]);
 
   const handleNext = (): void => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -168,109 +180,119 @@ const PostCreateView: FC = () => {
   };
 
   return (
-    <Page className={classes.root} title="Project Create">
-      <Container maxWidth="lg">
-        <Box mb={3}>
-          <Typography variant="h3" color="textPrimary">
-            Post New Article
-          </Typography>
-        </Box>
-        {!completed ? (
-          <Paper>
-            <Grid container>
-              <Grid item xs={12} md={3}>
-                <Stepper
-                  activeStep={activeStep}
-                  className={classes.stepper}
-                  connector={<CustomStepConnector />}
-                  orientation="vertical"
-                >
-                  {steps.map(step => (
-                    <Step key={step.label}>
-                      <StepLabel StepIconComponent={CustomStepIcon}>
-                        {step.label}
-                      </StepLabel>
-                    </Step>
-                  ))}
-                </Stepper>
-              </Grid>
-              <Grid item xs={12} md={9}>
-                <Box p={3}>
-                  {activeStep === 0 && (
-                    <PostDetails
-                      post={post}
-                      onPost={handlePost}
-                      onNext={handleNext}
-                    />
-                  )}
-                  {activeStep === 1 && (
-                    <PostContent
-                      post={post}
-                      onPost={handlePost}
-                      onBack={handleBack}
-                      onNext={handleNext}
-                    />
-                  )}
-                  {activeStep === 2 && (
-                    <PostDisclosure
-                      post={post}
-                      onPost={handlePost}
-                      onBack={handleBack}
-                      onNext={handleNext}
-                    />
-                  )}
-                  {activeStep === 3 && (
-                    <PostReview
-                      post={post}
-                      onBack={handleBack}
-                      onComplete={handleComplete}
-                    />
-                  )}
-                </Box>
-              </Grid>
-            </Grid>
-          </Paper>
-        ) : (
-          <Card>
-            <CardContent>
-              <Box maxWidth={450} mx="auto">
-                <Box display="flex" justifyContent="center">
-                  <Avatar className={classes.avatar}>
-                    <StarIcon />
-                  </Avatar>
-                </Box>
-                <Box mt={2}>
-                  <Typography variant="h3" color="textPrimary" align="center">
-                    You are all done!
-                  </Typography>
-                </Box>
-                <Box mt={2}>
-                  <Typography
-                    variant="subtitle1"
-                    color="textSecondary"
-                    align="center"
-                  >
-                    Thank you for submitting your contribution to us. Your
-                    article is now in review and we will come back to you with
-                    our final decision.
-                  </Typography>
-                </Box>
-                <Box mt={2} display="flex" justifyContent="center">
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    component={RouterLink}
-                    to="/account/profile"
-                  >
-                    Back to Profile
-                  </Button>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
-        )}
-      </Container>
-    </Page>
+    <>
+      {!user.stripeId ? (
+        <LoadingScreen />
+      ) : (
+        <Page className={classes.root} title="Project Create">
+          <Container maxWidth="lg">
+            <Box mb={3}>
+              <Typography variant="h3" color="textPrimary">
+                Post New Article
+              </Typography>
+            </Box>
+            {!completed ? (
+              <Paper>
+                <Grid container>
+                  <Grid item xs={12} md={3}>
+                    <Stepper
+                      activeStep={activeStep}
+                      className={classes.stepper}
+                      connector={<CustomStepConnector />}
+                      orientation="vertical"
+                    >
+                      {steps.map(step => (
+                        <Step key={step.label}>
+                          <StepLabel StepIconComponent={CustomStepIcon}>
+                            {step.label}
+                          </StepLabel>
+                        </Step>
+                      ))}
+                    </Stepper>
+                  </Grid>
+                  <Grid item xs={12} md={9}>
+                    <Box p={3}>
+                      {activeStep === 0 && (
+                        <PostDetails
+                          post={post}
+                          onPost={handlePost}
+                          onNext={handleNext}
+                        />
+                      )}
+                      {activeStep === 1 && (
+                        <PostContent
+                          post={post}
+                          onPost={handlePost}
+                          onBack={handleBack}
+                          onNext={handleNext}
+                        />
+                      )}
+                      {activeStep === 2 && (
+                        <PostDisclosure
+                          post={post}
+                          onPost={handlePost}
+                          onBack={handleBack}
+                          onNext={handleNext}
+                        />
+                      )}
+                      {activeStep === 3 && (
+                        <PostReview
+                          post={post}
+                          onBack={handleBack}
+                          onComplete={handleComplete}
+                        />
+                      )}
+                    </Box>
+                  </Grid>
+                </Grid>
+              </Paper>
+            ) : (
+              <Card>
+                <CardContent>
+                  <Box maxWidth={450} mx="auto">
+                    <Box display="flex" justifyContent="center">
+                      <Avatar className={classes.avatar}>
+                        <StarIcon />
+                      </Avatar>
+                    </Box>
+                    <Box mt={2}>
+                      <Typography
+                        variant="h3"
+                        color="textPrimary"
+                        align="center"
+                      >
+                        You are all done!
+                      </Typography>
+                    </Box>
+                    <Box mt={2}>
+                      <Typography
+                        variant="subtitle1"
+                        color="textSecondary"
+                        align="center"
+                      >
+                        Thank you for submitting your contribution to us. Your
+                        article is now in review and we will come back to you
+                        with our final decision.
+                      </Typography>
+                    </Box>
+                    <Box mt={2} display="flex" justifyContent="center">
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        component={RouterLink}
+                        to="/account/profile"
+                      >
+                        Back to Profile
+                      </Button>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            )}
+          </Container>
+        </Page>
+      )}
+    </>
   );
 };
 

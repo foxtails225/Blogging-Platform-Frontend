@@ -25,7 +25,7 @@ interface StatusProps {
   className?: string;
   open: boolean;
   data: Modal;
-  onOpen: () => void;
+  onOpen: (value?: any) => void;
   onFetch: () => void;
 }
 
@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {},
   toggleBtn: {
     '&.MuiToggleButton-root': {
-      color: theme.palette.text.primary,
+      color: theme.palette.text.primary
     },
     '&.Mui-selected': {
       backgroundColor: theme.palette.secondary.main,
@@ -69,7 +69,7 @@ const StatusModal: FC<StatusProps> = ({
     const params = { _id: data._id, status, reason: value };
     await axios.put<{ post: Post }>('/posts/update/status', params);
     onFetch();
-    onOpen();
+    onOpen(params);
   };
 
   const handleClick = (
@@ -79,9 +79,7 @@ const StatusModal: FC<StatusProps> = ({
     setStatus(newAlignment);
   };
 
-  const handleClose = () => {
-    onOpen();
-  };
+  const handleClose = () => onOpen();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setValue(event.target.value);
@@ -126,7 +124,11 @@ const StatusModal: FC<StatusProps> = ({
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} color="primary">
+          <Button
+            onClick={handleConfirm}
+            disabled={status === data.status}
+            color="primary"
+          >
             Confirm
           </Button>
         </DialogActions>

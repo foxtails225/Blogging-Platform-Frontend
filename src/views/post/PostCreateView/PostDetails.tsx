@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
-import axios from 'axios';
+import axios from 'src/utils/axios';
 import {
   Box,
   Button,

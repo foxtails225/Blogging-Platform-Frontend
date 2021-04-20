@@ -17,7 +17,7 @@ const HomeView: FC = () => {
   const classes = useStyles();
 
   return (
-    <Page className={classes.root} title="Dank Stock News">
+    <Page className={classes.root} title="World Class Stock News">
       <Container maxWidth={false}>
         <Grid container spacing={3}>
           <Grid item lg={6} xs={12}>

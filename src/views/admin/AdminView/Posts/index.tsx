@@ -24,9 +24,11 @@ import Label from 'src/components/Label';
 import { Theme } from 'src/theme';
 import axios from 'src/utils/axios';
 import GenericMoreButton from 'src/components/GenericMoreButton';
+import StripeCheckout from 'src/components/PaymentIntent';
 import { PostWithAuthor, PostStatus } from 'src/types/post';
 import StatusModal from './StatusModal';
 import { socket } from 'src/constants';
+import { User } from 'src/types/user';
 
 interface PostsProps {
   className?: string;
@@ -77,7 +79,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Posts: FC<PostsProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const [open, setOpen] = useState<boolean>(false);
+  const [openForm, setOpenForm] = useState<boolean>(false);
   const [modal, setModal] = useState<Modal>();
+  const [author, setAuthor] = useState<User>();
   const [status, setStatus] = useState<Status>(initialStatus);
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
 
@@ -132,8 +136,14 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
     setOpen(!open);
   };
 
-  const handleOpen = () => {
+  const handleOpen = (params?: any) => {
     setOpen(!open);
+
+    if (params && params.status === 'approved') {
+      const post = posts.find(item => item._id === params._id);
+      setAuthor(post.author);
+      setOpenForm(!openForm);
+    }
   };
 
   return (
@@ -216,6 +226,13 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
           data={modal}
           onOpen={handleOpen}
           onFetch={getPosts}
+        />
+      )}
+      {openForm && (
+        <StripeCheckout
+          open={openForm}
+          onOpen={() => setOpenForm(!openForm)}
+          author={author}
         />
       )}
     </Card>
