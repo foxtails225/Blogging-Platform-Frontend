@@ -20,6 +20,7 @@ interface CheckoutFormProps {
   author: User;
   onOpen: () => void;
   onBack: () => void;
+  onSuccess: () => void;
 }
 
 const CARD_ELEMENT_OPTIONS = {
@@ -51,6 +52,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
   secret,
   onOpen,
   onBack,
+  onSuccess,
   ...rest
 }) => {
   const stripe = useStripe();
@@ -86,6 +88,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
         // execution. Set up a webhook or plugin to listen for the
         // payment_intent.succeeded event that handles any business critical
         // post-payment actions.
+        onSuccess();
       }
     }
   };

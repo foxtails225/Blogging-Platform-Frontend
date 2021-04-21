@@ -14,6 +14,7 @@ import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { Post, PostStatus } from 'src/types/post';
+import StripeCheckout from 'src/components/PaymentIntent';
 
 interface Modal {
   _id: string;
@@ -64,12 +65,22 @@ const StatusModal: FC<StatusProps> = ({
   const classes = useStyles();
   const [status, setStatus] = useState<string>(data.status);
   const [value, setValue] = useState<string>(data.reason);
+  const [openForm, setOpenForm] = useState<boolean>(false);
 
-  const handleConfirm = async () => {
+  const updateStatus = async () => {
     const params = { _id: data._id, status, reason: value };
     await axios.put<{ post: Post }>('/posts/update/status', params);
-    onFetch();
-    onOpen(params);
+  };
+
+  const handleConfirm = async () => {
+    onOpen();
+
+    if (status === 'approved') {
+      setOpenForm(!openForm);
+    } else {
+      updateStatus();
+      onFetch();
+    }
   };
 
   const handleClick = (
@@ -81,58 +92,76 @@ const StatusModal: FC<StatusProps> = ({
 
   const handleClose = () => onOpen();
 
+  const handleForm = () => setOpenForm(!openForm);
+
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setValue(event.target.value);
   };
 
+  const handleSuccess = () => {
+    updateStatus();
+    handleForm();
+    onFetch();
+  };
+
   return (
     <div className={clsx(classes.root, className)} {...rest}>
-      <Dialog
-        open={open}
-        keepMounted
-        onClose={handleClose}
-        aria-labelledby="status-dialog"
-      >
-        <DialogTitle>Post Status</DialogTitle>
-        <DialogContent>
-          <ToggleButtonGroup
-            value={status}
-            exclusive
-            size="small"
-            onChange={handleClick}
-            aria-label="text alignment"
-          >
-            {buttons.map((item: Status, idx: number) => (
-              <ToggleButton
-                key={item.name + idx}
-                value={item.name}
-                className={classes.toggleBtn}
-              >
-                {item.text}
-              </ToggleButton>
-            ))}
-          </ToggleButtonGroup>
-          <TextField
-            value={value}
-            margin="dense"
-            type="text"
-            onChange={handleChange}
-            fullWidth
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={status === data.status}
-            color="primary"
-          >
-            Confirm
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {open && (
+        <Dialog
+          open={open}
+          keepMounted
+          onClose={handleClose}
+          aria-labelledby="status-dialog"
+        >
+          <DialogTitle>Post Status</DialogTitle>
+          <DialogContent>
+            <ToggleButtonGroup
+              value={status}
+              exclusive
+              size="small"
+              onChange={handleClick}
+              aria-label="text alignment"
+            >
+              {buttons.map((item: Status, idx: number) => (
+                <ToggleButton
+                  key={item.name + idx}
+                  value={item.name}
+                  className={classes.toggleBtn}
+                >
+                  {item.text}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+            <TextField
+              value={value}
+              margin="dense"
+              type="text"
+              onChange={handleChange}
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirm}
+              disabled={status === data.status}
+              color="primary"
+            >
+              Confirm
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+      {openForm && (
+        <StripeCheckout
+          open={openForm}
+          postId={data._id}
+          onOpen={handleForm}
+          onSuccess={handleSuccess}
+        />
+      )}
     </div>
   );
 };
