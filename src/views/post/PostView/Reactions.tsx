@@ -12,12 +12,14 @@ import {
 } from '@material-ui/core';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ShareIcon from '@material-ui/icons/Share';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
 import useAuth from 'src/hooks/useAuth';
 import { Bookmark } from 'src/types/bookmark';
 import { Post } from 'src/types/post';
 import { Theme } from 'src/theme';
+import StripeCheckout from 'src/components/PaymentIntent';
 
 interface ReactionsProps {
   className?: string;
@@ -75,6 +77,7 @@ const Reactions: FC<ReactionsProps> = ({
   const [isLiked, setLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(post.liked.count);
   const [disabled, setDisabled] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
     //@ts-ignore
@@ -120,6 +123,8 @@ const Reactions: FC<ReactionsProps> = ({
     onBookmarked(false);
     updateSaved();
   };
+
+  const handleOpen = (): void => setOpen(!open);
 
   return (
     <div className={clsx(classes.root, classes[className])} {...rest}>
@@ -198,11 +203,26 @@ const Reactions: FC<ReactionsProps> = ({
       </Box>
       <Box className={classes.iconBox}>
         <span>
+          <IconButton disabled={disabled} onClick={handleOpen}>
+            <AttachMoneyIcon fontSize="small" />
+          </IconButton>
+        </span>
+      </Box>
+      <Box className={classes.iconBox}>
+        <span>
           <IconButton disabled={disabled}>
             <ShareIcon fontSize="small" />
           </IconButton>
         </span>
       </Box>
+      {open && (
+        <StripeCheckout
+          open={open}
+          postId={post._id}
+          onOpen={handleOpen}
+          onSuccess={handleOpen}
+        />
+      )}
     </div>
   );
 };

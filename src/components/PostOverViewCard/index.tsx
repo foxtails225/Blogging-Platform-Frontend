@@ -90,7 +90,12 @@ const PostOverViewCard: FC<PostOverViewCardProps> = ({
           }
         />
         <Box px={3} pb={1} className={classes.title}>
-          <Link color="textPrimary" component={RouterLink} to={'/posts/public/' + post.slug} variant="h3">
+          <Link
+            color="textPrimary"
+            component={RouterLink}
+            to={'/posts/public/' + post.slug}
+            variant="h3"
+          >
             {post.title}
           </Link>
         </Box>

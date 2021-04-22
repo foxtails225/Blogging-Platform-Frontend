@@ -21,7 +21,7 @@ interface StripeCheckoutProps {
   postId: string;
   open: boolean;
   onOpen: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({

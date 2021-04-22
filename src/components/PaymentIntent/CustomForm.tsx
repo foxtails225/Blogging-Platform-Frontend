@@ -58,8 +58,8 @@ const CustomForm: FC<CustomFormProps> = ({
         <Grid container justify="center">
           <Grid item md={5}>
             <TextField
-              label="Email"
-              defaultValue={author.email}
+              label="Name"
+              defaultValue={author.name}
               InputProps={{
                 readOnly: true
               }}
@@ -68,8 +68,13 @@ const CustomForm: FC<CustomFormProps> = ({
           <Grid item md={5}>
             <TextField
               label="Amount"
+              type="number"
+              placeholder="Must be larger than 3"
+              value={amount}
               onChange={handleChange}
+              error={amount < 3}
               InputProps={{
+                inputProps: { min: 3 },
                 startAdornment: (
                   <InputAdornment position="start">$</InputAdornment>
                 )
@@ -82,7 +87,11 @@ const CustomForm: FC<CustomFormProps> = ({
         <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={handleSubmit} color="primary">
+        <Button
+          onClick={handleSubmit}
+          disabled={amount < 3 || !amount}
+          color="primary"
+        >
           Confirm
         </Button>
       </DialogActions>

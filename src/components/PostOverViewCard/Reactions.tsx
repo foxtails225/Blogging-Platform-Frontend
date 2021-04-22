@@ -10,9 +10,11 @@ import {
   makeStyles
 } from '@material-ui/core';
 import ShareIcon from '@material-ui/icons/Share';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from '../CustomIcon';
 import { Post } from 'src/types/post';
+import StripeCheckout from 'src/components/PaymentIntent';
 
 interface ReactionsProps {
   className?: string;
@@ -50,6 +52,7 @@ const Reactions: FC<ReactionsProps> = ({
   const classes = useStyles();
   const [isLiked, setLiked] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(post.liked.count);
+  const [open, setOpen] = useState<boolean>(false);
 
   const handleLike = (): void => {
     setLiked(true);
@@ -60,6 +63,8 @@ const Reactions: FC<ReactionsProps> = ({
     setLiked(false);
     setLikes(prevLikes => prevLikes - 1);
   };
+
+  const handleOpen = (): void => setOpen(!open);
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
@@ -97,10 +102,21 @@ const Reactions: FC<ReactionsProps> = ({
       <Typography color="textSecondary" variant="h6">
         {post.comments.length}
       </Typography>
+      <IconButton onClick={handleOpen}>
+        <AttachMoneyIcon fontSize="small" />
+      </IconButton>
       <Box flexGrow={1} />
       <IconButton>
         <ShareIcon fontSize="small" />
       </IconButton>
+      {open && (
+        <StripeCheckout
+          open={open}
+          postId={post._id}
+          onOpen={handleOpen}
+          onSuccess={handleOpen}
+        />
+      )}
     </div>
   );
 };

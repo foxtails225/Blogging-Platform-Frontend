@@ -14,7 +14,7 @@ import { ToggleButtonGroup, ToggleButton } from '@material-ui/lab';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { Post, PostStatus } from 'src/types/post';
-import StripeCheckout from 'src/components/PaymentIntent';
+import CustomForm from './CustomForm';
 
 interface Modal {
   _id: string;
@@ -155,7 +155,7 @@ const StatusModal: FC<StatusProps> = ({
         </Dialog>
       )}
       {openForm && (
-        <StripeCheckout
+        <CustomForm
           open={openForm}
           postId={data._id}
           onOpen={handleForm}
