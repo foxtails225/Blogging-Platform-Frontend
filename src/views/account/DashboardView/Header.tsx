@@ -109,7 +109,7 @@ const Header: FC<HeaderProps> = ({ className, ...rest }) => {
         : user.name;
     setName(value);
   }, [user]);
-
+  
   useEffect(() => {
     const getStatistics = async () => {
       try {

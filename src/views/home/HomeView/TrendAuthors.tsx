@@ -1,9 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import type { FC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
@@ -20,14 +15,19 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import type { Theme } from 'src/theme';
-import axios from 'src/utils/axios-mock';
+import axios from 'src/utils/axios';
+import { Theme } from 'src/theme';
+import { User } from 'src/types/user';
 import getInitials from 'src/utils/getInitials';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import type { CustomerActivity as CustomerActivityType } from 'src/types/reports';
 
 interface TrendAuthorsProps {
   className?: string;
+}
+
+interface TopAuthor {
+  _id: string;
+  author: User;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -44,75 +44,68 @@ const useStyles = makeStyles((theme: Theme) => ({
 const TrendAuthors: FC<TrendAuthorsProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [activities, setActivities] = useState<CustomerActivityType[]>([]);
+  const [authors, setAuhtors] = useState<TopAuthor[]>([]);
 
-  const getActivities = useCallback(async () => {
+  const getAurhtors = useCallback(async () => {
     try {
-      const response = await axios.get<{ activities: CustomerActivityType[]; }>('/api/reports/customer-activity');
+      const response = await axios.post<{ users: TopAuthor[] }>('/users/top', {
+        page: 0
+      });
 
       if (isMountedRef.current) {
-        setActivities(response.data.activities);
+        setAuhtors(response.data.users);
       }
     } catch (err) {
-      console.error(err);
+      setAuhtors([]);
     }
   }, [isMountedRef]);
 
   useEffect(() => {
-    getActivities();
-  }, [getActivities]);
+    getAurhtors();
+  }, [getAurhtors]);
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
+    <Card className={clsx(classes.root, className)} {...rest}>
       <CardHeader title="Dank Authors" />
       <Divider />
       <List disablePadding>
-        {activities.map((activity, i) => (
-          <ListItem
-            divider={i < activities.length - 1}
-            key={activity.id}
-          >
+        {authors.map((author: TopAuthor, i) => (
+          <ListItem divider={i < authors.length - 1} key={author._id}>
             <ListItemAvatar>
               <Avatar
                 alt="Customer"
                 component={RouterLink}
-                src={activity.customer.avatar}
-                to="#"
+                src={author.author.avatar}
+                to={'/users/' + author.author.name}
               >
-                {getInitials(activity.customer.name)}
+                {getInitials(author.author.name)}
               </Avatar>
             </ListItemAvatar>
             <ListItemText
               disableTypography
-              primary={(
+              primary={
                 <Link
                   color="textPrimary"
                   component={RouterLink}
-                  to="#"
+                  to={'/users/' + author.author.name}
                   underline="none"
                   variant="h6"
                 >
-                  {activity.customer.name}
+                  {author.author.name}
                 </Link>
-              )}
-              secondary={(
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                >
-                  {activity.description}
+              }
+              secondary={
+                <Typography variant="body2" color="textSecondary">
+                  {author.author.bio}
                 </Typography>
-              )}
+              }
             />
           </ListItem>
         ))}
       </List>
     </Card>
   );
-}
+};
 
 TrendAuthors.propTypes = {
   className: PropTypes.string

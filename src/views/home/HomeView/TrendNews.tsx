@@ -1,19 +1,16 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import type { FC } from 'react';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
-import numeral from 'numeral';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
+import moment from 'moment';
 import {
+  Avatar,
   Box,
   Button,
   Card,
   CardHeader,
+  Link,
   Divider,
   Table,
   TableBody,
@@ -24,10 +21,10 @@ import {
   makeStyles
 } from '@material-ui/core';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
-import axios from 'src/utils/axios-mock';
+import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import type { Theme } from 'src/theme';
-import type { Product } from 'src/types/reports';
+import { Theme } from 'src/theme';
+import { PostWithAuthor } from 'src/types/post';
 
 interface TrendNewsProps {
   className?: string;
@@ -46,23 +43,29 @@ const useStyles = makeStyles((theme: Theme) => ({
   value: {
     color: colors.green[600],
     fontWeight: theme.typography.fontWeightMedium
+  },
+  date: {
+    fontSize: '0.8rem'
   }
 }));
 
 const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
 
   const getProducts = useCallback(async () => {
     try {
-      const response = await axios.get<{ products: Product[]; }>('/api/reports/profitable-products');
+      const response = await axios.post<{ posts: PostWithAuthor[] }>(
+        '/posts/all',
+        { page: 0 }
+      );
 
       if (isMountedRef.current) {
-        setProducts(response.data.products);
+        setPosts(response.data.posts);
       }
     } catch (err) {
-      console.error(err);
+      setPosts([]);
     }
   }, [isMountedRef]);
 
@@ -71,68 +74,46 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
   }, [getProducts]);
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
-      <CardHeader title="Dank News"/>
+    <Card className={clsx(classes.root, className)} {...rest}>
+      <CardHeader title="Dank News" />
       <Divider />
       <PerfectScrollbar>
         <Box>
           <Table>
             <TableBody>
-              {products.map((product) => (
-                <TableRow
-                  hover
-                  key={product.id}
-                >
+              {posts.map((post: PostWithAuthor, idx) => (
+                <TableRow hover key={post._id}>
                   <TableCell>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                    >
-                      <img
-                        alt="Product"
-                        className={classes.image}
-                        src={product.image}
-                      />
+                    <Box display="flex" alignItems="center">
+                      <Avatar alt="PostNumber">{idx + 1}</Avatar>
                       <Box ml={2}>
-                        <Typography
-                          variant="h6"
+                        <Link
                           color="textPrimary"
+                          component={RouterLink}
+                          to={'/posts/public/' + post.slug}
+                          variant="h6"
                         >
-                          {product.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
+                          {post.title}
+                        </Link>
+                        <Link
                           color="textSecondary"
+                          component={RouterLink}
+                          to={'/users/' + post.author.name}
+                          variant="body2"
+                          display="block"
                         >
-                          <span className={classes.subscriptions}>
-                            {numeral(product.subscriptions).format('0,0')}
-                          </span>
-                          {' '}
-                          Active
-                        </Typography>
+                          {post.author.name}
+                        </Link>
                       </Box>
                     </Box>
                   </TableCell>
                   <TableCell>
                     <Typography
-                      variant="h6"
-                      color="textPrimary"
-                    >
-                      Price
-                    </Typography>
-                    <Typography
-                      noWrap
                       variant="body2"
                       color="textSecondary"
+                      className={classes.date}
                     >
-                      <span className={classes.value}>
-                        {numeral(product.price).format(`${product.currency}0,0.00`)}
-                      </span>
-                      {' '}
-                      monthly
+                      {moment(post.createdAt).fromNow()}
                     </Typography>
                   </TableCell>
                 </TableRow>
@@ -141,11 +122,7 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
           </Table>
         </Box>
       </PerfectScrollbar>
-      <Box
-        p={2}
-        display="flex"
-        justifyContent="flex-end"
-      >
+      <Box p={2} display="flex" justifyContent="flex-end">
         <Button
           component={RouterLink}
           size="small"
@@ -157,7 +134,7 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
       </Box>
     </Card>
   );
-}
+};
 
 TrendNews.propTypes = {
   className: PropTypes.string
