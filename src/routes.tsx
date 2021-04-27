@@ -91,6 +91,12 @@ const routes: Routes = [
   {
     exact: true,
     layout: MainLayout,
+    path: '/posts/all',
+    component: lazy(() => import('src/views/post/PostAllView'))
+  },
+  {
+    exact: true,
+    layout: MainLayout,
     path: '/symbol/:id',
     component: lazy(() => import('src/views/symbol/SymbolView'))
   },

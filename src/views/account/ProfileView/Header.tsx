@@ -102,13 +102,15 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
         className={classes.cover}
         style={{ backgroundImage: `url(${profile.cover})` }}
       >
-        <Button
-          className={classes.changeButton}
-          variant="contained"
-          startIcon={<AddPhotoIcon />}
-        >
-          Change Cover
-        </Button>
+        {!disable && (
+          <Button
+            className={classes.changeButton}
+            variant="contained"
+            startIcon={<AddPhotoIcon />}
+          >
+            Change Cover
+          </Button>
+        )}
       </div>
       <Container maxWidth="lg">
         <Box position="relative" mt={1} display="flex" alignItems="center">
