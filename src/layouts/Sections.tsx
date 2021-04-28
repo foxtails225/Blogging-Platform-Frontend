@@ -1,8 +1,7 @@
-import { FC, ReactNode } from 'react';
-import {
-  // User as UserIcon,
-  PieChart as PieChartIcon
-} from 'react-feather';
+import React, { FC, ReactNode } from 'react';
+import { Chip } from '@material-ui/core';
+import { User as UserIcon } from 'react-feather';
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 
 export interface NavItemProps {
   children?: ReactNode;
@@ -33,10 +32,10 @@ interface Section {
 
 export const sections: Section[] = [
   {
-    title: 'Dashboard',
-    icon: PieChartIcon,
+    title: 'Home',
+    icon: HomeOutlinedIcon,
     href: '/'
-  }
+  },
   // TODO: Remove in initial release version.
   // {
   //   title: 'Products',
@@ -53,24 +52,24 @@ export const sections: Section[] = [
   //     }
   //   ]
   // },
-  // {
-  //   title: 'Me',
-  //   href: '/account',
-  //   icon: UserIcon,
-  //   items: [
-  //     {
-  //       title: 'Setting',
-  //       href: '/account/setting'
-  //     },
-  //     {
-  //       title: 'Profile',
-  //       href: '/account/profile',
-  //       info: () => <Chip color="secondary" size="small" label="Updated" />
-  //     },
-  //     {
-  //       title: 'Dashboard',
-  //       href: '/account/dashboard',
-  //     }
-  //   ]
-  // }
+  {
+    title: 'Me',
+    href: '/account',
+    icon: UserIcon,
+    items: [
+      {
+        title: 'Setting',
+        href: '/account/setting'
+      },
+      {
+        title: 'Profile',
+        href: '/account/profile',
+        info: () => <Chip color="secondary" size="small" label="Updated" />
+      },
+      {
+        title: 'Dashboard',
+        href: '/account/dashboard'
+      }
+    ]
+  }
 ];

@@ -111,16 +111,16 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
   const content = (
     <Box height="100%" display="flex" flexDirection="column">
       <PerfectScrollbar options={{ suppressScrollX: true }}>
+        <Box p={2} display="flex" justifyContent="center">
+          <RouterLink to="/">
+            <Logo />
+          </RouterLink>
+        </Box>
         {isAuthenticated && (
           <>
-            <Box p={2} display="flex" justifyContent="center">
-              <RouterLink to="/">
-                <Logo />
-              </RouterLink>
-            </Box>
             <Box p={2}>
               <Box display="flex" justifyContent="center">
-                <RouterLink to="/app/account">
+                <RouterLink to="/account/profile">
                   <Avatar
                     alt="User"
                     className={classes.avatar}
@@ -131,7 +131,7 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
               <Box mt={2} textAlign="center">
                 <Link
                   component={RouterLink}
-                  to="/app/account"
+                  to="/account/profile"
                   variant="h5"
                   color="textPrimary"
                   underline="none"

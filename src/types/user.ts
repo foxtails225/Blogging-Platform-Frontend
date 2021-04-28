@@ -24,6 +24,8 @@ export interface User {
   status: boolean;
   reason: string;
   stripeId: string;
+  following: string[];
+  followers: string[];
   createdAt: Date;
   updatedAt: Date;
 }
