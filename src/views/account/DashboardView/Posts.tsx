@@ -24,6 +24,7 @@ import GenericMoreButton from 'src/components/GenericMoreButton';
 import axios from 'src/utils/axios';
 import { Post, PostStatus } from 'src/types/post';
 import { User } from 'src/types/user';
+import useAuth from 'src/hooks/useAuth';
 
 interface PostsProps {
   className?: string;
@@ -53,6 +54,7 @@ const useStyles = makeStyles(() => ({
 
 const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
+  const { user } = useAuth();
   const [page, setPage] = useState<number>(0);
   const [limit, setLimit] = useState<number>(5);
   const [count, setCount] = useState<number>(0);
@@ -64,7 +66,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
     const getPosts = async () => {
       try {
         const sortBy = { [order]: orderBy === 'desc' ? -1 : 1 };
-        const params = { email: profile.email, page, sortBy, limit };
+        const params = { email: profile.email, page, sortBy, limit, user };
         const response = await axios.post<{
           posts: Post[];
           count: number;
@@ -78,7 +80,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
       }
     };
     getPosts();
-  }, [page, profile.email, order, orderBy, limit]);
+  }, [page, profile.email, order, orderBy, limit, user]);
 
   const createSortHandler = (event): void => {
     const value = orderBy !== 'desc' ? 'desc' : 'asc';
