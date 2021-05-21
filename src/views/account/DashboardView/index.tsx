@@ -19,19 +19,21 @@ import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import Page from 'src/components/Page';
 import { User } from 'src/types/user';
 import Header from './Header';
-import Notifications from './Notifications';
 import Posts from './Posts';
 import Reading from './Reading';
 import Archive from './Archive';
+import Authors from './Authors';
+import Followers from './Followers';
+import Payment from './Payment';
 
 const tabs = [
   { value: 'posts', label: 'posts' },
-  { value: 'reading', label: 'dank read' },
+  { value: 'reading', label: 'dank reads' },
   { value: 'archive', label: 'Archive' },
   { value: 'payment', label: 'payment' },
-  { value: 'fowllers', label: 'followers' },
-  { value: 'tags', label: 'following tags' },
-  { value: 'authors', label: 'following Authors' }
+  { value: 'followers', label: 'followers' },
+  { value: 'tags', label: 'tickers followed' },
+  { value: 'authors', label: 'Authors Followed' }
 ];
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -45,7 +47,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const OverviewView: FC = () => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [currentTab, setCurrentTab] = useState<string>('posts');
+  const [currentTab, setCurrentTab] = useState<string>('payment');
   const [profile, setProfile] = useState<User | null>(null);
 
   const handleTabsChange = (event: ChangeEvent, value: string): void => {
@@ -73,9 +75,6 @@ const OverviewView: FC = () => {
       <Container maxWidth="lg">
         <Header />
         <Box mt={6}>
-          <Notifications />
-        </Box>
-        <Box mt={6}>
           <Tabs
             onChange={handleTabsChange}
             scrollButtons="auto"
@@ -90,9 +89,12 @@ const OverviewView: FC = () => {
         </Box>
         <Divider />
         <Box py={3} pb={6}>
-          {currentTab === 'reading' && <Reading profile={profile} />}
-          {currentTab === 'archive' && <Archive profile={profile} />}
           {currentTab === 'posts' && <Posts profile={profile} />}
+          {currentTab === 'reading' && <Reading profile={profile} />}
+          {currentTab === 'authors' && <Authors profile={profile} />}
+          {currentTab === 'followers' && <Followers profile={profile} />}
+          {currentTab === 'archive' && <Archive profile={profile} />}
+          {currentTab === 'payment' && <Payment profile={profile} />}
         </Box>
       </Container>
     </Page>

@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {
@@ -12,10 +11,10 @@ import {
   CardHeader,
   Link,
   Divider,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
   Typography,
   colors,
   makeStyles
@@ -74,65 +73,60 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
   }, [getProducts]);
 
   return (
-    <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Dank News" />
-      <Divider />
-      <PerfectScrollbar>
-        <Box>
-          <Table>
-            <TableBody>
-              {posts.map((post: PostWithAuthor, idx) => (
-                <TableRow hover key={post._id}>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Avatar alt="PostNumber">{idx + 1}</Avatar>
-                      <Box ml={2}>
-                        <Link
-                          color="textPrimary"
-                          component={RouterLink}
-                          to={'/posts/public/' + post.slug}
-                          variant="h6"
-                        >
-                          {post.title}
-                        </Link>
-                        <Link
-                          color="textSecondary"
-                          component={RouterLink}
-                          to={'/users/' + post.author.name}
-                          variant="body2"
-                          display="block"
-                        >
-                          {post.author.name}
-                        </Link>
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      className={classes.date}
-                    >
-                      {moment(post.createdAt).fromNow()}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+    <>
+      <Card className={clsx(classes.root, className)} {...rest}>
+        <CardHeader title="Dank Reads" />
+        <Divider />
+        <List disablePadding>
+          {posts.map((post: PostWithAuthor, idx) => (
+            <ListItem divider={idx < posts.length} key={post._id}>
+              <ListItemAvatar>
+                <Avatar alt="PostNumber">{idx + 1}</Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Link
+                    color="textPrimary"
+                    component={RouterLink}
+                    to={'/posts/public/' + post.slug}
+                    underline="none"
+                    variant="h6"
+                  >
+                    {post.title}
+                  </Link>
+                }
+                secondary={
+                  <Link
+                    color="textSecondary"
+                    component={RouterLink}
+                    to={'/users/' + post.author.name}
+                    underline="none"
+                    variant="body2"
+                    display="block"
+                  >
+                    {post.author.name}
+                  </Link>
+                }
+              />
+              <Typography color="textSecondary" noWrap variant="caption">
+                {moment(post.createdAt).fromNow()}
+              </Typography>
+            </ListItem>
+          ))}
+        </List>
+        <Box p={2} display="flex" justifyContent="flex-end">
+          <Button
+            component={RouterLink}
+            size="small"
+            to={'/posts/all'}
+            endIcon={<NavigateNextIcon />}
+          >
+            See all
+          </Button>
         </Box>
-      </PerfectScrollbar>
-      <Box p={2} display="flex" justifyContent="flex-end">
-        <Button
-          component={RouterLink}
-          size="small"
-          to="#"
-          endIcon={<NavigateNextIcon />}
-        >
-          See all
-        </Button>
-      </Box>
-    </Card>
+      </Card>
+    </>
   );
 };
 

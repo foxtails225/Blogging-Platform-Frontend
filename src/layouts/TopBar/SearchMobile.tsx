@@ -111,7 +111,14 @@ const Search: FC = () => {
                   )
                 }}
                 onChange={event => setValue(event.target.value)}
-                placeholder="Search people &amp; places"
+                onKeyPress={e => {
+                  if (e.key === 'Enter') {
+                    //@ts-ignore
+                    setValue(e.target.value);
+                    handleSearch();
+                  }
+                }}
+                placeholder="Search Tickers"
                 value={value}
                 variant="outlined"
               />

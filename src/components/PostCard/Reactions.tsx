@@ -12,7 +12,6 @@ import {
 } from '@material-ui/core';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import FavoriteBorderIcon from '@material-ui/icons/FavoriteBorder';
-import ShareIcon from '@material-ui/icons/Share';
 import type { Post } from 'src/types/social';
 
 interface ReactionsProps {
@@ -73,9 +72,7 @@ const Reactions: FC<ReactionsProps> = ({ className, post, ...rest }) => {
         {likes}
       </Typography>
       <Box flexGrow={1} />
-      <IconButton>
-        <ShareIcon fontSize="small" />
-      </IconButton>
+     
     </div>
   );
 };

@@ -11,7 +11,6 @@ import {
   makeStyles
 } from '@material-ui/core';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
-import ShareIcon from '@material-ui/icons/Share';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
@@ -39,6 +38,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     float: 'left',
     top: '45vh',
     left: '10vw'
+  },
+  reaction: {
+    [theme.breakpoints.down('md')]: {
+      paddingRight: theme.spacing(5)
+    }
   },
   likedButton: {
     color: colors.red[600]
@@ -127,7 +131,14 @@ const Reactions: FC<ReactionsProps> = ({
   const handleOpen = (): void => setOpen(!open);
 
   return (
-    <div className={clsx(classes.root, classes[className])} {...rest}>
+    <div
+      className={clsx(
+        classes.root,
+        classes[className],
+        className === 'div' && classes.reaction
+      )}
+      {...rest}
+    >
       {isLiked ? (
         <Tooltip
           title="Unlike"
@@ -205,13 +216,6 @@ const Reactions: FC<ReactionsProps> = ({
         <span>
           <IconButton disabled={disabled} onClick={handleOpen}>
             <AttachMoneyIcon fontSize="small" />
-          </IconButton>
-        </span>
-      </Box>
-      <Box className={classes.iconBox}>
-        <span>
-          <IconButton disabled={disabled}>
-            <ShareIcon fontSize="small" />
           </IconButton>
         </span>
       </Box>

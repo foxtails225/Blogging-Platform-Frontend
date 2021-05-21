@@ -15,14 +15,14 @@ import {
   makeStyles
 } from '@material-ui/core';
 import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import { Post } from 'src/types/post';
+import { PostWithAuthor } from 'src/types/post';
 import Reactions from './Reactions';
 import { Theme } from 'src/theme';
 
 interface PostOverViewCardProps {
   className?: string;
   author: boolean;
-  post: Post;
+  post: PostWithAuthor;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({

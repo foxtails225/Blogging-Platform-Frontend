@@ -18,6 +18,7 @@ export interface User {
   lastName: string;
   bio: string;
   lastLoggedIn: Date;
+  banned: Date;
   tier: string;
   role: string;
   isPublic: boolean;

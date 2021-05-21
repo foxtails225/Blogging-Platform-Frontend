@@ -8,16 +8,15 @@ import {
   Button,
   Container,
   Hidden,
-  IconButton,
-  Tooltip,
   Typography,
   colors,
   makeStyles
 } from '@material-ui/core';
-import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
-import EditIcon from '@material-ui/icons/Edit';
+// import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
+import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { User } from 'src/types/user';
+import useAuth from 'src/hooks/useAuth';
 
 interface HeaderProps {
   className?: string;
@@ -89,12 +88,28 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
+  const { user } = useAuth();
   const location = useLocation();
+  const [isFollow, setIsFollow] = useState(false);
   const [disable, setDisable] = useState(false);
 
   useEffect(() => {
-    setDisable(location.pathname !== '/account/profile');
-  }, [location.pathname]);
+    const follow =
+      profile.followers && user && profile.followers.includes(user._id);
+    const isDisable = user
+      ? user._id !== profile._id
+      : location.pathname !== '/account/profile';
+
+    setDisable(isDisable);
+    setIsFollow(follow);
+    //eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname, profile]);
+
+  const handleFollow = async () => {
+    const params = { userId: profile._id, isFollow };
+    await axios.put<{ user: User }>(`/account/follow`, params);
+    setIsFollow(!isFollow);
+  };
 
   return (
     <div className={clsx(classes.root, className)} {...rest}>
@@ -102,7 +117,7 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
         className={classes.cover}
         style={{ backgroundImage: `url(${profile.cover})` }}
       >
-        {!disable && (
+        {/* {!disable && (
           <Button
             className={classes.changeButton}
             variant="contained"
@@ -110,7 +125,7 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
           >
             Change Cover
           </Button>
-        )}
+        )} */}
       </div>
       <Container maxWidth="lg">
         <Box position="relative" mt={1} display="flex" alignItems="center">
@@ -130,27 +145,30 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
             </Hidden>
           </Box>
           <Box flexGrow={1} />
-          {!disable && (
+          {!disable ? (
+            <Button
+              color="secondary"
+              component={RouterLink}
+              size="small"
+              to="/account/setting"
+              variant="contained"
+              className={classes.action}
+            >
+              Edit Profile
+            </Button>
+          ) : (
             <>
-              <Hidden smDown>
+              {user && (
                 <Button
                   color="secondary"
-                  component={RouterLink}
                   size="small"
-                  to="/account/setting"
                   variant="contained"
                   className={classes.action}
+                  onClick={handleFollow}
                 >
-                  Edit Profile
+                  {isFollow ? 'Unfollow' : 'Follow'}
                 </Button>
-              </Hidden>
-              <Hidden mdUp>
-                <Tooltip title="More options">
-                  <IconButton className={classes.action}>
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Hidden>
+              )}
             </>
           )}
         </Box>

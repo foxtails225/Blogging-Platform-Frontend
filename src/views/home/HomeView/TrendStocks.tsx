@@ -1,12 +1,7 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState
-} from 'react';
-import type { FC } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
+import { FC } from 'react';
+import { Link as RouterLink, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
-import moment from 'moment';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -18,14 +13,15 @@ import {
   ListItem,
   ListItemAvatar,
   ListItemText,
+  Chip,
   Typography,
+  colors,
   makeStyles
 } from '@material-ui/core';
-import type { Theme } from 'src/theme';
-import axios from 'src/utils/axios-mock';
-import getInitials from 'src/utils/getInitials';
+import { Theme } from 'src/theme';
+import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import type { CustomerActivity as CustomerActivityType } from 'src/types/reports';
+import { Quote } from 'src/types/stock';
 
 interface TrendStocksProps {
   className?: string;
@@ -45,14 +41,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [activities, setActivities] = useState<CustomerActivityType[]>([]);
+  const history = useHistory();
+  const [quotes, setQuotes] = useState<Quote[]>([]);
 
-  const getActivities = useCallback(async () => {
+  const getQuotes = useCallback(async () => {
     try {
-      const response = await axios.get<{ activities: CustomerActivityType[]; }>('/api/reports/customer-activity');
+      const response = await axios.get<{ quotes: Quote[] }>('/stock/top');
 
       if (isMountedRef.current) {
-        setActivities(response.data.activities);
+        setQuotes(response.data.quotes);
       }
     } catch (err) {
       console.error(err);
@@ -60,67 +57,63 @@ const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
   }, [isMountedRef]);
 
   useEffect(() => {
-    getActivities();
-  }, [getActivities]);
+    getQuotes();
+  }, [getQuotes]);
+
+  const handleChip = (route: string): void => history.push(`/symbol/${route}`);
 
   return (
-    <Card
-      className={clsx(classes.root, className)}
-      {...rest}
-    >
-      <CardHeader title="Dank Stocks"/>
+    <Card className={clsx(classes.root, className)} {...rest}>
+      <CardHeader title="Dank Stocks" />
       <Divider />
       <List disablePadding>
-        {activities.map((activity, i) => (
-          <ListItem
-            divider={i < activities.length - 1}
-            key={activity.id}
-          >
+        {quotes.map((quote: Quote, i) => (
+          <ListItem divider={i < quotes.length - 1} key={i}>
             <ListItemAvatar>
-              <Avatar
-                alt="Customer"
-                component={RouterLink}
-                src={activity.customer.avatar}
-                to="#"
-              >
-                {getInitials(activity.customer.name)}
-              </Avatar>
+              <Avatar alt="QuoteNumber">{i + 1}</Avatar>
             </ListItemAvatar>
             <ListItemText
               disableTypography
-              primary={(
+              primary={
                 <Link
                   color="textPrimary"
                   component={RouterLink}
-                  to="#"
+                  to={`/symbol/${quote.symbol}`}
                   underline="none"
                   variant="h6"
                 >
-                  {activity.customer.name}
+                  {quote.companyName}
                 </Link>
-              )}
-              secondary={(
+              }
+              secondary={
                 <Typography
                   variant="body2"
                   color="textSecondary"
+                  style={{
+                    color:
+                      quote.changePercent > 0
+                        ? colors.green[300]
+                        : colors.red[300]
+                  }}
                 >
-                  {activity.description}
+                  {`$${quote.latestPrice} ${
+                    quote.changePercent > 0 ? '+' : ''
+                  } ${quote.change} (${quote.changePercent}%)`}
                 </Typography>
-              )}
+              }
             />
-            <Typography
-              color="textSecondary"
-              noWrap
-              variant="caption"
-            >
-              {moment(activity.createdAt).fromNow()}
-            </Typography>
+            <Chip
+              variant="outlined"
+              clickable={true}
+              label={quote.symbol}
+              onClick={() => handleChip(quote.symbol)}
+            />
           </ListItem>
         ))}
       </List>
     </Card>
   );
-}
+};
 
 TrendStocks.propTypes = {
   className: PropTypes.string

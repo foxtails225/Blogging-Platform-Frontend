@@ -15,10 +15,14 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import {
+  ToggleButtonGroup,
+  ToggleButton,
+  Autocomplete
+} from '@material-ui/lab';
 import { Plus as PlusIcon } from 'react-feather';
 import { Theme } from 'src/theme';
-import { Post, Tag } from 'src/types/post';
+import { Picker, Post, Tag } from 'src/types/post';
 
 interface PostDetailsProps {
   className?: string;
@@ -26,6 +30,18 @@ interface PostDetailsProps {
   onPost?: (param: any) => void;
   onNext?: () => void;
 }
+
+interface Status {
+  name: Picker;
+  text: string;
+}
+
+const buttons: Status[] = [
+  { name: 'bullish', text: 'Bullish' },
+  { name: 'bearish', text: 'Bearish' },
+  { name: 'neutral', text: 'Neutral' },
+  { name: 'no_opinion', text: 'No Opinion' }
+];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
@@ -41,12 +57,23 @@ const useStyles = makeStyles((theme: Theme) => ({
     '& + &': {
       marginLeft: theme.spacing(2)
     }
+  },
+  toggleBtn: {
+    marginTop: theme.spacing(3),
+    '&.MuiToggleButton-root': {
+      color: theme.palette.text.primary
+    },
+    '&.Mui-selected': {
+      backgroundColor: theme.palette.secondary.main,
+      color: theme.palette.common.white
+    }
   }
 }));
 
 const initialTag: Tag = {
   symbol: '',
-  securityName: ''
+  securityName: '',
+  main: false
 };
 
 const PostDetails: FC<PostDetailsProps> = ({
@@ -67,7 +94,11 @@ const PostDetails: FC<PostDetailsProps> = ({
 
       if (response.data && response.data.length > 0) {
         let data = response.data.map(item => {
-          return { symbol: item.symbol, securityName: item.securityName };
+          return {
+            symbol: item.symbol,
+            securityName: item.securityName,
+            main: false
+          };
         });
         setOptions(data);
       }
@@ -77,7 +108,7 @@ const PostDetails: FC<PostDetailsProps> = ({
 
   const handleChangeTag = (event, value) => {
     const val = value.split(': ');
-    setTag({ symbol: val[0], securityName: val[1] });
+    setTag({ symbol: val[0], securityName: val[1], main: false });
   };
 
   return (
@@ -85,6 +116,7 @@ const PostDetails: FC<PostDetailsProps> = ({
       initialValues={{
         title: post.title || '',
         tags: post.tags || [],
+        picker: post.picker || buttons[0].name,
         submit: null
       }}
       validationSchema={Yup.object().shape({
@@ -92,12 +124,17 @@ const PostDetails: FC<PostDetailsProps> = ({
           .min(3, 'Must be at least 3 characters')
           .max(255)
           .required('Required'),
+        picker: Yup.string().required('Required'),
         tags: Yup.array().required()
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          console.log(values.tags);
-          onPost({ title: values.title.trim(), tags: values.tags });
+          console.log(values)
+          onPost({
+            title: values.title.trim(),
+            tags: values.tags,
+            picker: values.picker
+          });
           setStatus({ success: true });
           setSubmitting(false);
 
@@ -153,6 +190,28 @@ const PostDetails: FC<PostDetailsProps> = ({
               onChange={handleChange}
               variant="outlined"
             />
+            <ToggleButtonGroup
+              value={values.picker}
+              exclusive
+              size="small"
+              onChange={(
+                event: React.MouseEvent<HTMLElement>,
+                newAlignment: string | null
+              ) => {
+                setFieldValue('picker', newAlignment);
+              }}
+              aria-label="text alignment"
+            >
+              {buttons.map((item: Status, idx: number) => (
+                <ToggleButton
+                  key={item.name + idx}
+                  value={item.name}
+                  className={classes.toggleBtn}
+                >
+                  {item.text}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
             <Box mt={3} display="flex" alignItems="center">
               <Autocomplete
                 freeSolo
@@ -163,10 +222,13 @@ const PostDetails: FC<PostDetailsProps> = ({
                 onChange={handleChangeTag}
                 onKeyPress={e => {
                   if (e.key === 'Enter') {
+                    let tagValue: Tag = tag;
                     if (tag.symbol === '' || tag.securityName === '') {
                       return;
                     }
-                    setFieldValue('tags', [...values.tags, tag]);
+
+                    if (values.tags.length === 0) tagValue.main = true;
+                    setFieldValue('tags', [...values.tags, tagValue]);
                     setTag(initialTag);
                     setSearch('');
                   }
@@ -177,7 +239,7 @@ const PostDetails: FC<PostDetailsProps> = ({
                     {...params}
                     fullWidth
                     name="tags"
-                    label="Article Tags"
+                    label="Ticker"
                     placeholder="Please choose at least one tag."
                     variant="outlined"
                     InputProps={{
@@ -191,10 +253,13 @@ const PostDetails: FC<PostDetailsProps> = ({
               <IconButton
                 className={classes.addTab}
                 onClick={() => {
+                  let tagValue: Tag = tag;
                   if (tag.symbol === '' || tag.securityName === '') {
                     return;
                   }
-                  setFieldValue('tags', [...values.tags, tag]);
+
+                  if (values.tags.length === 0) tagValue.main = true;
+                  setFieldValue('tags', [...values.tags, tagValue]);
                   setTag(initialTag);
                   setSearch('');
                 }}
@@ -207,11 +272,14 @@ const PostDetails: FC<PostDetailsProps> = ({
             <Box mt={2}>
               {values.tags.map((tag, i) => (
                 <Chip
-                  variant="outlined"
+                  variant={tag.main ? 'default' : 'outlined'}
                   key={i}
                   label={tag.symbol}
                   className={classes.tag}
                   onDelete={() => {
+                    if (values.tags.length > 1 && tag.main)
+                      values.tags[1].main = true;
+
                     const newTags = values.tags.filter(
                       t =>
                         t.symbol !== tag.symbol &&
@@ -219,6 +287,7 @@ const PostDetails: FC<PostDetailsProps> = ({
                     );
                     setFieldValue('tags', newTags);
                   }}
+                  color={tag.main ? 'secondary' : 'default'}
                 />
               ))}
             </Box>

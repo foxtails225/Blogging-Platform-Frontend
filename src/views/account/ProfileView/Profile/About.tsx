@@ -79,7 +79,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
 
   useEffect(() => {
     const disable = user && user.email !== profile.email;
-    setDisabled(disable);
+    setDisabled(disable ?? true);
   }, [user, profile]);
 
   const handleClick = () => history.push('/posts/new');
@@ -149,7 +149,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={`${status.tags} tag followed`}
+                  primary={`${status.tags} tickers followed`}
                   primaryTypographyProps={{
                     variant: 'body2',
                     color: 'textSecondary'

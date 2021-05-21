@@ -10,14 +10,17 @@ import {
   makeStyles,
   colors
 } from '@material-ui/core';
+import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { User } from 'src/types/user';
+import useAuth from 'src/hooks/useAuth';
 
 interface CheckoutFormProps {
   className?: string;
   open: boolean;
   secret: string;
   author: User;
+  amount: number;
   onOpen: () => void;
   onBack: () => void;
   onSuccess: () => void;
@@ -50,11 +53,13 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
   open,
   author,
   secret,
+  amount,
   onOpen,
   onBack,
   onSuccess,
   ...rest
 }) => {
+  const { user } = useAuth();
   const stripe = useStripe();
   const elements = useElements();
   const classes = useStyles();
@@ -88,6 +93,24 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
         // execution. Set up a webhook or plugin to listen for the
         // payment_intent.succeeded event that handles any business critical
         // post-payment actions.
+        await axios.post<{ notification: Notification }>(
+          '/notifications/create',
+          {
+            user: author._id,
+            type: 'tips_success',
+            title: `New payment received`,
+            description: `You got the new tips. You received $${amount} from ${user.name}`,
+            isRead: false,
+            url: '#'
+          }
+        );
+        await axios.post('/transactions/create', {
+          user: author._id,
+          client: user._id,
+          amount: (amount * 5) / 4,
+          fee: amount / 4,
+          type: 'tips'
+        });
         onSuccess();
       }
     }

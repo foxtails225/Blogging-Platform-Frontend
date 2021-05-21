@@ -64,7 +64,7 @@ const Search: FC = () => {
             {...params}
             fullWidth
             className={classes.root}
-            placeholder="Search stock"
+            placeholder="Search Ticker"
             variant="outlined"
             size="small"
             InputProps={{

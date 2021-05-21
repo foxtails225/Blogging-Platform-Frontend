@@ -136,6 +136,11 @@ const routes: Routes = [
       },
       {
         exact: true,
+        path: '/account/notification',
+        component: lazy(() => import('src/views/account/NotificationView'))
+      },
+      {
+        exact: true,
         path: '/user',
         component: () => <Redirect to="/user/profile" />
       },

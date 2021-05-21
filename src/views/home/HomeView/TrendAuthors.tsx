@@ -32,13 +32,6 @@ interface TopAuthor {
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
-  item: {
-    padding: theme.spacing(3),
-    flexGrow: 1,
-    '&:first-of-type': {
-      borderRight: `1px solid ${theme.palette.divider}`
-    }
-  }
 }));
 
 const TrendAuthors: FC<TrendAuthorsProps> = ({ className, ...rest }) => {

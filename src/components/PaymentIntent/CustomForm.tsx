@@ -19,7 +19,7 @@ interface CustomFormProps {
   open: boolean;
   author: User;
   onOpen: () => void;
-  onNext: (secret: string) => void;
+  onNext: (secret: string, amount: number) => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -44,7 +44,7 @@ const CustomForm: FC<CustomFormProps> = ({
       params
     );
     if (response.data) {
-      onNext(response.data.secret);
+      onNext(response.data.secret, (amount * 4) / 5);
     }
   };
 

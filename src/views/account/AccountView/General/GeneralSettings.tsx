@@ -13,9 +13,7 @@ import {
   Divider,
   FormHelperText,
   Grid,
-  Switch,
   TextField,
-  Typography,
   makeStyles
 } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
@@ -60,11 +58,8 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
       initialValues={{
         country: user.country || '',
         email: user.email || '',
-        isPublic: user.isPublic,
         name: user.name || '',
         phone: user.phone || '',
-        firstName: user.firstName || '',
-        lastName: user.lastName || '',
         bio: user.bio || '',
         submit: null
       }}
@@ -75,12 +70,9 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
           .email('Must be a valid email')
           .max(255)
           .required('Email is required'),
-        isPublic: Yup.bool(),
         name: Yup.string()
           .max(255)
           .required('Name is required'),
-        firstName: Yup.string().max(255),
-        LastName: Yup.string().max(255),
         bio: Yup.string().max(50),
         phone: Yup.string().matches(phoneRegExp, 'Phone number is not valid'),
         state: Yup.string().max(255)
@@ -183,32 +175,6 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                     )}
                   />
                 </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    error={Boolean(touched.firstName && errors.firstName)}
-                    fullWidth
-                    helperText={touched.firstName && errors.firstName}
-                    label="First Name"
-                    name="firstName"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.firstName}
-                    variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <TextField
-                    error={Boolean(touched.lastName && errors.lastName)}
-                    fullWidth
-                    helperText={touched.lastName && errors.lastName}
-                    label="Last Name"
-                    name="lastName"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    value={values.lastName}
-                    variant="outlined"
-                  />
-                </Grid>
                 <Grid item md={12} xs={12}>
                   <TextField
                     error={Boolean(touched.bio && errors.bio)}
@@ -220,21 +186,6 @@ const GeneralSettings: FC<GeneralSettingsProps> = ({
                     onChange={handleChange}
                     value={values.bio}
                     variant="outlined"
-                  />
-                </Grid>
-                <Grid item md={6} xs={12}>
-                  <Typography variant="h6" color="textPrimary">
-                    Make Profile Info Public
-                  </Typography>
-                  <Typography variant="body2" color="textSecondary">
-                    Means that anyone viewing your profile will be able to see
-                    your details
-                  </Typography>
-                  <Switch
-                    checked={values.isPublic}
-                    edge="start"
-                    name="isPublic"
-                    onChange={handleChange}
                   />
                 </Grid>
               </Grid>

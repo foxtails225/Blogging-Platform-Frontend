@@ -5,10 +5,11 @@ import { Grid, Box, makeStyles } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import PostOverViewCard from 'src/components/PostOverViewCard';
-import { Post } from 'src/types/post';
+import { PostWithAuthor } from 'src/types/post';
 import { User } from 'src/types/user';
 import About from './About';
-import Posts from './Posts';
+import RecentComments from './RecentComments';
+import useAuth from 'src/hooks/useAuth';
 
 interface ProfileProps {
   className?: string;
@@ -22,15 +23,16 @@ const useStyles = makeStyles(() => ({
 const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [posts, setPosts] = useState<Post[]>([]);
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<PostWithAuthor[]>([]);
   const [isAuthor, setIsAuthor] = useState<boolean>(false);
   const [page, setPage] = useState<number>(0);
 
   const getPosts = useCallback(async () => {
     try {
-      const params = { email: profile.email, page: page ? page : 0 };
+      const params = { email: profile.email, page: page ? page : 0, user };
       const response = await axios.post<{
-        posts: Post[];
+        posts: PostWithAuthor[];
         page: number;
         isAuthor: boolean;
       }>('/posts/all/', params);
@@ -43,7 +45,7 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef, page, profile]);
+  }, [isMountedRef, page, profile, user]);
 
   useEffect(() => {
     getPosts();
@@ -58,7 +60,7 @@ const Profile: FC<ProfileProps> = ({ className, profile, ...rest }) => {
               <About profile={profile} />
             </Grid>
             <Grid item xs={12} md={12} lg={12}>
-              <Posts />
+              <RecentComments profile={profile} />
             </Grid>
           </Grid>
         </Grid>

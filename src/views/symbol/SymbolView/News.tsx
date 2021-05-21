@@ -10,6 +10,7 @@ import {
   Link,
   Grid,
   Chip,
+  Button,
   Typography,
   makeStyles
 } from '@material-ui/core';
@@ -28,12 +29,18 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: '15vh',
     marginRight: '2vw',
     [theme.breakpoints.down('sm')]: {
-      width: '100vw',
+      height: '20vh'
     }
   },
   content: {
     paddingTop: 0,
     paddingBottom: 0
+  },
+  item: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'block',
+      textAlign: 'center'
+    }
   },
   chip: {
     margin: theme.spacing(0.5)
@@ -43,11 +50,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 const News: FC<NewsProps> = ({ path }) => {
   const classes = useStyles();
   const [results, setResults] = useState<StockNews[]>([]);
+  const [amount, setAmount] = useState<number>(10);
 
   useEffect(() => {
     const fetchData = async (value: string) => {
       const response = await axios.get<{ data: StockNews[] }>(
-        `/stock/news/${value}`
+        `/stock/news/${value}?items=${amount}`
       );
 
       if (response.data.data && response.data.data.length > 0) {
@@ -55,18 +63,25 @@ const News: FC<NewsProps> = ({ path }) => {
       }
     };
     path && fetchData(path);
-  }, [path]);
+  }, [path, amount]);
+
+  const handleClick = (): void => setAmount(amount + 10);
 
   return (
     <Container className={classes.root} maxWidth={false}>
       {results.length > 0 && (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} justify="center">
           <Grid item xs={12} md={12} lg={12}>
             <Card>
               <CardContent className={classes.content}>
                 <List>
                   {results.map((result: StockNews, id) => (
-                    <ListItem key={id} disableGutters divider>
+                    <ListItem
+                      key={id}
+                      disableGutters
+                      divider
+                      className={classes.item}
+                    >
                       <img
                         alt="Stock News"
                         src={result.image_url}
@@ -92,7 +107,6 @@ const News: FC<NewsProps> = ({ path }) => {
                             variant="caption"
                             color="textSecondary"
                             component={'span'}
-                            // className={classes.text}
                           >
                             {result.text}
                             <br />
@@ -114,6 +128,17 @@ const News: FC<NewsProps> = ({ path }) => {
                 </List>
               </CardContent>
             </Card>
+          </Grid>
+          <Grid item md={3}>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleClick}
+              disabled={amount > 40}
+              fullWidth
+            >
+              Read More
+            </Button>
           </Grid>
         </Grid>
       )}

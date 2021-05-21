@@ -16,19 +16,32 @@ import {
   TableBody,
   TableCell,
   TableRow,
+  Chip,
   colors,
   makeStyles
 } from '@material-ui/core';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import { Theme } from 'src/theme';
-import { PostWithAuthor } from 'src/types/post';
+import { PostWithAuthor, Picker } from 'src/types/post';
 import getInitials from 'src/utils/getInitials';
 
 interface DankNewsProps {
   className?: string;
   path: string;
 }
+
+interface PickerStatus {
+  name: Picker;
+  text: string;
+}
+
+const chips: PickerStatus[] = [
+  { name: 'bullish', text: 'Bullish' },
+  { name: 'bearish', text: 'Bearish' },
+  { name: 'neutral', text: 'Neutral' },
+  { name: 'no_opinion', text: 'No Opinion' }
+];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
@@ -43,7 +56,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   value: {
     color: colors.green[600],
     fontWeight: theme.typography.fontWeightMedium
-  }
+  },
+  picker: {}
 }));
 
 const DankNews: FC<DankNewsProps> = ({ className, path, ...rest }) => {
@@ -101,6 +115,15 @@ const DankNews: FC<DankNewsProps> = ({ className, path, ...rest }) => {
                           {post.title}
                         </Link>
                       </Box>
+                      <Box flexGrow={1} />
+                      <Chip
+                        variant="outlined"
+                        color="primary"
+                        label={
+                          chips.find(item => item.name === post.picker).text
+                        }
+                        className={classes.picker}
+                      />
                     </Box>
                   </TableCell>
                 </TableRow>

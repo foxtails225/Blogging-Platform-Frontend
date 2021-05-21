@@ -14,6 +14,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
+  Hidden,
   makeStyles
 } from '@material-ui/core';
 import { Profile } from 'src/types/stock';
@@ -91,54 +92,105 @@ const ProfileGlance: FC<ProfileGlanceProps> = ({
                       Read {expanded ? 'less' : 'more'}
                     </Link>
                   </Grid>
-                  <Grid item lg={6} xs={12}>
-                    <Table>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center">Sector</TableCell>
-                          <TableCell align="center">{profile.sector}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell align="center">Industry</TableCell>
-                          <TableCell align="center">
-                            {profile.industry}
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell align="center">Employees</TableCell>
-                          <TableCell align="center">
-                            {numeral(profile.employees).format('0,0')}
-                          </TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </Grid>
-                  <Grid item lg={6} xs={12}>
-                    <Table>
-                      <TableBody>
-                        <TableRow>
-                          <TableCell align="center">Address</TableCell>
-                          <TableCell align="center">
-                            {profile.address} {profile.city} {profile.state}{' '}
-                            {profile.zip} {profile.country}
-                          </TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell align="center">Phone Number</TableCell>
-                          <TableCell align="center">+{profile.phone}</TableCell>
-                        </TableRow>
-                        <TableRow>
-                          <TableCell align="center">CEO</TableCell>
-                          <TableCell align="center">{profile.CEO}</TableCell>
-                        </TableRow>
-                      </TableBody>
-                    </Table>
-                  </Grid>
+                  <Hidden mdDown>
+                    <Grid item lg={6} xs={12}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center">Sector</TableCell>
+                            <TableCell align="center">
+                              {profile.sector}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Industry</TableCell>
+                            <TableCell align="center">
+                              {profile.industry}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Employees</TableCell>
+                            <TableCell align="center">
+                              {numeral(profile.employees).format('0,0')}
+                            </TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Grid>
+                    <Grid item lg={6} xs={12}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center">Address</TableCell>
+                            <TableCell align="center">
+                              {profile.address} {profile.city} {profile.state}{' '}
+                              {profile.zip} {profile.country}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Phone Number</TableCell>
+                            <TableCell align="center">
+                              +{profile.phone}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">CEO</TableCell>
+                            <TableCell align="center">{profile.CEO}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Grid>
+                  </Hidden>
+                  <Hidden lgUp>
+                    <Grid item lg={12} xs={12}>
+                      <Table>
+                        <TableBody>
+                          <TableRow>
+                            <TableCell align="center">Sector</TableCell>
+                            <TableCell align="center">
+                              {profile.sector}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Industry</TableCell>
+                            <TableCell align="center">
+                              {profile.industry}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Employees</TableCell>
+                            <TableCell align="center">
+                              {numeral(profile.employees).format('0,0')}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Address</TableCell>
+                            <TableCell align="center">
+                              {profile.address} {profile.city} {profile.state}{' '}
+                              {profile.zip} {profile.country}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">Phone Number</TableCell>
+                            <TableCell align="center">
+                              +{profile.phone}
+                            </TableCell>
+                          </TableRow>
+                          <TableRow>
+                            <TableCell align="center">CEO</TableCell>
+                            <TableCell align="center">{profile.CEO}</TableCell>
+                          </TableRow>
+                        </TableBody>
+                      </Table>
+                    </Grid>
+                  </Hidden>
                 </Grid>
               </Box>
               <Box mt={2}>
                 <Typography gutterBottom variant="h5" color="textPrimary">
-                  Official Website: {profile.website}
+                  <Link href={profile.website ?? '#'} target="blank">
+                    {profile.website}
+                  </Link>
                 </Typography>
               </Box>
             </>

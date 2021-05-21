@@ -12,7 +12,6 @@ import {
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import ArchiveOutlinedIcon from '@material-ui/icons/ArchiveOutlined';
 import UnarchiveOutlinedIcon from '@material-ui/icons/UnarchiveOutlined';
-import ShareIcon from '@material-ui/icons/Share';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
 import axios from 'src/utils/axios';
@@ -200,9 +199,6 @@ const Reactions: FC<ReactionsProps> = ({
           </IconButton>
         </Tooltip>
       )}
-      <IconButton>
-        <ShareIcon fontSize="small" />
-      </IconButton>
     </div>
   );
 };

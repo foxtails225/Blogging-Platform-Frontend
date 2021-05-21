@@ -1,4 +1,5 @@
 export interface Quote {
+  symbol?: string;
   companyName?: string;
   latestPrice: number | string;
   change: number | string;

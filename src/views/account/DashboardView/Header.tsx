@@ -7,7 +7,6 @@ import {
   Button,
   Grid,
   Card,
-  Hidden,
   SvgIcon,
   Menu,
   MenuItem,
@@ -109,7 +108,7 @@ const Header: FC<HeaderProps> = ({ className, ...rest }) => {
         : user.name;
     setName(value);
   }, [user]);
-  
+
   useEffect(() => {
     const getStatistics = async () => {
       try {
@@ -178,15 +177,6 @@ const Header: FC<HeaderProps> = ({ className, ...rest }) => {
             </Menu>
           </Box>
         </Grid>
-        <Hidden smDown>
-          <Grid item md={6}>
-            <img
-              alt="Cover"
-              className={classes.image}
-              src="/static/images/undraw_growth_analytics_8btt.svg"
-            />
-          </Grid>
-        </Hidden>
       </Grid>
       <Box mt={3}>
         <Card className={clsx(classes.root, className)} {...rest}>

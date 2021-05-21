@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   disclosure: {
     fontFamily: theme.typography.fontFamily,
     color: colors.grey[500],
-    fontSize: '0.9rem',
+    fontSize: '0.9rem'
   }
 }));
 
@@ -110,9 +110,10 @@ const PostReview: FC<PostReviewProps> = ({
                 {post.tags.map((tag: Tag) => (
                   <Chip
                     key={tag.symbol}
-                    variant="outlined"
+                    variant={tag.main ? 'default' : 'outlined'}
                     label={tag.symbol}
                     className={classes.chip}
+                    color={tag.main ? 'primary' : 'default'}
                   />
                 ))}
               </Box>

@@ -1,10 +1,11 @@
 import { Flag } from './flag';
+import { Post } from './post';
 import { User } from './user';
 
 export interface Comments {
   _id?: string;
   parent: string;
-  post: string;
+  post: string | Post;
   user: string | User;
   depth?: number;
   position: string;
@@ -21,4 +22,8 @@ export interface Comments {
 
 export interface CommentsWithUser extends Comments {
   user: User;
+}
+
+export interface CommentsWithPostAndUser extends CommentsWithUser {
+  post: Post;
 }

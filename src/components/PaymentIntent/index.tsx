@@ -48,6 +48,7 @@ const StripeCheckout: FC<StripeCheckoutProps> = ({
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState<number>(0);
   const [secret, setSecret] = useState<string>();
+  const [amount, setAmount] = useState<number>(0);
   const [author, setAuthor] = useState<User>();
   const steps = getSteps();
 
@@ -64,8 +65,9 @@ const StripeCheckout: FC<StripeCheckoutProps> = ({
     fetchData();
   }, [postId]);
 
-  const handleNext = (value: string) => {
+  const handleNext = (value: string, qty: number) => {
     setSecret(value);
+    setAmount(qty);
     setActiveStep(prevActiveStep => prevActiveStep + 1);
   };
 
@@ -105,6 +107,7 @@ const StripeCheckout: FC<StripeCheckoutProps> = ({
               <CheckoutForm
                 open={open}
                 author={author}
+                amount={amount}
                 secret={secret}
                 onOpen={onOpen}
                 onBack={handleBack}

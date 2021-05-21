@@ -10,7 +10,6 @@ import {
   makeStyles
 } from '@material-ui/core';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
-import ShareIcon from '@material-ui/icons/Share';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
 import axios from 'src/utils/axios';
@@ -128,9 +127,6 @@ const Reactions: FC<ReactionsProps> = ({
           </IconButton>
         </Tooltip>
       )}
-      <IconButton>
-        <ShareIcon fontSize="small" />
-      </IconButton>
     </div>
   );
 };

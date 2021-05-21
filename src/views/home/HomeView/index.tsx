@@ -5,7 +5,6 @@ import TrendStocks from './TrendStocks';
 import TrendAuthors from './TrendAuthors';
 import TrendNews from './TrendNews';
 import Market from './Market';
-import Features from './Futures';
 
 const useStyles = makeStyles(() => ({
   root: {
@@ -17,14 +16,11 @@ const HomeView: FC = () => {
   const classes = useStyles();
 
   return (
-    <Page className={classes.root} title="World Class Stock News">
+    <Page className={classes.root} title="Homepage">
       <Container maxWidth={false}>
         <Grid container spacing={3}>
-          <Grid item lg={6} xs={12}>
+          <Grid item lg={9} xs={12}>
             <Market />
-          </Grid>
-          <Grid item lg={6} xs={12}>
-            <Features />
           </Grid>
           <Grid item lg={9} xs={12}>
             <Grid container spacing={3}>

@@ -45,6 +45,7 @@ interface Status {
 interface Modal {
   _id: string;
   status: boolean;
+  banned: Date;
   reason: string;
 }
 
@@ -119,7 +120,12 @@ const Users: FC<UsersProps> = ({ className, ...rest }) => {
   };
 
   const handleStatus = (data: User) => {
-    setModal({ _id: data._id, status: data.status, reason: data.reason });
+    setModal({
+      _id: data._id,
+      status: data.status,
+      reason: data.reason,
+      banned: data.banned
+    });
     setOpen(!open);
   };
 
@@ -176,12 +182,8 @@ const Users: FC<UsersProps> = ({ className, ...rest }) => {
                       </Box>
                     </Box>
                   </TableCell>
-                  <TableCell align="center">
-                    {user.email}
-                  </TableCell>
-                  <TableCell align="center">
-                    {user.role}
-                  </TableCell>
+                  <TableCell align="center">{user.email}</TableCell>
+                  <TableCell align="center">{user.role}</TableCell>
                   <TableCell align="center" onClick={() => handleStatus(user)}>
                     <Label color={user.status ? 'success' : 'error'}>
                       {user.status ? 'Active' : 'Banned'}

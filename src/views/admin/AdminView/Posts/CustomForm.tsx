@@ -15,6 +15,7 @@ import { Theme } from 'src/theme';
 import { User } from 'src/types/user';
 import axios from 'src/utils/axios';
 import { PostWithAuthor } from 'src/types/post';
+import useAuth from 'src/hooks/useAuth';
 
 interface CustomFormProps {
   className?: string;
@@ -37,6 +38,7 @@ const CustomForm: FC<CustomFormProps> = ({
   ...rest
 }) => {
   const classes = useStyles();
+  const { user } = useAuth();
   const [amount, setAmount] = useState<number>();
   const [author, setAuthor] = useState<User>();
 
@@ -54,11 +56,24 @@ const CustomForm: FC<CustomFormProps> = ({
   }, [postId]);
 
   const handleSubmit = async () => {
-    const params = { stripeId: author.stripeId, amount };
+    const params = {
+      stripeId: author.stripeId,
+      author: author._id,
+      type: 'payment_success',
+      amount
+    };
     const response = await axios.post<{ secret: string }>(
       '/stripe/transfer',
       params
     );
+
+    await axios.post('/transactions/create', {
+      user: author._id,
+      client: user._id,
+      amount: amount,
+      fee: 0,
+      type: 'post_approved'
+    });
     if (response.data) {
       onSuccess();
     }

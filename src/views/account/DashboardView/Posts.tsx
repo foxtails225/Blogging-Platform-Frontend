@@ -157,7 +157,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={count}
+            count={Math.ceil(count / limit)}
             rowsPerPage={limit}
             page={page}
             onChangePage={handleChangePage}

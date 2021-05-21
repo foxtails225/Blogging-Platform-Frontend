@@ -178,7 +178,7 @@ const PostCreateView: FC = () => {
   const handlePost = (values): void => {
     setPost(prevState => ({ ...prevState, ...values }));
   };
-
+  console.log(post)
   return (
     <>
       {!user.stripeId ? (

@@ -45,6 +45,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     minHeight: '100%',
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3),
+    [theme.breakpoints.down('md')]: {
+      width: '70%'
+    },
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     }
@@ -91,7 +94,7 @@ const PostView: FC = () => {
   const history = useHistory();
   const location = useLocation();
   const { user, isAuthenticated } = useAuth();
-  const matches = useMediaQuery(theme.breakpoints.down('md'));
+  const matches = useMediaQuery(theme.breakpoints.down('sm'));
   const [post, setPost] = useState<PostWithAuthor>();
   const [status, setStatus] = useState<Status>(initialStatus);
   const [isBookmarked, setBookmarked] = useState<boolean>(false);
@@ -133,6 +136,8 @@ const PostView: FC = () => {
     const parent = status.parent !== id ? id : null;
     setStatus({ parent, depth });
   };
+
+  const handleChip = (route: string): void => history.push(`/symbol/${route}`);
 
   return (
     <>
@@ -196,9 +201,11 @@ const PostView: FC = () => {
                     {post.tags.map((tag: Tag) => (
                       <Chip
                         key={tag.symbol}
+                        clickable={true}
                         variant="outlined"
                         label={tag.symbol}
                         className={classes.chip}
+                        onClick={() => handleChip(tag.symbol)}
                       />
                     ))}
                   </Box>

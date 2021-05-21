@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState, FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
+import moment from 'moment';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -19,13 +20,14 @@ import {
 } from '@material-ui/core';
 import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import { Theme } from 'src/theme';
-import axios from 'src/utils/axios-mock';
-import getInitials from 'src/utils/getInitials';
+import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
-import { CustomerActivity as CustomerActivityType } from 'src/types/reports';
+import { CommentsWithPostAndUser } from 'src/types/comment';
+import { User } from 'src/types/user';
 
 interface PostsProps {
   className?: string;
+  profile: User;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -36,65 +38,68 @@ const useStyles = makeStyles((theme: Theme) => ({
     '&:first-of-type': {
       borderRight: `1px solid ${theme.palette.divider}`
     }
+  },
+  comment: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': '1'
   }
 }));
 
-const Posts: FC<PostsProps> = ({ className, ...rest }) => {
+const RecentComments: FC<PostsProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [activities, setActivities] = useState<CustomerActivityType[]>([]);
-
-  const getActivities = useCallback(async () => {
+  const [comments, setComments] = useState<CommentsWithPostAndUser[]>([]);
+  const getComments = useCallback(async () => {
     try {
-      const response = await axios.get<{ activities: CustomerActivityType[] }>(
-        '/api/reports/customer-activity'
-      );
+      const response = await axios.post<{
+        comments: CommentsWithPostAndUser[];
+      }>('/comments/get', { user: profile._id });
 
       if (isMountedRef.current) {
-        setActivities(response.data.activities);
+        setComments(response.data.comments);
       }
     } catch (err) {
       console.error(err);
     }
-  }, [isMountedRef]);
+  }, [isMountedRef, profile]);
 
   useEffect(() => {
-    getActivities();
-  }, [getActivities]);
+    getComments();
+  }, [getComments]);
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
       <CardHeader title="Recent Comments" />
       <Divider />
       <List disablePadding>
-        {activities.map((activity, i) => (
-          <ListItem divider={i < activities.length - 1} key={activity.id}>
+        {comments.map((comment, i) => (
+          <ListItem divider={i < comments.length - 1} key={comment._id}>
             <ListItemAvatar>
-              <Avatar
-                alt="Customer"
-                component={RouterLink}
-                src={activity.customer.avatar}
-                to="#"
-              >
-                {getInitials(activity.customer.name)}
-              </Avatar>
+              <Avatar alt="Comment Number">{i + 1}</Avatar>
             </ListItemAvatar>
             <ListItemText
               disableTypography
               primary={
                 <Link
-                  color="textPrimary"
                   component={RouterLink}
-                  to="#"
-                  underline="none"
-                  variant="h6"
+                  to={
+                    comment.post && comment.post.slug
+                      ? '/posts/public/' + comment.post.slug
+                      : '#'
+                  }
+                  color="textPrimary"
+                  variant="body2"
+                  className={classes.comment}
                 >
-                  {activity.customer.name}
+                  {comment.comment}
                 </Link>
               }
               secondary={
                 <Typography variant="body2" color="textSecondary">
-                  {activity.description}
+                  {moment(comment.createdAt).fromNow()}
                 </Typography>
               }
             />
@@ -116,8 +121,8 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
   );
 };
 
-Posts.propTypes = {
+RecentComments.propTypes = {
   className: PropTypes.string
 };
 
-export default Posts;
+export default RecentComments;
