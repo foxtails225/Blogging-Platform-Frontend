@@ -1,15 +1,17 @@
 import React, { FC } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   Box,
   Container,
   Divider,
   Grid,
+  Link,
   Typography,
   makeStyles,
   withStyles
 } from '@material-ui/core';
-import { THEMES } from '../../constants';
+import { THEMES } from '../../../constants';
 import { Theme } from 'src/theme';
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -42,11 +44,11 @@ const SecondaryTypography = withStyles({
   }
 })(Typography);
 
-const WhiteSecondaryTypography = withStyles({
-  root: {
-    color: '#546e7a'
-  }
-})(Typography);
+// const WhiteSecondaryTypography = withStyles({
+//   root: {
+//     color: '#546e7a'
+//   }
+// })(Typography);
 
 const FootBar: FC = () => {
   const classes = useStyles();
@@ -54,14 +56,34 @@ const FootBar: FC = () => {
   return (
     <div className={classes.root}>
       <Container maxWidth="lg">
-        <WhiteTextTypography variant="h1">
-          Terms and Privacy
-        </WhiteTextTypography>
+        <WhiteTextTypography variant="h1">Policies</WhiteTextTypography>
         <Box my={3}>
           <Divider className={classes.divider} />
         </Box>
         <Grid container spacing={3} component="dl">
-          <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={12}>
+            <SecondaryTypography variant="overline">
+              <Link
+                component={RouterLink}
+                to="/docs/policy"
+                variant="h5"
+              >
+                Privacy Policy
+              </Link>
+            </SecondaryTypography>
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <SecondaryTypography variant="overline">
+              <Link
+                component={RouterLink}
+                to="/docs/terms"
+                variant="h5"
+              >
+                Terms and Conditions
+              </Link>
+            </SecondaryTypography>
+          </Grid>
+          {/* <Grid item xs={12} md={6}>
             <SecondaryTypography variant="overline">
               Technical &amp; Licensing
             </SecondaryTypography>
@@ -122,6 +144,7 @@ const FootBar: FC = () => {
               </dd>
             </Box>
           </Grid>
+        */}
         </Grid>
       </Container>
     </div>

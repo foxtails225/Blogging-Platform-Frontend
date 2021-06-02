@@ -1,12 +1,13 @@
 import React, { Suspense, Fragment, lazy } from 'react';
 import { Switch, Redirect, Route } from 'react-router-dom';
-import MainLayout from 'src/layouts';
+import MainLayout from 'src/layouts/MainLayout';
+import DocsLayout from 'src/layouts/DocsLayout';
 import HomeView from 'src/views/home/HomeView';
 import LoadingScreen from 'src/components/LoadingScreen';
 import AuthGuard from 'src/components/AuthGuard';
 import GuestGuard from 'src/components/GuestGuard';
-import AdminGuard from './components/AdminGuard';
-import SubAdminGuard from './components/SubAdminGuard';
+import AdminGuard from 'src/components/AdminGuard';
+import SubAdminGuard from 'src/components/SubAdminGuard';
 
 type Routes = {
   exact?: boolean;
@@ -75,6 +76,24 @@ const routes: Routes = [
     exact: true,
     path: '/register-unprotected',
     component: lazy(() => import('src/views/auth/RegisterView'))
+  },
+  {
+    exact: true,
+    guard: GuestGuard,
+    path: '/verify-code',
+    component: lazy(() => import('src/views/auth/VerifyCodeView'))
+  },
+  {
+    exact: true,
+    guard: GuestGuard,
+    path: '/password-recovery',
+    component: lazy(() => import('src/views/auth/PasswordRecovery'))
+  },
+  {
+    exact: true,
+    guard: GuestGuard,
+    path: '/password-reset/:id',
+    component: lazy(() => import('src/views/auth/PasswordReset'))
   },
   {
     exact: true,
@@ -158,6 +177,35 @@ const routes: Routes = [
         exact: true,
         path: '/posts/new',
         component: lazy(() => import('src/views/post/PostCreateView'))
+      },
+      {
+        exact: true,
+        path: '/posts/edit/:id',
+        component: lazy(() => import('src/views/post/PostCreateView'))
+      },
+      {
+        component: () => <Redirect to="/404" />
+      }
+    ]
+  },
+  {
+    path: '/docs',
+    layout: DocsLayout,
+    routes: [
+      {
+        exact: true,
+        path: '/docs',
+        component: () => <Redirect to="/docs/policy" />
+      },
+      {
+        exact: true,
+        path: '/docs/policy',
+        component: lazy(() => import('src/views/docs/PolicyView'))
+      },
+      {
+        exact: true,
+        path: '/docs/terms',
+        component: lazy(() => import('src/views/docs/TermsView'))
       },
       {
         component: () => <Redirect to="/404" />

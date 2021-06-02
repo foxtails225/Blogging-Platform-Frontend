@@ -21,6 +21,7 @@ interface AuthContextValue extends AuthState {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   register: (email: string, name: string, password: string) => Promise<void>;
+  verifyCode: (email: string, code: string) => Promise<void>;
   setUser: (user: User) => void;
 }
 
@@ -54,7 +55,19 @@ type RegisterAction = {
   };
 };
 
-type Action = InitialiseAction | LoginAction | LogoutAction | RegisterAction;
+type VerifyCodeAction = {
+  type: 'VERIFYCODE';
+  payload: {
+    user: User;
+  };
+};
+
+type Action =
+  | InitialiseAction
+  | LoginAction
+  | LogoutAction
+  | RegisterAction
+  | VerifyCodeAction;
 
 const initialAuthState: AuthState = {
   isAuthenticated: false,
@@ -116,6 +129,15 @@ export const reducer = (state: AuthState, action: Action): AuthState => {
 
       return {
         ...state,
+        isAuthenticated: false,
+        user
+      };
+    }
+    case 'VERIFYCODE': {
+      const { user } = action.payload;
+
+      return {
+        ...state,
         isAuthenticated: true,
         user
       };
@@ -132,6 +154,7 @@ const AuthContext = createContext<AuthContextValue>({
   login: () => Promise.resolve(),
   logout: () => {},
   register: () => Promise.resolve(),
+  verifyCode: () => Promise.resolve(),
   setUser: (user: User) => {}
 });
 
@@ -170,16 +193,33 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   const register = async (email: string, name: string, password: string) => {
+    const response = await axios.post<{ user: User }>('/signup', {
+      email,
+      name,
+      password,
+      lastLoggedIn: Date.now()
+    });
+    const { user } = response.data;
+
+    dispatch({
+      type: 'REGISTER',
+      payload: {
+        user
+      }
+    });
+  };
+
+  const verifyCode = async (email: string, code: string) => {
     const response = await axios.post<{ accessToken: string; user: User }>(
-      '/signup',
-      { email, name, password, lastLoggedIn: Date.now() }
+      '/verify-code',
+      { email, code, lastLoggedIn: Date.now() }
     );
     const { accessToken, user } = response.data;
 
     window.localStorage.setItem('accessToken', accessToken);
 
     dispatch({
-      type: 'REGISTER',
+      type: 'VERIFYCODE',
       payload: {
         user
       }
@@ -239,6 +279,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         login,
         logout,
         register,
+        verifyCode,
         setUser
       }}
     >

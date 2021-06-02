@@ -3,11 +3,11 @@ import type { FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Box,
+  Link,
   Card,
   CardContent,
-  Container,
   Divider,
-  Link,
+  Container,
   Typography,
   makeStyles
 } from '@material-ui/core';
@@ -15,7 +15,7 @@ import type { Theme } from 'src/theme';
 import Page from 'src/components/Page';
 import Logo from 'src/components/Logo';
 import useAuth from 'src/hooks/useAuth';
-import JWTLogin from './JWTLogin';
+import PasswordRecovery from './PasswordRecovery';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -50,14 +50,14 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const LoginView: FC = () => {
+const PasswordRecoveryView: FC = () => {
   const classes = useStyles();
   const { method } = useAuth();
 
   return (
     <Page
       className={classes.root}
-      title="Login"
+      title="Password Recovery"
     >
       <Container
         className={classes.cardContainer}
@@ -86,13 +86,13 @@ const LoginView: FC = () => {
                   gutterBottom
                   variant="h2"
                 >
-                  Sign in
+                  Password Recovery
                 </Typography>
                 <Typography
                   variant="body2"
                   color="textSecondary"
                 >
-                  Sign in on the internal platform
+                  Tell us your email so we can send you a reset link
                 </Typography>
               </div>
             </Box>
@@ -100,30 +100,19 @@ const LoginView: FC = () => {
               flexGrow={1}
               mt={3}
             >
-              {method === 'JWT' && <JWTLogin /> }
+              {method === 'JWT' && <PasswordRecovery /> }
             </Box>
             <Box my={3}>
               <Divider />
             </Box>
-            <Box display="flex">
-              <Link
-                component={RouterLink}
-                to="/register"
-                variant="body2"
-                color="textSecondary"
-              >
-                Create new account
-              </Link>
-              <Box flexGrow={1} />
-              <Link
+            <Link
               component={RouterLink}
-              to="/password-recovery"
+              to="/login"
               variant="body2"
               color="textSecondary"
             >
-              Forgot password
+              Have an account?
             </Link>
-            </Box>
           </CardContent>
         </Card>
       </Container>
@@ -131,4 +120,4 @@ const LoginView: FC = () => {
   );
 };
 
-export default LoginView;
+export default PasswordRecoveryView;

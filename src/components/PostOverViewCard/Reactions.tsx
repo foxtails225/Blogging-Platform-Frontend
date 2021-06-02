@@ -10,6 +10,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import EditIcon from '@material-ui/icons/Edit';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from '../CustomIcon';
 import { PostWithAuthor } from 'src/types/post';
@@ -109,6 +110,13 @@ const Reactions: FC<ReactionsProps> = ({
         </IconButton>
       )}
       <Box flexGrow={1} />
+      {author && post.status === 'pending' && (
+        <Tooltip title="Edit">
+          <IconButton onClick={handleLike} href={'/posts/edit/' + post.slug}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      )}
       {open && (
         <StripeCheckout
           open={open}

@@ -12,11 +12,14 @@ import {
 } from '@material-ui/core';
 import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutlined';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import FlagIcon from '@material-ui/icons/Flag';
+import FlagOutlinedIcon from '@material-ui/icons/FlagOutlined';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
 import useAuth from 'src/hooks/useAuth';
 import { Bookmark } from 'src/types/bookmark';
 import { Post } from 'src/types/post';
+import { Flag } from 'src/types/flag';
 import { Theme } from 'src/theme';
 import StripeCheckout from 'src/components/PaymentIntent';
 
@@ -79,6 +82,7 @@ const Reactions: FC<ReactionsProps> = ({
   const classes = useStyles();
   const { user, isAuthenticated } = useAuth();
   const [isLiked, setLiked] = useState<boolean>(false);
+  const [isFlag, setFlag] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(post.liked.count);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -90,14 +94,27 @@ const Reactions: FC<ReactionsProps> = ({
   }, [user, isAuthenticated, post.author]);
 
   useEffect(() => {
-    isAuthenticated &&
-      post.liked.users.forEach(item => item === user._id && setLiked(true));
+    if (isAuthenticated) {
+      post.liked?.users.forEach(item => item === user._id && setLiked(true));
+      //@ts-ignore
+      post.flags.map((flag: Flag) => flag.user === user._id && setFlag(true));
+    }
+
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post.liked.users]);
 
   const updateLiked = async (): Promise<void> => {
     const params = { postId: post._id, isLiked: !isLiked };
     await axios.put<{ post: Post }>('/posts/liked', params);
+  };
+
+  const updateFlag = async (): Promise<void> => {
+    const params = {
+      post: post._id,
+      type: 'post',
+      isFlag: !isFlag
+    };
+    await axios.put<{ post: Post }>('/posts/flaged', params);
   };
 
   const updateSaved = async (): Promise<void> => {
@@ -116,6 +133,16 @@ const Reactions: FC<ReactionsProps> = ({
     setLiked(false);
     setLikes(prevLikes => prevLikes - 1);
     updateLiked();
+  };
+
+  const handleFlag = (): void => {
+    setFlag(true);
+    updateFlag();
+  };
+
+  const handleUnflag = (): void => {
+    setFlag(false);
+    updateFlag();
   };
 
   const handleSaved = (): void => {
@@ -219,6 +246,39 @@ const Reactions: FC<ReactionsProps> = ({
           </IconButton>
         </span>
       </Box>
+      {isFlag ? (
+        <Tooltip
+          title="Unflag"
+          disableTouchListener
+          disableHoverListener={disabled}
+        >
+          <span>
+            <IconButton
+              className={clsx(classes.iconBox)}
+              onClick={handleUnflag}
+              disabled={disabled}
+            >
+              <FlagIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      ) : (
+        <Tooltip
+          title="Flag"
+          disableTouchListener
+          disableHoverListener={disabled}
+        >
+          <span>
+            <IconButton
+              className={classes.iconBox}
+              onClick={handleFlag}
+              disabled={disabled}
+            >
+              <FlagOutlinedIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
+      )}
       {open && (
         <StripeCheckout
           open={open}

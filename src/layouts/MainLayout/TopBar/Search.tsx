@@ -11,7 +11,7 @@ import {
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { grey } from '@material-ui/core/colors';
 import { Search as SearchIcon } from 'react-feather';
-import { THEMES } from '../../constants';
+import { THEMES } from 'src/constants';
 import { Theme } from 'src/theme';
 import { Tag } from 'src/types/post';
 

@@ -1,5 +1,6 @@
 import { User } from './user';
 import { Comments } from './comment';
+import { Flag } from './flag';
 
 export type PostStatus = 'approved' | 'pending' | 'rejected';
 
@@ -31,6 +32,7 @@ export interface Post {
   month?: number;
   year?: number;
   comments?: Comments[];
+  flags?: string[] | Flag[];
   picker?: Picker;
   createdAt?: Date;
   updatedAt?: Date;
@@ -38,4 +40,5 @@ export interface Post {
 
 export interface PostWithAuthor extends Post {
   author: User;
+  flags: Flag[];
 }

@@ -1,5 +1,5 @@
 import React, { useState, FC, useEffect } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import {
@@ -30,7 +30,7 @@ import RateReviewIcon from '@material-ui/icons/RateReview';
 import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
-import { Post } from 'src/types/post';
+import { Post, PostWithAuthor } from 'src/types/post';
 import Page from 'src/components/Page';
 import PostDetails from './PostDetails';
 import PostContent from './PostContent';
@@ -139,6 +139,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 const PostCreateView: FC = () => {
   const classes = useStyles();
   const { user } = useAuth();
+  const location = useLocation();
+  const [isEdit, setIsEdit] = useState<boolean>(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [completed, setCompleted] = useState<boolean>(false);
   const [post, setPost] = useState<Post>(initialPost);
@@ -152,6 +154,24 @@ const PostCreateView: FC = () => {
     };
     !user.stripeId && fetchData();
   }, [user]);
+
+  useEffect(() => {
+    const paths = location.pathname.split('/');
+    const fetchPost = async () => {
+      const response = await axios.get<{ post: PostWithAuthor }>(
+        `/posts/get/${paths[3]}`,
+        {
+          params: { user: user._id }
+        }
+      );
+
+      response.data && setPost(response.data.post);
+    };
+    if (paths[2] === 'edit') {
+      fetchPost();
+      setIsEdit(true);
+    }
+  }, [location.pathname, user._id]);
 
   const handleNext = (): void => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -171,14 +191,16 @@ const PostCreateView: FC = () => {
       .trim()
       .toLowerCase();
 
-    await axios.post<{ post: Post }>('/posts/new', { ...post, slug });
+    isEdit
+      ? await axios.put<{ post: Post }>('/posts/update', { ...post, slug })
+      : await axios.post<{ post: Post }>('/posts/new', { ...post, slug });
     setCompleted(true);
   };
 
   const handlePost = (values): void => {
     setPost(prevState => ({ ...prevState, ...values }));
   };
-  console.log(post)
+
   return (
     <>
       {!user.stripeId ? (

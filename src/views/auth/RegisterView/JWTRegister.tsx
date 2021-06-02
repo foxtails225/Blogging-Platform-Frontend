@@ -1,5 +1,5 @@
-import React from 'react';
-import type { FC } from 'react';
+import React, { FC } from 'react';
+import { useHistory } from 'react-router';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
@@ -27,6 +27,7 @@ const useStyles = makeStyles(() => ({
 
 const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
   const classes = useStyles();
+  const history = useHistory();
   const { register } = useAuth() as any;
   const isMountedRef = useIsMountedRef();
 
@@ -40,22 +41,30 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        name: Yup.string().max(255).required('Name is required'),
-        password: Yup.string().min(7).max(255).required('Password is required'),
+        email: Yup.string()
+          .email('Must be a valid email')
+          .max(255)
+          .required('Email is required'),
+        name: Yup.string()
+          .max(255)
+          .required('Name is required'),
+        password: Yup.string()
+          .min(7)
+          .max(255)
+          .required('Password is required'),
         policy: Yup.boolean().oneOf([true], 'This field must be checked')
       })}
-      onSubmit={async (values, {
-        setErrors,
-        setStatus,
-        setSubmitting
-      }) => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
           await register(values.email, values.name, values.password);
 
           if (isMountedRef.current) {
             setStatus({ success: true });
             setSubmitting(false);
+            history.push({
+              pathname: '/verify-code',
+              state: { username: values.email }
+            });
           }
         } catch (err) {
           setStatus({ success: false });
@@ -117,42 +126,25 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
             value={values.password}
             variant="outlined"
           />
-          <Box
-            alignItems="center"
-            display="flex"
-            mt={2}
-            ml={-1}
-          >
+          <Box alignItems="center" display="flex" mt={2} ml={-1}>
             <Checkbox
               checked={values.policy}
               name="policy"
               onChange={handleChange}
             />
-            <Typography
-              variant="body2"
-              color="textSecondary"
-            >
-              I have read the
-              {' '}
-              <Link
-                component="a"
-                href="#"
-                color="secondary"
-              >
+            <Typography variant="body2" color="textSecondary">
+              I have read the{' '}
+              <Link component="a" href="/docs" color="secondary">
                 Terms and Conditions
               </Link>
             </Typography>
           </Box>
           {Boolean(touched.policy && errors.policy) && (
-            <FormHelperText error>
-              {errors.policy}
-            </FormHelperText>
+            <FormHelperText error>{errors.policy}</FormHelperText>
           )}
           {errors.submit && (
             <Box mt={3}>
-              <FormHelperText error>
-                {errors.submit}
-              </FormHelperText>
+              <FormHelperText error>{errors.submit}</FormHelperText>
             </Box>
           )}
           <Box mt={2}>

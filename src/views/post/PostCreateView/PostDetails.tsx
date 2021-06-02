@@ -110,9 +110,10 @@ const PostDetails: FC<PostDetailsProps> = ({
     const val = value.split(': ');
     setTag({ symbol: val[0], securityName: val[1], main: false });
   };
-
+  
   return (
     <Formik
+      enableReinitialize
       initialValues={{
         title: post.title || '',
         tags: post.tags || [],
@@ -129,7 +130,6 @@ const PostDetails: FC<PostDetailsProps> = ({
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
-          console.log(values)
           onPost({
             title: values.title.trim(),
             tags: values.tags,
@@ -245,7 +245,7 @@ const PostDetails: FC<PostDetailsProps> = ({
                     InputProps={{
                       ...params.InputProps
                     }}
-                    style={{ width: '52vw' }}
+                    style={{ width: '47vw' }}
                     onChange={event => setSearch(event.target.value)}
                   />
                 )}

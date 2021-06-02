@@ -24,7 +24,11 @@ export interface User {
   isPublic: boolean;
   status: boolean;
   reason: string;
+  code: string;
+  recoveryToken: string;
   stripeId: string;
+  expiredIn: Date;
+  registered: boolean;
   following: string[];
   followers: string[];
   createdAt: Date;

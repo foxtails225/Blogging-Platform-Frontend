@@ -26,7 +26,7 @@ const HighchartsWrapper: FC<HighchartsWrapperProps> = ({
   const classes = useStyles();
   const [source, setSource] = useState<any[]>([]);
   darkUnica(Highcharts);
-
+  
   useEffect(() => {
     const fetchHistory = async (value: string) => {
       const response = await axios.get<Chart[]>(`/stock/chart/${value}`, {
@@ -36,7 +36,7 @@ const HighchartsWrapper: FC<HighchartsWrapperProps> = ({
     };
     path && fetchHistory(path);
   }, [path]);
-
+  
   return (
     <div className={clsx(classes.root, className)} {...rest}>
       {source.length > 0 && (

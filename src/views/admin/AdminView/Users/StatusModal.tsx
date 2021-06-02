@@ -83,7 +83,7 @@ const StatusModal: FC<StatusProps> = ({
   const handlePicker = date => {
     setBanned(date);
   };
-  console.log(banned);
+  
   return (
     <div className={clsx(classes.root, className)} {...rest}>
       <Dialog
