@@ -17,6 +17,7 @@ import {
 } from '@material-ui/core';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import FlagIcon from '@material-ui/icons/Flag';
+import DeleteOutlineIcon from '@material-ui/icons/DeleteOutline';
 import FlagOutlinedIcon from '@material-ui/icons/FlagOutlined';
 import CustomIcon from 'src/components/CustomIcon';
 import axios from 'src/utils/axios';
@@ -37,11 +38,13 @@ interface CommentProps {
 interface Status {
   reply: boolean;
   disable: boolean;
+  removeDisabled: boolean;
 }
 
-const initialStatus = {
+const initialStatus: Status = {
   reply: false,
-  disable: true
+  disable: true,
+  removeDisabled: true
 };
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -105,12 +108,26 @@ const Comment: FC<CommentProps> = ({
   };
 
   useEffect(() => {
-    //@ts-ignore
-    isAuthenticated &&
+    if (isAuthenticated) {
       user._id === comment.user._id &&
-      setStatus(prevState => ({ ...prevState, disabled: true }));
-    !isAuthenticated &&
-      setStatus(prevState => ({ ...prevState, disabled: true }));
+        setStatus(prevState => ({
+          ...prevState,
+          disabled: true,
+          removeDisabled: false
+        }));
+      user.role === 'admin' &&
+        setStatus(prevState => ({
+          ...prevState,
+          disabled: false,
+          removeDisabled: false
+        }));
+    } else {
+      setStatus(prevState => ({
+        ...prevState,
+        disabled: true,
+        removeDisabled: true
+      }));
+    }
   }, [user, isAuthenticated, comment.user]);
 
   useEffect(() => {
@@ -129,16 +146,25 @@ const Comment: FC<CommentProps> = ({
   }, [comment.flags]);
 
   useEffect(() => {
-    if (user) {
-      const value = reply === comment._id && comment.user._id !== user._id;
-      const disable = comment.user._id === user._id;
-      setStatus({ reply: value, disable });
-    }
+    if (!user) return;
+
+    const value = reply === comment._id && comment.user._id !== user._id;
+    const disable = comment.user._id === user._id;
+    const removeDisabled = user.role !== 'admin' ? !disable : false;
+    setStatus({
+      reply: value,
+      disable,
+      removeDisabled
+    });
   }, [reply, comment, user]);
 
   const updateLiked = async (): Promise<void> => {
     const params = { commentId: comment._id, isLiked: !isLiked };
     await axios.put<{ comment: CommentsWithUser }>('/comments/liked', params);
+  };
+
+  const handleDelete = async (): Promise<void> => {
+    await axios.delete('/comments/delete', { params: { _id: comment._id } });
   };
 
   const handleReply = (): void => {
@@ -259,6 +285,15 @@ const Comment: FC<CommentProps> = ({
             startIcon={isFlag ? <FlagIcon /> : <FlagOutlinedIcon />}
           >
             Flag
+          </Button>
+          <Button
+            size="small"
+            className={classes.replybtn}
+            onClick={handleDelete}
+            disabled={status.removeDisabled}
+            startIcon={<DeleteOutlineIcon />}
+          >
+            Remove
           </Button>
           <Hidden smDown>
             <Typography
