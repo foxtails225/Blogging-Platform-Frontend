@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useRef } from 'react';
 import { useHistory, useLocation, Link as RouterLink } from 'react-router-dom';
 import parse from 'html-react-parser';
 import moment from 'moment';
@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       width: '100%'
+    },
+    [theme.breakpoints.up('xl')]: {
+      width: '45%'
     }
   },
   chip: {
@@ -79,6 +82,15 @@ const useStyles = makeStyles((theme: Theme) => ({
       fontSize: theme.typography.pxToRem(17)
     }
   },
+  defaultDisclosure: {
+    fontFamily: theme.typography.fontFamily,
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    color: colors.grey[500],
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '0.9rem'
+    }
+  },
   disclosure: {
     fontFamily: theme.typography.fontFamily,
     color: colors.grey[500],
@@ -92,10 +104,13 @@ const PostView: FC = () => {
   const classes = useStyles();
   const theme = useTheme();
   const history = useHistory();
-  const location = useLocation();
   const { user, isAuthenticated } = useAuth();
+  const inputRef = useRef<any>(null);
+  const commentRef = useRef<any>(null);
   const matches = useMediaQuery(theme.breakpoints.down('sm'));
+  const location = useLocation<{ from: string; comment?: string }>();
   const [post, setPost] = useState<PostWithAuthor>();
+  const [commentRefId, setCommentRefId] = useState<string>();
   const [status, setStatus] = useState<Status>(initialStatus);
   const [isBookmarked, setBookmarked] = useState<boolean>(false);
 
@@ -106,6 +121,18 @@ const PostView: FC = () => {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    location.state?.from === 'admin' &&
+      setCommentRefId(location.state?.comment);
+    inputRef.current && location.state?.from === 'profile' && handleInputRef();
+    !inputRef.current && history.replace({ ...location });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location, history]);
+
+  useEffect(() => {
+    commentRef.current && commentRef.current.focus();
+  }, [location, history]);
 
   const handleFetch = async (): Promise<void> => {
     try {
@@ -128,17 +155,20 @@ const PostView: FC = () => {
     setStatus(initialStatus);
   };
 
-  const handleBookmark = (value: boolean): void => {
-    setBookmarked(value);
-  };
+  const handleBookmark = (value: boolean): void => setBookmarked(value);
 
   const handleComment = (id: string, depth: number): void => {
     const parent = status.parent !== id ? id : null;
     setStatus({ parent, depth });
   };
 
-  const handleChip = (route: string): void => history.push(`/symbol/${route}`);
+  const handleInputRef = (): void => {
+    inputRef.current.click();
+    history.replace({ ...location, state: undefined });
+  };
 
+  const handleChip = (route: string): void => history.push(`/symbol/${route}`);
+  
   return (
     <>
       {post && !matches && (
@@ -146,6 +176,7 @@ const PostView: FC = () => {
           post={post}
           isBookmarked={isBookmarked}
           onBookmarked={handleBookmark}
+          onRef={handleInputRef}
           className="div"
         />
       )}
@@ -164,6 +195,7 @@ const PostView: FC = () => {
                       post={post}
                       isBookmarked={isBookmarked}
                       onBookmarked={handleBookmark}
+                      onRef={handleInputRef}
                     />
                   </>
                 )}
@@ -215,6 +247,13 @@ const PostView: FC = () => {
                 {parse(post.content)}
               </Box>
               <Divider />
+              <Box mt={3} className={classes.defaultDisclosure}>
+                Disclaimer: Nothing in this article is or should ever be taken
+                as financial advice. This is purely the personal opinions of the
+                author. Seek out financial advice from a licensed professional
+                who is familiar with your personal financial status and risk
+                tolerances.
+              </Box>
               <Box mt={3} className={classes.disclosure}>
                 {parse(post.disclosure)}
               </Box>
@@ -230,6 +269,8 @@ const PostView: FC = () => {
                     <React.Fragment key={comment._id}>
                       <Comment
                         comment={comment}
+                        commentRef={commentRefId === comment._id && commentRef}
+                        postId={post._id}
                         reply={status.parent}
                         onComment={handleComment}
                       />
@@ -241,6 +282,7 @@ const PostView: FC = () => {
                   <CommentAdd
                     post={post}
                     status={status}
+                    inputRef={inputRef}
                     onFetch={handleFetch}
                   />
                 </Grid>

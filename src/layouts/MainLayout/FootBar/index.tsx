@@ -63,26 +63,28 @@ const FootBar: FC = () => {
         <Grid container spacing={3} component="dl">
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              <Link
-                component={RouterLink}
-                to="/docs/policy"
-                variant="h5"
-              >
+              <Link component={RouterLink} to="/docs/policy" variant="h5">
                 Privacy Policy
               </Link>
             </SecondaryTypography>
           </Grid>
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              <Link
-                component={RouterLink}
-                to="/docs/terms"
-                variant="h5"
-              >
+              <Link component={RouterLink} to="/docs/terms" variant="h5">
                 Terms and Conditions
               </Link>
             </SecondaryTypography>
           </Grid>
+          </Grid>
+          <Box my={3}>
+            <Divider className={classes.divider} />
+          </Box>
+          <Grid container justify="center" alignItems="center">
+            <Grid item>
+              <WhiteTextTypography variant="h6">
+                Dankstocks Copyright 2021
+              </WhiteTextTypography>
+            </Grid>
           {/* <Grid item xs={12} md={6}>
             <SecondaryTypography variant="overline">
               Technical &amp; Licensing

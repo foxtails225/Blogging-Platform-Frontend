@@ -11058,6 +11058,13 @@ react-modal-image@^2.5.0:
   resolved "https://registry.yarnpkg.com/react-modal-image/-/react-modal-image-2.5.0.tgz#c9f047ae2a1b8ca54c35dbdad3bbca846cf21632"
   integrity sha512-QucQrgOLmF44CD4EFDLZ9ICrbHEZwztjALgx1GsNmMWZrAtmzDLarG+T1TK2OSE4w1eHfkXtmEhQibjbt0mT2g==
 
+react-number-format@^4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/react-number-format/-/react-number-format-4.6.1.tgz#b4a213fa8a0c77899208b3331eb0693ba7f9a175"
+  integrity sha512-9pQOMiB3xB7ck2ar+0fOdwLQBWlkkXzOEaMyYXVYuO6qWX6fL4PuZp8kXypGWVTa4KENQs0hGThwcjyNvOMS9g==
+  dependencies:
+    prop-types "^15.7.2"
+
 react-perfect-scrollbar@^1.5.8:
   version "1.5.8"
   resolved "https://registry.yarnpkg.com/react-perfect-scrollbar/-/react-perfect-scrollbar-1.5.8.tgz#380959387a325c5c9d0268afc08b3f73ed5b3078"

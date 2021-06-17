@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import axios from 'src/utils/axios';
 import numeral from 'numeral';
+import NumberFormat from 'react-number-format';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import {
   Box,
@@ -130,7 +131,13 @@ const ProfileGlance: FC<ProfileGlanceProps> = ({
                           <TableRow>
                             <TableCell align="center">Phone Number</TableCell>
                             <TableCell align="center">
-                              +{profile.phone}
+                              {profile.phone && (
+                                <NumberFormat
+                                  value={profile.phone}
+                                  displayType={'text'}
+                                  format="+1 (###) ###-####"
+                                />
+                              )}
                             </TableCell>
                           </TableRow>
                           <TableRow>

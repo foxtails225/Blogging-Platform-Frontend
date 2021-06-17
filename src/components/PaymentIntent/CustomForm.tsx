@@ -69,7 +69,7 @@ const CustomForm: FC<CustomFormProps> = ({
             <TextField
               label="Amount"
               type="number"
-              placeholder="Must be larger than 3"
+              placeholder="Minimum of $3"
               value={amount}
               onChange={handleChange}
               error={amount < 3}

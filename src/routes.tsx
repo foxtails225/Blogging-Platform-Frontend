@@ -98,6 +98,12 @@ const routes: Routes = [
   {
     exact: true,
     layout: MainLayout,
+    path: '/contactus',
+    component: lazy(() => import('src/views/contact'))
+  },
+  {
+    exact: true,
+    layout: MainLayout,
     path: '/users/:id',
     component: lazy(() => import('src/views/account/ProfileView'))
   },

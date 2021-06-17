@@ -1,5 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import moment from 'moment';
+import parser from 'html-react-parser';
 import {
   Avatar,
   Box,
@@ -144,7 +145,7 @@ const NotificationView: FC = () => {
                       }}
                       secondary={
                         <>
-                          {notification.description}
+                          {parser(notification.description)}
                           <br />
                           {moment(notification.createdAt).fromNow()}
                         </>

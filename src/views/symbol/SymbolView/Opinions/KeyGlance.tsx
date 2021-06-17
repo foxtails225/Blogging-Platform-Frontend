@@ -59,15 +59,15 @@ const KeyGlance: FC<KeyGlanceProps> = ({ className, path, ...rest }) => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell align="center">Day High</TableCell>
+                  <TableCell align="center">52 Week High</TableCell>
                   <TableCell align="center">
-                    {numeral(source.peHigh).format('0,0.00')}
+                    {numeral(source.week52high).format('0,0.00')}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell align="center">Day Low</TableCell>
+                  <TableCell align="center">52 Week Low</TableCell>
                   <TableCell align="center">
-                    {numeral(source.peLow).format('0,0.00')}
+                    {numeral(source.week52low).format('0,0.00')}
                   </TableCell>
                 </TableRow>
                 <TableRow>

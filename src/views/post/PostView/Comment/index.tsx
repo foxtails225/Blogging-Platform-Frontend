@@ -25,25 +25,30 @@ import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
 import { CommentsWithUser } from 'src/types/comment';
 import FlagModal from './FlagModal';
+import DeleteModal from './DeleteModal';
 import { Flag } from 'src/types/flag';
 
 interface CommentProps {
   className?: string;
   reply: string;
+  postId: string;
   commentId?: string;
   comment: CommentsWithUser;
+  commentRef?: any;
   onComment: (parent: string, depth: number) => void;
 }
 
 interface Status {
   reply: boolean;
   disable: boolean;
+  flagDiabled: boolean;
   removeDisabled: boolean;
 }
 
 const initialStatus: Status = {
   reply: false,
   disable: true,
+  flagDiabled: true,
   removeDisabled: true
 };
 
@@ -90,7 +95,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Comment: FC<CommentProps> = ({
   className,
   comment,
+  postId,
   reply,
+  commentRef,
   onComment,
   ...rest
 }) => {
@@ -99,6 +106,7 @@ const Comment: FC<CommentProps> = ({
   const match = useMediaQuery(theme.breakpoints.down('sm'));
   const { user, isAuthenticated } = useAuth();
   const [open, setOpen] = useState<boolean>(false);
+  const [isModal, setModal] = useState<boolean>(false);
   const [status, setStatus] = useState<Status>(initialStatus);
   const [isLiked, setLiked] = useState<boolean>(false);
   const [isFlag, setFlag] = useState<boolean>(false);
@@ -113,18 +121,21 @@ const Comment: FC<CommentProps> = ({
         setStatus(prevState => ({
           ...prevState,
           disabled: true,
+          flagDiabled: true,
           removeDisabled: false
         }));
       user.role === 'admin' &&
         setStatus(prevState => ({
           ...prevState,
           disabled: false,
+          flagDiabled: false,
           removeDisabled: false
         }));
     } else {
       setStatus(prevState => ({
         ...prevState,
         disabled: true,
+        flagDiabled: true,
         removeDisabled: true
       }));
     }
@@ -148,12 +159,14 @@ const Comment: FC<CommentProps> = ({
   useEffect(() => {
     if (!user) return;
 
-    const value = reply === comment._id && comment.user._id !== user._id;
+    const value = reply === comment._id;
     const disable = comment.user._id === user._id;
     const removeDisabled = user.role !== 'admin' ? !disable : false;
+
     setStatus({
       reply: value,
-      disable,
+      disable: false,
+      flagDiabled: disable,
       removeDisabled
     });
   }, [reply, comment, user]);
@@ -184,17 +197,13 @@ const Comment: FC<CommentProps> = ({
     updateLiked();
   };
 
-  const handleFlag = (): void => {
-    setOpen(true);
-  };
+  const handleFlag = (): void => setOpen(true);
 
-  const handleFlagSubmit = (): void => {
-    setFlag(true);
-  };
+  const handleFlagSubmit = (): void => setFlag(true);
 
-  const handleOpen = () => {
-    setOpen(!open);
-  };
+  const handleOpen = () => setOpen(!open);
+
+  const handleModal = () => setModal(!isModal);
 
   return (
     <div className={clsx(classes.root, className)} style={style} {...rest}>
@@ -219,14 +228,26 @@ const Comment: FC<CommentProps> = ({
           mb={1}
         >
           <Box className={classes.name}>
-            <Link
-              color="textPrimary"
-              component={RouterLink}
-              to="#"
-              variant="h6"
-            >
-              {comment.user.name}
-            </Link>
+            {commentRef ? (
+              <Link
+                ref={commentRef}
+                color="textPrimary"
+                component={RouterLink}
+                to="#"
+                variant="h6"
+              >
+                {comment.user.name}
+              </Link>
+            ) : (
+              <Link
+                color="textPrimary"
+                component={RouterLink}
+                to="#"
+                variant="h6"
+              >
+                {comment.user.name}
+              </Link>
+            )}
             <Hidden smUp>
               <Typography
                 color="textSecondary"
@@ -281,20 +302,22 @@ const Comment: FC<CommentProps> = ({
             size="small"
             className={classes.replybtn}
             onClick={handleFlag}
-            disabled={status.disable || isFlag}
+            disabled={status.flagDiabled || isFlag}
             startIcon={isFlag ? <FlagIcon /> : <FlagOutlinedIcon />}
           >
             Flag
           </Button>
-          <Button
-            size="small"
-            className={classes.replybtn}
-            onClick={handleDelete}
-            disabled={status.removeDisabled}
-            startIcon={<DeleteOutlineIcon />}
-          >
-            Remove
-          </Button>
+          {!status.removeDisabled && (
+            <Button
+              size="small"
+              className={classes.replybtn}
+              onClick={handleModal}
+              disabled={status.removeDisabled}
+              startIcon={<DeleteOutlineIcon />}
+            >
+              Remove
+            </Button>
+          )}
           <Hidden smDown>
             <Typography
               color="textSecondary"
@@ -313,9 +336,17 @@ const Comment: FC<CommentProps> = ({
         <FlagModal
           open={open}
           user={user}
+          post={postId}
           comment={comment}
           onOpen={handleOpen}
           onFlag={handleFlagSubmit}
+        />
+      )}
+      {isModal && (
+        <DeleteModal
+          open={isModal}
+          onOpen={handleModal}
+          onConfirm={handleDelete}
         />
       )}
     </div>

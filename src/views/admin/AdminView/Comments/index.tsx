@@ -13,7 +13,7 @@ import {
 import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import GenericMoreButton from 'src/components/GenericMoreButton';
-import { FlagWithUser } from 'src/types/flag';
+import { FlagWithUserAndPost } from 'src/types/flag';
 import FlagItem from './FlagItem';
 import { socket } from 'src/constants';
 
@@ -28,11 +28,11 @@ const useStyles = makeStyles(() => ({
 const TeamTasks: FC<TeamTasksProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
-  const [flags, setFlags] = useState<FlagWithUser[]>([]);
+  const [flags, setFlags] = useState<FlagWithUserAndPost[]>([]);
 
   const getFlags = useCallback(async () => {
     try {
-      const response = await axios.get<{ flags: FlagWithUser[] }>(
+      const response = await axios.get<{ flags: FlagWithUserAndPost[] }>(
         '/comments/flagsAll'
       );
 

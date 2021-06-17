@@ -162,14 +162,25 @@ const Posts: FC<PostsProps> = ({ className, ...rest }) => {
               {posts.map(post => (
                 <TableRow hover key={post._id}>
                   <TableCell align="center">
-                    <Link
-                      color="textPrimary"
-                      component={RouterLink}
-                      to={'/posts/public/' + post.slug}
-                      variant="body2"
-                    >
-                      {post.title}
-                    </Link>
+                    {post.status !== 'pending' ? (
+                      <Link
+                        color="textPrimary"
+                        component={RouterLink}
+                        to={'/posts/public/' + post.slug}
+                        variant="body2"
+                      >
+                        {post.title}
+                      </Link>
+                    ) : (
+                      <Link
+                        color="textPrimary"
+                        component={RouterLink}
+                        to={'/posts/edit/' + post.slug}
+                        variant="body2"
+                      >
+                        {post.title}
+                      </Link>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Link

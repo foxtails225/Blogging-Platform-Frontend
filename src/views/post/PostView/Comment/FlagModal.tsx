@@ -26,6 +26,7 @@ interface FlagProps {
   className?: string;
   open: boolean;
   user: User;
+  post: string;
   comment: CommentsWithUser;
   onOpen: () => void;
   onFlag: () => void;
@@ -47,6 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const FlagModal: FC<FlagProps> = ({
   open,
   user,
+  post,
   comment,
   onOpen,
   onFlag,
@@ -58,20 +60,19 @@ const FlagModal: FC<FlagProps> = ({
   const [value, setValue] = useState<string>('');
 
   const handleConfirm = async () => {
-    const reason = value !== '' ? value : option;
     const params = {
       comment: comment._id,
-      reason,
-      type: 'comment'
+      post,
+      reason: option,
+      type: 'comment',
+      description: value
     };
     await axios.put<{ flag: Flag }>('/comments/flag', params);
     onOpen();
     onFlag();
   };
 
-  const handleClose = () => {
-    onOpen();
-  };
+  const handleClose = () => onOpen();
 
   const handleOption = (event: ChangeEvent<HTMLInputElement>): void => {
     setValue('');

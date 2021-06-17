@@ -27,6 +27,7 @@ interface ReactionsProps {
   className?: string;
   post: Post;
   isBookmarked: boolean;
+  onRef: () => void;
   onBookmarked: (param: boolean) => void;
 }
 
@@ -40,7 +41,10 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'sticky',
     float: 'left',
     top: '45vh',
-    left: '10vw'
+    left: '10vw',
+    [theme.breakpoints.up('xl')]: {
+      left: '26vw'
+    }
   },
   reaction: {
     [theme.breakpoints.down('md')]: {
@@ -76,21 +80,28 @@ const Reactions: FC<ReactionsProps> = ({
   className,
   post,
   isBookmarked,
+  onRef,
   onBookmarked,
   ...rest
 }) => {
   const classes = useStyles();
   const { user, isAuthenticated } = useAuth();
   const [isLiked, setLiked] = useState<boolean>(false);
+  const [likedDisabled, setLikedDisabled] = useState<boolean>(false);
   const [isFlag, setFlag] = useState<boolean>(false);
   const [likes, setLikes] = useState<number>(post.liked.count);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
 
   useEffect(() => {
-    //@ts-ignore
-    isAuthenticated && user._id === post.author._id && setDisabled(true);
-    !isAuthenticated && setDisabled(true);
+    if (isAuthenticated) {
+      //@ts-ignore
+      user._id === post.author._id && setDisabled(true);
+      setLikedDisabled(false);
+    } else {
+      setDisabled(true);
+      setLikedDisabled(true);
+    }
   }, [user, isAuthenticated, post.author]);
 
   useEffect(() => {
@@ -99,7 +110,6 @@ const Reactions: FC<ReactionsProps> = ({
       //@ts-ignore
       post.flags.map((flag: Flag) => flag.user === user._id && setFlag(true));
     }
-
     //eslint-disable-next-line react-hooks/exhaustive-deps
   }, [post.liked.users]);
 
@@ -170,13 +180,13 @@ const Reactions: FC<ReactionsProps> = ({
         <Tooltip
           title="Unlike"
           disableTouchListener
-          disableHoverListener={disabled}
+          disableHoverListener={likedDisabled}
         >
           <span>
             <IconButton
               className={clsx(classes.likedButton, classes.likedIcon)}
               onClick={handleUnlike}
-              disabled={disabled}
+              disabled={likedDisabled}
             >
               <CustomIcon src="/static/icons/trending_filled.svg" />
             </IconButton>
@@ -186,13 +196,13 @@ const Reactions: FC<ReactionsProps> = ({
         <Tooltip
           title="Like"
           disableTouchListener
-          disableHoverListener={disabled}
+          disableHoverListener={likedDisabled}
         >
           <span>
             <IconButton
               className={classes.likedIcon}
               onClick={handleLike}
-              disabled={disabled}
+              disabled={likedDisabled}
             >
               <CustomIcon src="/static/icons/trending_outlined.svg" />
             </IconButton>
@@ -203,7 +213,13 @@ const Reactions: FC<ReactionsProps> = ({
         {likes}
       </Typography>
       <Box className={classes.commentBox}>
-        <MessageCircleIcon className={classes.commentIcon} size="20" />
+        <IconButton
+          className={classes.likedIcon}
+          onClick={onRef}
+          disabled={likedDisabled}
+        >
+          <MessageCircleIcon className={classes.commentIcon} size="20" />
+        </IconButton>
       </Box>
       <Typography color="textSecondary" variant="h6">
         {post.comments.length}

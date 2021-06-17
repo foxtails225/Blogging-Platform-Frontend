@@ -121,7 +121,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
-                  primary={`${status.pending} posts pended`}
+                  primary={`${status.pending} posts pending`}
                   primaryTypographyProps={{
                     variant: 'body2',
                     color: 'textSecondary'

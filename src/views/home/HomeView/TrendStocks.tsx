@@ -98,7 +98,7 @@ const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
                 >
                   {`$${quote.latestPrice} ${
                     quote.changePercent > 0 ? '+' : ''
-                  } ${quote.change} (${quote.changePercent}%)`}
+                  }${quote.change} (${quote.changePercent}%)`}
                 </Typography>
               }
             />

@@ -15,7 +15,7 @@ import {
 } from '@material-ui/core';
 import SendIcon from '@material-ui/icons/Send';
 import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
-import AttachFileIcon from '@material-ui/icons/AttachFile';
+// import AttachFileIcon from '@material-ui/icons/AttachFile';
 import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
@@ -31,6 +31,7 @@ interface CommentAddProps {
   className?: string;
   post?: Post;
   status: Status;
+  inputRef: any;
   onFetch?: () => void;
 }
 
@@ -66,6 +67,7 @@ const CommentAdd: FC<CommentAddProps> = ({
   className,
   post,
   status,
+  inputRef,
   onFetch,
   ...rest
 }) => {
@@ -81,7 +83,7 @@ const CommentAdd: FC<CommentAddProps> = ({
     event.persist();
     setValue(event.target.value);
   };
-  
+
   const handleClick = async () => {
     try {
       const params = {
@@ -116,6 +118,7 @@ const CommentAdd: FC<CommentAddProps> = ({
           multiline
           rows={3}
           onChange={handleChange}
+          ref={inputRef}
         />
       </Paper>
       <Tooltip title="Send">
@@ -135,11 +138,12 @@ const CommentAdd: FC<CommentAddProps> = ({
           <AddPhotoIcon />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Attach file">
+      {/* TODO: enable for file uploading feature */}
+      {/* <Tooltip title="Attach file">
         <IconButton edge="end" onClick={handleAttach}>
           <AttachFileIcon />
         </IconButton>
-      </Tooltip>
+      </Tooltip> */}
       <input className={classes.fileInput} ref={fileInputRef} type="file" />
     </div>
   );

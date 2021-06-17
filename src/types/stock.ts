@@ -32,8 +32,8 @@ export interface Profile {
 
 export interface KeyStats {
   avg10Volume: number;
-  peHigh: number;
-  peLow: number;
+  week52high: number;
+  week52low: number;
   marketcap: number;
   sharesOutstanding: number;
   beta: number;
