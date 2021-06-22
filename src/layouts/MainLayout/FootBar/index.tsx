@@ -44,22 +44,12 @@ const SecondaryTypography = withStyles({
   }
 })(Typography);
 
-// const WhiteSecondaryTypography = withStyles({
-//   root: {
-//     color: '#546e7a'
-//   }
-// })(Typography);
-
 const FootBar: FC = () => {
   const classes = useStyles();
 
   return (
     <div className={classes.root}>
       <Container maxWidth="lg">
-        <WhiteTextTypography variant="h1">Policies</WhiteTextTypography>
-        <Box my={3}>
-          <Divider className={classes.divider} />
-        </Box>
         <Grid container spacing={3} component="dl">
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
@@ -75,78 +65,23 @@ const FootBar: FC = () => {
               </Link>
             </SecondaryTypography>
           </Grid>
-          </Grid>
-          <Box my={3}>
-            <Divider className={classes.divider} />
-          </Box>
-          <Grid container justify="center" alignItems="center">
-            <Grid item>
-              <WhiteTextTypography variant="h6">
-                Dankstocks Copyright 2021
-              </WhiteTextTypography>
-            </Grid>
-          {/* <Grid item xs={12} md={6}>
+          <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              Technical &amp; Licensing
+              <Link component={RouterLink} to="/contact" variant="h5">
+                Contact Us
+              </Link>
             </SecondaryTypography>
-            <Box mt={6}>
-              <dt>
-                <WhiteTextTypography variant="h4">
-                  What do we use for styling our components?
-                </WhiteTextTypography>
-              </dt>
-              <dd>
-                <WhiteSecondaryTypography variant="body1">
-                  We use Material-ui&apos;s hooks api as we think it’s the best
-                  way of avoiding clutter.
-                </WhiteSecondaryTypography>
-              </dd>
-            </Box>
-            <Box mt={6}>
-              <dt>
-                <WhiteTextTypography variant="h4">
-                  Is Typescript available?
-                </WhiteTextTypography>
-              </dt>
-              <dd>
-                <WhiteSecondaryTypography variant="body1">
-                  Yes, we have the Typescript version available for Standard
-                  Plus and Extended license.
-                </WhiteSecondaryTypography>
-              </dd>
-            </Box>
-            <Box mt={6}>
-              <dt>
-                <WhiteTextTypography variant="h4">
-                  Are you providing support for setting up my project?
-                </WhiteTextTypography>
-              </dt>
-              <dd>
-                <WhiteSecondaryTypography variant="body1">
-                  Yes, we offer email support for all our customers &amp; even
-                  skype meetings for our extended license customers.
-                </WhiteSecondaryTypography>
-              </dd>
-            </Box>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <SecondaryTypography variant="overline">Design</SecondaryTypography>
-            <Box mt={6}>
-              <dt>
-                <WhiteTextTypography variant="h4">
-                  Are the design files (Sketch, Figma) included in the Standard
-                  License?
-                </WhiteTextTypography>
-              </dt>
-              <dd>
-                <WhiteSecondaryTypography variant="body1">
-                  No, we offer the design source file only to Standard Plus and
-                  Extended License.
-                </WhiteSecondaryTypography>
-              </dd>
-            </Box>
+        </Grid>
+        <Box my={3}>
+          <Divider className={classes.divider} />
+        </Box>
+        <Grid container justify="center" alignItems="center">
+          <Grid item>
+            <WhiteTextTypography variant="h6">
+              Dankstocks Copyright 2021
+            </WhiteTextTypography>
           </Grid>
-        */}
         </Grid>
       </Container>
     </div>

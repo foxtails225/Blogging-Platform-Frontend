@@ -168,7 +168,7 @@ const PostView: FC = () => {
   };
 
   const handleChip = (route: string): void => history.push(`/symbol/${route}`);
-  
+
   return (
     <>
       {post && !matches && (
@@ -276,15 +276,19 @@ const PostView: FC = () => {
                       />
                     </React.Fragment>
                   ))}
-                  <Box my={2}>
-                    <Divider />
-                  </Box>
-                  <CommentAdd
-                    post={post}
-                    status={status}
-                    inputRef={inputRef}
-                    onFetch={handleFetch}
-                  />
+                  {isAuthenticated && (
+                    <>
+                      <Box my={2}>
+                        <Divider />
+                      </Box>
+                      <CommentAdd
+                        post={post}
+                        status={status}
+                        inputRef={inputRef}
+                        onFetch={handleFetch}
+                      />
+                    </>
+                  )}
                 </Grid>
               </Grid>
             </Box>

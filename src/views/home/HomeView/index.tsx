@@ -22,6 +22,7 @@ const HomeView: FC = () => {
           <Grid item lg={9} xs={12}>
             <Market />
           </Grid>
+          <Grid item md={3} xs={12} />
           <Grid item lg={9} xs={12}>
             <Grid container spacing={3}>
               <Grid item lg={6} xs={12}>

@@ -98,7 +98,7 @@ const routes: Routes = [
   {
     exact: true,
     layout: MainLayout,
-    path: '/contactus',
+    path: '/contact',
     component: lazy(() => import('src/views/contact'))
   },
   {
