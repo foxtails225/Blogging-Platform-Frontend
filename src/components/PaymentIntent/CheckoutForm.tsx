@@ -93,6 +93,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
         // execution. Set up a webhook or plugin to listen for the
         // payment_intent.succeeded event that handles any business critical
         // post-payment actions.
+        console.log(result);
         await axios.post<{ notification: Notification }>(
           '/notifications/create',
           {
@@ -109,6 +110,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
           client: user._id,
           amount: (amount * 5) / 4,
           fee: amount / 4,
+          paymentId: result.paymentIntent.id,
           type: 'tips'
         });
         onSuccess();

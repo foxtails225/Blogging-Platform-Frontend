@@ -6,6 +6,8 @@ export interface Transaction {
   client: string;
   amount: number;
   fee: number;
+  paymentId: string;
+  refund: boolean;
   type: TransactionType;
   refId: string;
   createdAt: Date;

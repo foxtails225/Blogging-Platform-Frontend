@@ -1,8 +1,5 @@
-import React, {
-  useState,
-  useEffect
-} from 'react';
-import type { FC } from 'react';
+import React, { FC, useState, useEffect } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import {
   Box,
@@ -12,7 +9,7 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import type { Theme } from 'src/theme';
+import { Theme } from 'src/theme';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -57,29 +54,21 @@ const CookiesNotification: FC = () => {
   return (
     <Portal>
       <div className={classes.root}>
-        <Typography
-          variant="body1"
-          color="inherit"
-        >
+        <Typography variant="body1" color="inherit">
           We use Cookies to ensure that we give you the best experience on our
-          website. Read our
-          {' '}
+          website. Read our{' '}
           <Link
-            component="a"
             color="inherit"
+            component={RouterLink}
+            to="/docs/policy"
+            variant="h5"
             underline="always"
-            href="https://devias.io/privacy-policy"
-            target="_blank"
           >
             Privacy Policy
           </Link>
           .
         </Typography>
-        <Box
-          mt={2}
-          display="flex"
-          justifyContent="flex-end"
-        >
+        <Box mt={2} display="flex" justifyContent="flex-end">
           <Button
             onClick={handleClose}
             variant="contained"

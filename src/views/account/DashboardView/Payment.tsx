@@ -9,6 +9,7 @@ import {
   Card,
   CardHeader,
   Divider,
+  Button,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +26,7 @@ import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
 import { Balance, Transaction } from 'src/types/transaction';
 
-interface PostsProps {
+interface PaymentProps {
   className?: string;
   profile: User;
 }
@@ -42,10 +43,12 @@ interface Status {
 const columns = [
   { name: 'no', value: 'No' },
   { name: 'createdAt', value: 'Date' },
+  { name: 'status', value: 'Status' },
   { name: 'type', value: 'Type' },
   { name: 'amount', value: 'Initial Pyament' },
   { name: 'fee', value: 'Fee' },
-  { name: 'income', value: 'Net Income' }
+  { name: 'income', value: 'Net Income' },
+  { name: 'refund', value: '' }
 ];
 
 const initialStatus: Status = {
@@ -68,7 +71,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
+const Payment: FC<PaymentProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const { user } = useAuth();
   const [count, setCount] = useState<number>(0);
@@ -117,17 +120,17 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   }, [status, user]);
 
   const createSortHandler = (event): void => {
+    const { id } = event.currentTarget;
     const value = status.orderBy !== 'desc' ? 'desc' : 'asc';
     setStatus(prevState => ({
       ...prevState,
-      order: event.currentTarget.id,
+      order: id,
       orderBy: value
     }));
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (event: unknown, newPage: number) =>
     setStatus(prevState => ({ ...prevState, page: newPage }));
-  };
 
   const handleSortDirection = (name: string): OrderByStatus => {
     const direction =
@@ -143,15 +146,17 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
     }));
   };
 
+  const handleRefund = async (_id, payment_intent) => {
+    const params = { _id, payment_intent };
+    await axios.post('/stripe/refund/', params);
+  };
+
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
       <CardHeader
         action={
           <Typography variant="h5" color="textSecondary">
-            Balance:{' '}
-            {numeral(balance.available + balance.instant_available).format(
-              `$0,0.00`
-            )}
+            Balance: {numeral(balance.instant_available).format(`$0,0.00`)}
           </Typography>
         }
         classes={{ action: classes.action }}
@@ -171,7 +176,10 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
                       onClick={createSortHandler}
                       direction={handleSortDirection(column.name)}
                       disabled={
-                        column.name === 'no' || column.name === 'income'
+                        column.name === 'no' ||
+                        column.name === 'income' ||
+                        column.name === 'refund' ||
+                        column.name === 'status'
                       }
                     >
                       {column.value}
@@ -190,12 +198,30 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
                     )}
                   </TableCell>
                   <TableCell align="center">
+                    {transaction.user === profile._id ? 'Received' : 'Send'}
+                  </TableCell>
+                  <TableCell align="center">
                     {transaction.type.replace('_', ' ')}
                   </TableCell>
                   <TableCell align="center">${transaction.amount}</TableCell>
                   <TableCell align="center">${transaction.fee}</TableCell>
                   <TableCell align="center">
                     ${transaction.amount - transaction.fee}
+                  </TableCell>
+                  <TableCell width="10%">
+                    <Button
+                      color="primary"
+                      variant="contained"
+                      size="small"
+                      disabled={
+                        transaction.user === profile._id || transaction.refund
+                      }
+                      onClick={() =>
+                        handleRefund(transaction._id, transaction.paymentId)
+                      }
+                    >
+                      Refund
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -204,7 +230,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={Math.ceil(count / status.limit)}
+            count={count}
             rowsPerPage={status.limit}
             page={status.page}
             onChangePage={handleChangePage}
@@ -217,10 +243,10 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
   );
 };
 
-Posts.propTypes = {
+Payment.propTypes = {
   className: PropTypes.string,
   //@ts-ignore
   profile: PropTypes.object
 };
 
-export default Posts;
+export default Payment;

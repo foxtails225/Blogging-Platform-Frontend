@@ -88,9 +88,8 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
     setOrderBy(value);
   };
 
-  const handleChangePage = (event: unknown, newPage: number) => {
+  const handleChangePage = (event: unknown, newPage: number) =>
     setPage(newPage);
-  };
 
   const handleSortDirection = (name: string): OrderByStatus => {
     const direction = order === name && orderBy ? orderBy : 'desc';
@@ -157,7 +156,7 @@ const Posts: FC<PostsProps> = ({ className, profile, ...rest }) => {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={Math.ceil(count / limit)}
+            count={count}
             rowsPerPage={limit}
             page={page}
             onChangePage={handleChangePage}

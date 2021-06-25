@@ -44,7 +44,7 @@ const ContactForm: FC<ContactFormProps> = ({ value }) => {
           .required('Email is required'),
         company: Yup.string().max(255),
         position: Yup.string().max(255),
-        message: Yup.string().required()
+        message: Yup.string().required('Message is required')
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
@@ -151,7 +151,7 @@ const ContactForm: FC<ContactFormProps> = ({ value }) => {
             <Grid item xs={12}>
               <Box mb={1}>
                 <Typography color="textPrimary" variant="subtitle2">
-                  Message
+                  Message *
                 </Typography>
               </Box>
               <TextField
