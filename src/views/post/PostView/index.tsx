@@ -123,17 +123,20 @@ const PostView: FC = () => {
   }, []);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     location.state?.from === 'admin' &&
       setCommentRefId(location.state?.comment);
     inputRef.current && location.state?.from === 'profile' && handleInputRef();
     !inputRef.current && history.replace({ ...location });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location, history]);
+  }, [location, history, isAuthenticated]);
 
   useEffect(() => {
+    if (!isAuthenticated) return;
     commentRef.current && commentRef.current.focus();
-  }, [location, history]);
-
+  }, [history, location, isAuthenticated]);
+  
   const handleFetch = async (): Promise<void> => {
     try {
       const path = location.pathname.split('/')[3];
