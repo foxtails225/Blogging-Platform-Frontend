@@ -49,9 +49,12 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
           .max(255)
           .required('Name is required'),
         password: Yup.string()
-          .min(7)
           .max(255)
-          .required('Password is required'),
+          .required('Password is required')
+          .matches(
+            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+            "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+          ),
         policy: Yup.boolean().oneOf([true], 'This field must be checked')
       })}
       onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {

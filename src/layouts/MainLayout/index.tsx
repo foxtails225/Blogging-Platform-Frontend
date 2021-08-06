@@ -28,7 +28,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   wrapper: {
     display: 'flex',
     flex: '1 1 auto',
-    paddingTop: 64
+    paddingTop: 64,
+    position: 'relative'
   },
   footer: {
     marginTop: 40,

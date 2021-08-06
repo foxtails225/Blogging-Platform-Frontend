@@ -10,7 +10,9 @@ export const SEVER_URL = 'https://dankstocks.com';
 export const LOCAL_URL = 'http://127.0.0.1:8080';
 
 export const STRIPE_KEY =
-  'pk_test_51IYaKXKVBO5q0qZPSZy6q6RSvHnlvipZlfSINADXImc4Uv4oXCtQFm8aoSL4o3fQmz4tLDZAm5c6gWT0xKkXYnim00jfnFsmRv';
+  process.env.NODE_ENV === 'production'
+    ? 'pk_live_51IYaKXKVBO5q0qZPHCESZnjpMy50HgO7TfBIwkT0tPVqMOzRK6L7E1Z31dtZFP1bOF0Ayn4TCgpzsfTOPpIPtjjk00y1m4E4Y7'
+    : 'pk_test_51IYaKXKVBO5q0qZPSZy6q6RSvHnlvipZlfSINADXImc4Uv4oXCtQFm8aoSL4o3fQmz4tLDZAm5c6gWT0xKkXYnim00jfnFsmRv';
 
 export const stripePromise = loadStripe(STRIPE_KEY);
 

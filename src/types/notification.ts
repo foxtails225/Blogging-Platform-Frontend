@@ -5,7 +5,8 @@ export type NotifyStatus =
   | 'post_approved'
   | 'post_rejected'
   | 'payment_success'
-  | 'tips_success';
+  | 'tips_success'
+  | 'tip_refunded';
 
 export interface Notification {
   _id?: string;
@@ -13,8 +14,8 @@ export interface Notification {
   title: string;
   description: string;
   type: NotifyStatus;
-  isRead: boolean;
   url: string;
+  isRead: boolean;
   createdAt?: Date;
   updatedAt?: Date;
 }

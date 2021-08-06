@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState, ChangeEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import clsx from 'clsx';
 import moment from 'moment';
-import numeral from 'numeral';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import PropTypes from 'prop-types';
 import {
@@ -19,18 +18,14 @@ import {
   TableSortLabel,
   TablePagination,
   makeStyles,
-  Typography,
   Link
 } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import { User } from 'src/types/user';
 import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
-import {
-  Balance,
-  Transaction,
-  TransactionWithClient
-} from 'src/types/transaction';
+import { TransactionWithClient } from 'src/types/transaction';
+import { socket } from 'src/constants';
 
 interface PaymentProps {
   className?: string;
@@ -65,12 +60,6 @@ const initialStatus: Status = {
   orderBy: 'desc'
 };
 
-const initialBalance: Balance = {
-  available: 0,
-  instant_available: 0,
-  pending: 0
-};
-
 const useStyles = makeStyles((theme: Theme) => ({
   root: {},
   action: {
@@ -83,17 +72,16 @@ const Payment: FC<PaymentProps> = ({ className, profile, ...rest }) => {
   const { user } = useAuth();
   const [count, setCount] = useState<number>(0);
   const [status, setStatus] = useState<Status>(initialStatus);
-  const [balance, setBalance] = useState<Balance>(initialBalance);
   const [transactions, setTransactions] = useState<TransactionWithClient[]>([]);
 
-  const getPosts = async () => {
+  const getData = async () => {
     try {
       const sortBy = { [status.order]: status.orderBy === 'desc' ? -1 : 1 };
       const params = { page: status.page, sortBy, limit: status.limit, user };
       const response = await axios.post<{
         transactions: TransactionWithClient[];
         count: number;
-      }>('/transactions/all/', params);
+      }>('/admin/refunds', params);
 
       setTransactions(response.data.transactions);
       setCount(response.data.count);
@@ -102,27 +90,11 @@ const Payment: FC<PaymentProps> = ({ className, profile, ...rest }) => {
     }
   };
 
-  const getBalance = async () => {
-    try {
-      const response = await axios.get('/stripe/balance');
-
-      if (response.data) {
-        Object.keys(balance).forEach(item => {
-          const amount = response.data[item].reduce(
-            (a, b) => a + (b['amount'] || 0),
-            0
-          );
-          setBalance(prevState => ({ ...prevState, [item]: amount / 100 }));
-        });
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
-    getBalance();
-    getPosts();
+    getData();
+    socket.on('requestRefund', data => {
+      getData();
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [status, user]);
 
@@ -153,27 +125,18 @@ const Payment: FC<PaymentProps> = ({ className, profile, ...rest }) => {
     }));
   };
 
-  const handleRefund = async event => {
-    const params = { _id: event.currentTarget.name };
-    if (event.currentTarget.name) {
-      await axios.put<{ transaction: Transaction }>(
-        '/transactions/refund/',
-        params
-      );
-    }
-    getPosts();
+  const handleRefund = async (transaction: TransactionWithClient) => {
+    const { _id, paymentId, user } = transaction;
+    const params = { _id, payment_intent: paymentId, user };
+    await axios.post('/stripe/refund/', params);
+    getData();
   };
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
       <CardHeader
-        action={
-          <Typography variant="h5" color="textSecondary">
-            Balance: {numeral(balance.instant_available).format(`$0,0.00`)}
-          </Typography>
-        }
         classes={{ action: classes.action }}
-        title="Latest Transactions"
+        title="Latest Refund Transactions"
       />
       <Divider />
       <PerfectScrollbar>
@@ -243,22 +206,16 @@ const Payment: FC<PaymentProps> = ({ className, profile, ...rest }) => {
                       ${transaction.amount - transaction.fee}
                     </TableCell>
                     <TableCell width="10%">
-                      {moment().diff(moment(transaction.createdAt), 'h') <=
-                        24 && (
-                        <Button
-                          name={transaction?._id}
-                          color="primary"
-                          variant="contained"
-                          size="small"
-                          onClick={handleRefund}
-                          disabled={
-                            transaction.user === profile._id ||
-                            transaction.requestRefund
-                          }
-                        >
-                          Refund
-                        </Button>
-                      )}
+                      <Button
+                        name={transaction?._id}
+                        color="primary"
+                        variant="contained"
+                        size="small"
+                        disabled={transaction.refund}
+                        onClick={() => handleRefund(transaction)}
+                      >
+                        Refund
+                      </Button>
                     </TableCell>
                   </TableRow>
                 )

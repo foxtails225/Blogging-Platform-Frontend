@@ -29,6 +29,9 @@ export interface User {
   stripeId: string;
   expiredIn: Date;
   registered: boolean;
+  alert?: string;
+  alertType?: string;
+  alertChecked?: boolean;
   following: string[];
   followers: string[];
   createdAt: Date;

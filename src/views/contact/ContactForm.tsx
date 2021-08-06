@@ -10,7 +10,13 @@ import {
   Link,
   TextField,
   Typography,
-  FormHelperText
+  FormHelperText,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  makeStyles,
+  Theme
 } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import { Support } from 'src/types/support';
@@ -18,9 +24,18 @@ import { Support } from 'src/types/support';
 type Type = 'ads' | 'support';
 interface ContactFormProps {
   value: Type;
+  onSubmit: () => void;
 }
 
-const ContactForm: FC<ContactFormProps> = ({ value }) => {
+const useStyles = makeStyles((theme: Theme) => ({
+  root: {},
+  control: {
+    minWidth: 300
+  }
+}));
+
+const ContactForm: FC<ContactFormProps> = ({ value, onSubmit }) => {
+  const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
   return (
@@ -32,6 +47,7 @@ const ContactForm: FC<ContactFormProps> = ({ value }) => {
         company: '',
         position: '',
         message: '',
+        support: '',
         submit: null
       }}
       validationSchema={Yup.object().shape({
@@ -52,7 +68,8 @@ const ContactForm: FC<ContactFormProps> = ({ value }) => {
           await axios.post<{ support: Support }>('/support/contact', params);
           setStatus({ success: true });
           setSubmitting(false);
-          enqueueSnackbar('Profile updated', {
+          onSubmit();
+          enqueueSnackbar('Your request is submitted', {
             variant: 'success'
           });
         } catch (err) {
@@ -73,6 +90,28 @@ const ContactForm: FC<ContactFormProps> = ({ value }) => {
       }) => (
         <form onSubmit={handleSubmit}>
           <Grid container spacing={3}>
+            {value !== 'ads' && (
+              <Grid item xs={12} sm={12}>
+                <FormControl
+                  className={classes.control}
+                  variant="outlined"
+                  required
+                >
+                  <InputLabel>Support Type</InputLabel>
+                  <Select
+                    name="support"
+                    value={values.support}
+                    onChange={handleChange}
+                    label="Support Type"
+                  >
+                    <MenuItem value="Questions/support">
+                      Questions/support
+                    </MenuItem>
+                    <MenuItem value="Feedback/ideas">Feedback/ideas</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            )}
             <Grid item xs={12} sm={6}>
               <Box mb={1}>
                 <Typography color="textPrimary" variant="subtitle2">

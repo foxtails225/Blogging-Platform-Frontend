@@ -7,6 +7,7 @@ import { Theme } from 'src/theme';
 
 interface QuillEditorProps {
   className?: string;
+  forwardRef?: any;
   [key: string]: any;
 }
 
@@ -74,12 +75,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const QuillEditor: FC<QuillEditorProps> = ({ className, ...rest }) => {
+const QuillEditor: FC<QuillEditorProps> = ({
+  className,
+  forwardRef,
+  ...rest
+}) => {
   const classes = useStyles();
-
+  console.log(forwardRef);
   return (
     /* @ts-ignore */
-    <ReactQuill className={clsx(classes.root, className)} {...rest} />
+    <ReactQuill
+      ref={forwardRef}
+      className={clsx(classes.root, className)}
+      {...rest}
+    />
   );
 };
 

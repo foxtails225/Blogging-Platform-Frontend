@@ -13,6 +13,7 @@ import {
   Divider,
   makeStyles
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { Theme } from 'src/theme';
 import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
@@ -94,7 +95,18 @@ const OverviewView: FC = () => {
           {currentTab === 'authors' && <Authors profile={profile} />}
           {currentTab === 'followers' && <Followers profile={profile} />}
           {currentTab === 'archive' && <Archive profile={profile} />}
-          {currentTab === 'payment' && <Payment profile={profile} />}
+          {currentTab === 'payment' && (
+            <Box>
+              <Box mb={2}>
+                <Alert severity="info">
+                  You may only request a refund for tips within a 24 hour period
+                  of the transactions being made. Please see the Terms and
+                  Condition's for more detail.
+                </Alert>
+              </Box>
+              <Payment profile={profile} />
+            </Box>
+          )}
         </Box>
       </Container>
     </Page>

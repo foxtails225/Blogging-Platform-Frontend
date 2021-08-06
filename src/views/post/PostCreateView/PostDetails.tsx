@@ -1,4 +1,5 @@
 import React, { useState, useEffect, FC } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import * as Yup from 'yup';
@@ -8,6 +9,7 @@ import {
   Box,
   Button,
   Chip,
+  Link,
   FormHelperText,
   IconButton,
   SvgIcon,
@@ -110,7 +112,7 @@ const PostDetails: FC<PostDetailsProps> = ({
     const val = value.split(': ');
     setTag({ symbol: val[0], securityName: val[1], main: false });
   };
-  
+
   return (
     <Formik
       enableReinitialize
@@ -174,7 +176,13 @@ const PostDetails: FC<PostDetailsProps> = ({
               Do not spam tags. <br />
               Title should not be spammy. <br />
               Title and article contents may be subject to grammatical and
-              punctual editing to ensure quality.
+              punctual editing to ensure quality. <br />
+              You will only be compensated by the platform directly for your
+              first two approved articles. Please see the
+              <Link component={RouterLink} to="/docs/terms" variant="h5">
+                Terms and Conditions
+              </Link>
+              for more details.
             </Typography>
           </Box>
           <Box mt={2}>

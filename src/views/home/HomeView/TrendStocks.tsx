@@ -64,7 +64,7 @@ const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Dank Stocks" />
+      <CardHeader title="Dankstocks" />
       <Divider />
       <List disablePadding>
         {quotes.map((quote: Quote, i) => (

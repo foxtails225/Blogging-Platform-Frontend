@@ -87,7 +87,7 @@ const DankNews: FC<DankNewsProps> = ({ className, path, ...rest }) => {
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Dank News" />
+      <CardHeader title="Dank Reads" />
       <Divider />
       <PerfectScrollbar>
         <Box>

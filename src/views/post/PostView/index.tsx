@@ -19,7 +19,7 @@ import {
 import axios from 'src/utils/axios';
 import useAuth from 'src/hooks/useAuth';
 import { Theme } from 'src/theme';
-import { PostWithAuthor, Tag } from 'src/types/post';
+import { Picker, PostWithAuthor, Tag } from 'src/types/post';
 import { Comments, CommentsWithUser } from 'src/types/comment';
 import Page from 'src/components/Page';
 import Reactions from './Reactions';
@@ -32,10 +32,22 @@ interface Status {
   parent: string | null;
 }
 
+interface PickerStatus {
+  name: Picker;
+  text: string;
+}
+
 const initialStatus: Status = {
   depth: 0,
   parent: null
 };
+
+const chips: PickerStatus[] = [
+  { name: 'bullish', text: 'Bullish' },
+  { name: 'bearish', text: 'Bearish' },
+  { name: 'neutral', text: 'Neutral' },
+  { name: 'no_opinion', text: 'No Opinion' }
+];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -136,7 +148,7 @@ const PostView: FC = () => {
     if (!isAuthenticated) return;
     commentRef.current && commentRef.current.focus();
   }, [history, location, isAuthenticated]);
-  
+
   const handleFetch = async (): Promise<void> => {
     try {
       const path = location.pathname.split('/')[3];
@@ -243,6 +255,12 @@ const PostView: FC = () => {
                         onClick={() => handleChip(tag.symbol)}
                       />
                     ))}
+                    <Chip
+                      variant="outlined"
+                      color="primary"
+                      className={classes.chip}
+                      label={chips.find(item => item.name === post.picker).text}
+                    />
                   </Box>
                 </Grid>
               </Grid>

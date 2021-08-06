@@ -1,4 +1,4 @@
-import React, { useState, FC, FormEvent } from 'react';
+import React, { useState, FC, FormEvent, useMemo, useRef } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -9,6 +9,7 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
+import axios from 'src/utils/axios';
 import QuillEditor from 'src/components/QuillEditor';
 import { Theme } from 'src/theme';
 import { Post } from 'src/types/post';
@@ -42,9 +43,29 @@ const PostContent: FC<PostContentProps> = ({
   ...rest
 }) => {
   const classes = useStyles();
+  const quillRef = useRef(null);
   const [content, setContent] = useState<string>(post.content || '');
   const [isSubmitting, setSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ align: [] }],
+          ['link', 'image', 'code-block'],
+          ['clean']
+        ],
+        handlers: {
+          image: () => handleUpload()
+        }
+      }
+    }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   const handleChange = (value: string): void => {
     setContent(value);
@@ -69,6 +90,38 @@ const PostContent: FC<PostContentProps> = ({
     }
   };
 
+  const handleSave = async file => {
+    const fd = new FormData();
+    fd.append('upload', file);
+    const response = await axios.post<{ url: string }>(
+      '/posts/upload-image',
+      fd
+    );
+
+    if (response.data && quillRef.current) {
+      const url = response.data.url;
+      const range = quillRef.current.getEditorSelection();
+      quillRef.current.getEditor().insertEmbed(range.index, 'image', url);
+    }
+  };
+
+  const handleUpload = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files[0];
+
+      if (/^image\//.test(file.type)) {
+        handleSave(file);
+      } else {
+        console.warn('You could only upload images.');
+      }
+    };
+  };
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -86,9 +139,11 @@ const PostContent: FC<PostContentProps> = ({
       </Box>
       <Paper className={classes.editorContainer} variant="outlined">
         <QuillEditor
+          forwardRef={quillRef}
           onChange={handleChange}
           value={content}
           className={classes.editor}
+          modules={modules}
         />
       </Paper>
       {error && (

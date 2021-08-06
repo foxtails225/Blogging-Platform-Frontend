@@ -40,7 +40,11 @@ const PasswordRecovery: FC<JWTLoginProps> = ({ className, ...rest }) => {
         password: Yup.string()
           .min(7, 'Must be at least 7 characters')
           .max(255)
-          .required('Required'),
+          .required('Required')
+          .matches(
+            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+            'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
+          ),
         passwordConfirm: Yup.string()
           .oneOf([Yup.ref('password'), null], 'Passwords must match')
           .required('Required')
