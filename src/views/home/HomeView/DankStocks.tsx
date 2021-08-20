@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
+const DankStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
   const history = useHistory();
@@ -64,7 +64,7 @@ const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
 
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Dankstocks" />
+      <CardHeader title="Dank Stocks" />
       <Divider />
       <List disablePadding>
         {quotes.map((quote: Quote, i) => (
@@ -115,8 +115,8 @@ const TrendStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
   );
 };
 
-TrendStocks.propTypes = {
+DankStocks.propTypes = {
   className: PropTypes.string
 };
 
-export default TrendStocks;
+export default DankStocks;

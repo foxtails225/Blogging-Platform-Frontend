@@ -16,7 +16,8 @@ import {
   Tooltip,
   Typography,
   makeStyles,
-  Divider
+  Divider,
+  colors
 } from '@material-ui/core';
 import { Search as SearchIcon, XCircle as XIcon } from 'react-feather';
 import { Tag } from 'src/types/post';
@@ -125,7 +126,7 @@ const Search: FC = () => {
             </Box>
             <Box mt={2} display="flex" justifyContent="flex-end">
               <Button
-                color="secondary"
+                style={{ background: colors.green[800], color: '#fff' }}
                 variant="contained"
                 onClick={handleSearch}
               >

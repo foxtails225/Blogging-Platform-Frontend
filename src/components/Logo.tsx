@@ -10,7 +10,7 @@ interface LogoProps {
 const Logo: FC<LogoProps> = props => {
   const { settings } = useSettings();
   const [src, setSrc] = useState<string>();
-  const style = { width: '120px', height: 'auto' };
+  const style = { width: '160px', height: 'auto' };
 
   useEffect(() => {
     if (!props.static) {

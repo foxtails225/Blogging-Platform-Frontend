@@ -29,7 +29,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flex: '1 1 auto',
     paddingTop: 64,
-    position: 'relative'
+    position: 'relative',
+    minHeight: '60vh',
+    [theme.breakpoints.up('lg')]: {
+      minHeight: '70vh',
+    }
   },
   footer: {
     marginTop: 40,

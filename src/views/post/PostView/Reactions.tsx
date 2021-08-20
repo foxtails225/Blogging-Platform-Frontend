@@ -14,6 +14,7 @@ import BookmarkBorderOutlinedIcon from '@material-ui/icons/BookmarkBorderOutline
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import FlagIcon from '@material-ui/icons/Flag';
 import FlagOutlinedIcon from '@material-ui/icons/FlagOutlined';
+import CloseIcon from '@material-ui/icons/Close';
 import { MessageCircle as MessageCircleIcon } from 'react-feather';
 import CustomIcon from 'src/components/CustomIcon';
 import useAuth from 'src/hooks/useAuth';
@@ -92,6 +93,7 @@ const Reactions: FC<ReactionsProps> = ({
   const [likes, setLikes] = useState<number>(post.liked.count);
   const [disabled, setDisabled] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
+  const [toolTipOpen, setToolTipOpen] = useState<boolean>(true);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -166,6 +168,8 @@ const Reactions: FC<ReactionsProps> = ({
   };
 
   const handleOpen = (): void => setOpen(!open);
+
+  const handleTooltip = (): void => setToolTipOpen(!toolTipOpen);
 
   return (
     <div
@@ -256,11 +260,34 @@ const Reactions: FC<ReactionsProps> = ({
         )}
       </Box>
       <Box className={classes.iconBox}>
-        <span>
-          <IconButton disabled={disabled} onClick={handleOpen}>
-            <AttachMoneyIcon fontSize="small" />
-          </IconButton>
-        </span>
+        <Tooltip
+          arrow
+          disableTouchListener
+          interactive
+          placement="left"
+          open={toolTipOpen}
+          title={
+            <Box display="flex">
+              <Typography color="inherit">
+                Remember
+                <br /> to drop
+                <br /> a tip.
+              </Typography>
+              <Box flexGrow={1} />
+              <Box>
+                <IconButton onClick={handleTooltip}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Box>
+          }
+        >
+          <span>
+            <IconButton disabled={disabled} onClick={handleOpen}>
+              <AttachMoneyIcon fontSize="small" />
+            </IconButton>
+          </span>
+        </Tooltip>
       </Box>
       {isFlag ? (
         <Tooltip

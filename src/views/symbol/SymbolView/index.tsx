@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.dark,
     paddingTop: theme.spacing(3),
     paddingBottom: theme.spacing(3)
-  }
+  },
 }));
 
 const SymbolView: FC = () => {
@@ -63,7 +63,7 @@ const SymbolView: FC = () => {
           </Tabs>
         </Box>
         <Divider />
-        <Box py={3} pb={6}>
+        <Box pb={6}>
           {currentTab === 'opinions' && <Opinions path={path} />}
           {currentTab === 'news' && <News path={path} />}
           {currentTab === 'financials' && <Financials path={path} />}

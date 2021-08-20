@@ -1,5 +1,4 @@
-import React from 'react';
-import type { FC } from 'react';
+import React, { FC, useState } from 'react';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import PropTypes from 'prop-types';
@@ -9,8 +8,12 @@ import {
   Button,
   FormHelperText,
   TextField,
+  InputAdornment,
+  IconButton,
   makeStyles
 } from '@material-ui/core';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 
@@ -26,6 +29,9 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const { login } = useAuth();
   const isMountedRef = useIsMountedRef();
+  const [show, setShow] = useState<boolean>(false);
+
+  const handleClick = (): void => setShow(!show);
 
   return (
     <Formik
@@ -35,14 +41,15 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
         submit: null
       }}
       validationSchema={Yup.object().shape({
-        email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-        password: Yup.string().max(255).required('Password is required')
+        email: Yup.string()
+          .email('Must be a valid email')
+          .max(255)
+          .required('Email is required'),
+        password: Yup.string()
+          .max(255)
+          .required('Password is required')
       })}
-      onSubmit={async (values, {
-        setErrors,
-        setStatus,
-        setSubmitting
-      }) => {
+      onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
         try {
           await login(values.email, values.password);
 
@@ -97,15 +104,22 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
             name="password"
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type={show ? 'text' : 'password'}
             value={values.password}
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton name="password" onClick={handleClick} edge="end">
+                    {!show ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
           {errors.submit && (
             <Box mt={3}>
-              <FormHelperText error>
-                {errors.submit}
-              </FormHelperText>
+              <FormHelperText error>{errors.submit}</FormHelperText>
             </Box>
           )}
           <Box mt={2}>
@@ -127,7 +141,7 @@ const JWTLogin: FC<JWTLoginProps> = ({ className, ...rest }) => {
 };
 
 JWTLogin.propTypes = {
-  className: PropTypes.string,
+  className: PropTypes.string
 };
 
 export default JWTLogin;

@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   cardContent: {
     paddingTop: 0
+  },
+  chip: {
+    backgroundColor: colors.green[800]
   }
 }));
 
@@ -107,10 +110,10 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
                 />
                 {!disabled && (
                   <Chip
-                    color="secondary"
                     size="small"
                     label="Contribute"
                     onClick={handleClick}
+                    className={classes.chip}
                   />
                 )}
               </ListItem>

@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
+const DankReads: FC<TrendNewsProps> = ({ className, ...rest }) => {
   const classes = useStyles();
   const isMountedRef = useIsMountedRef();
   const [posts, setPosts] = useState<PostWithAuthor[]>([]);
@@ -57,7 +57,7 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
     try {
       const response = await axios.post<{ posts: PostWithAuthor[] }>(
         '/posts/all',
-        { page: 0 }
+        { page: 0, sortBy: { createdAt: -1, 'liked.count': -1 } }
       );
 
       if (isMountedRef.current) {
@@ -130,8 +130,8 @@ const TrendNews: FC<TrendNewsProps> = ({ className, ...rest }) => {
   );
 };
 
-TrendNews.propTypes = {
+DankReads.propTypes = {
   className: PropTypes.string
 };
 
-export default TrendNews;
+export default DankReads;

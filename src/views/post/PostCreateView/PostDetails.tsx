@@ -178,10 +178,10 @@ const PostDetails: FC<PostDetailsProps> = ({
               Title and article contents may be subject to grammatical and
               punctual editing to ensure quality. <br />
               You will only be compensated by the platform directly for your
-              first two approved articles. Please see the
+              first two approved articles. Please see the{' '}
               <Link component={RouterLink} to="/docs/terms" variant="h5">
                 Terms and Conditions
-              </Link>
+              </Link>{' '}
               for more details.
             </Typography>
           </Box>

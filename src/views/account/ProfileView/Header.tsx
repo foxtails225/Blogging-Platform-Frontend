@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useRef, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -12,7 +12,7 @@ import {
   colors,
   makeStyles
 } from '@material-ui/core';
-// import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
+import AddPhotoIcon from '@material-ui/icons/AddPhotoAlternate';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import { User } from 'src/types/user';
@@ -76,7 +76,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     }
   },
   action: {
-    marginLeft: theme.spacing(1)
+    color: '#fff',
+    marginLeft: theme.spacing(1),
+    backgroundColor: colors.green[800]
   },
   bioBox: {
     marginLeft: '160px',
@@ -90,8 +92,10 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
   const classes = useStyles();
   const { user } = useAuth();
   const location = useLocation();
+  const fileInput = useRef(null);
   const [isFollow, setIsFollow] = useState(false);
   const [disable, setDisable] = useState(false);
+  const [preview, setPreview] = useState<string>(profile.cover);
 
   useEffect(() => {
     const follow =
@@ -103,7 +107,7 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
     setDisable(isDisable);
     setIsFollow(follow);
     //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname, profile]);
+  }, [location.pathname, profile, user]);
 
   const handleFollow = async () => {
     const params = { userId: profile._id, isFollow };
@@ -111,21 +115,53 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
     setIsFollow(!isFollow);
   };
 
+  const handleUpload = (event): void => {
+    event.preventDefault();
+    fileInput.current.click();
+  };
+
+  const handleChange = async (): Promise<void> => {
+    const fd = new FormData();
+    fd.append('upload', fileInput.current.files[0]);
+
+    const response = await axios.post<{ url: string }>(
+      '/posts/upload-image',
+      fd
+    );
+
+    if (response.data) {
+      setPreview(response.data.url);
+      await axios.put<{ user: User }>('/users/update/avatar', {
+        _id: user._id,
+        cover: response.data.url
+      });
+    }
+  };
+
   return (
     <div className={clsx(classes.root, className)} {...rest}>
       <div
         className={classes.cover}
-        style={{ backgroundImage: `url(${profile.cover})` }}
+        style={{ backgroundImage: `url(${preview})` }}
       >
-        {/* {!disable && (
-          <Button
-            className={classes.changeButton}
-            variant="contained"
-            startIcon={<AddPhotoIcon />}
-          >
-            Change Cover
-          </Button>
-        )} */}
+        {!disable && (
+          <>
+            <input
+              type="file"
+              ref={fileInput}
+              onChange={handleChange}
+              style={{ display: 'none' }}
+            />
+            <Button
+              className={classes.changeButton}
+              variant="contained"
+              startIcon={<AddPhotoIcon />}
+              onClick={handleUpload}
+            >
+              Change Cover
+            </Button>
+          </>
+        )}
       </div>
       <Container maxWidth="lg">
         <Box position="relative" mt={1} display="flex" alignItems="center">
@@ -147,7 +183,6 @@ const Header: FC<HeaderProps> = ({ className, profile, ...rest }) => {
           <Box flexGrow={1} />
           {!disable ? (
             <Button
-              color="secondary"
               component={RouterLink}
               size="small"
               to="/account/setting"

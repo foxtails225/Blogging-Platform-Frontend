@@ -34,13 +34,13 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const WhiteTextTypography = withStyles({
   root: {
-    color: '#e6e5e8'
+    color: '#fff'
   }
 })(Typography);
 
 const SecondaryTypography = withStyles({
   root: {
-    color: '#8a85ff'
+    color: '#fff'
   }
 })(Typography);
 
@@ -53,21 +53,36 @@ const FootBar: FC = () => {
         <Grid container spacing={3} component="dl">
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              <Link component={RouterLink} to="/docs/policy" variant="h5">
+              <Link
+                component={RouterLink}
+                to="/docs/policy"
+                variant="h5"
+                color="textPrimary"
+              >
                 Privacy Policy
               </Link>
             </SecondaryTypography>
           </Grid>
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              <Link component={RouterLink} to="/docs/terms" variant="h5">
+              <Link
+                component={RouterLink}
+                to="/docs/terms"
+                variant="h5"
+                color="textPrimary"
+              >
                 Terms and Conditions
               </Link>
             </SecondaryTypography>
           </Grid>
           <Grid item xs={12} md={12}>
             <SecondaryTypography variant="overline">
-              <Link component={RouterLink} to="/contact" variant="h5">
+              <Link
+                component={RouterLink}
+                to="/contact"
+                variant="h5"
+                color="textPrimary"
+              >
                 Contact Us
               </Link>
             </SecondaryTypography>

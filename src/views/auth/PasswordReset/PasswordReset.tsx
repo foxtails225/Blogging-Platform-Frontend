@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useHistory, useParams } from 'react-router';
 import clsx from 'clsx';
 import * as Yup from 'yup';
@@ -7,16 +7,30 @@ import { Formik } from 'formik';
 import {
   Box,
   Button,
+  InputAdornment,
+  IconButton,
   TextField,
   makeStyles,
   FormHelperText
 } from '@material-ui/core';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from 'src/utils/axios';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 
 interface JWTLoginProps {
   className?: string;
 }
+
+interface State {
+  password: boolean;
+  confirm: boolean;
+}
+
+const initialState: State = {
+  password: false,
+  confirm: false
+};
 
 const useStyles = makeStyles(() => ({
   root: {}
@@ -27,6 +41,12 @@ const PasswordRecovery: FC<JWTLoginProps> = ({ className, ...rest }) => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
   const isMountedRef = useIsMountedRef();
+  const [state, setState] = useState<State>(initialState);
+
+  const handleClick = (event): void => {
+    const { name } = event.currentTarget;
+    setState(prevState => ({ ...prevState, [name]: !state[name] }));
+  };
 
   return (
     <Formik
@@ -42,7 +62,7 @@ const PasswordRecovery: FC<JWTLoginProps> = ({ className, ...rest }) => {
           .max(255)
           .required('Required')
           .matches(
-            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d-_,./()@$!%*#?&]{8,}$/,
             'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
           ),
         passwordConfirm: Yup.string()
@@ -95,9 +115,18 @@ const PasswordRecovery: FC<JWTLoginProps> = ({ className, ...rest }) => {
             name="password"
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type={state.password ? 'text' : 'password'}
             value={values.password}
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton name="password" onClick={handleClick} edge="end">
+                    {!state.password ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
           <TextField
             error={Boolean(touched.passwordConfirm && errors.passwordConfirm)}
@@ -108,9 +137,18 @@ const PasswordRecovery: FC<JWTLoginProps> = ({ className, ...rest }) => {
             name="passwordConfirm"
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type={state.confirm ? 'text' : 'password'}
             value={values.passwordConfirm}
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton name="confirm" onClick={handleClick} edge="end">
+                    {!state.confirm ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
           {errors.submit && (
             <Box mt={3}>

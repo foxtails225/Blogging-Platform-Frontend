@@ -45,8 +45,9 @@ const Search: FC = () => {
     value !== '' ? fecthData() : setResults([]);
   }, [value]);
 
-  const handleChangeTag = (event, value) => {
+  const handleChangeTag = async (event, value): Promise<void> => {
     const symbol = value.split(': ')[0];
+    await axios.post('/stock/search/create', { symbol });
     history.push(`/symbol/${symbol}`);
   };
 
@@ -77,7 +78,7 @@ const Search: FC = () => {
                 </InputAdornment>
               )
             }}
-            style={{ width: '15vw' }}
+            style={{ width: '27vw' }}
             value={value}
             onChange={event => setValue(event.target.value)}
           />

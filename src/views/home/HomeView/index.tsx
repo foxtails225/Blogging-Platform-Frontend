@@ -4,9 +4,9 @@ import { Alert } from '@material-ui/lab';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
 import Page from 'src/components/Page';
-import TrendStocks from './TrendStocks';
-import TrendAuthors from './TrendAuthors';
-import TrendNews from './TrendNews';
+import DankStocks from './DankStocks';
+import DankNews from './DankNews';
+import DankReads from './DankReads';
 import Market from './Market';
 
 interface Alert {
@@ -54,24 +54,27 @@ const HomeView: FC = () => {
           </Alert>
         </>
       )}
-      <Container maxWidth={false}>
+      <Container maxWidth="lg">
         <Grid container spacing={3} className={classes.container}>
-          <Grid item lg={9} xs={12}>
+          <Grid item lg={12} xs={12}>
             <Market />
           </Grid>
-          <Grid item md={3} xs={12} />
-          <Grid item lg={9} xs={12}>
+          <Grid item lg={12} xs={12}>
             <Grid container spacing={3}>
               <Grid item lg={6} xs={12}>
-                <TrendStocks />
+                <DankStocks />
               </Grid>
               <Grid item lg={6} xs={12}>
-                <TrendNews />
+                <Grid container spacing={3}>
+                  <Grid item lg={12} xs={12}>
+                    <DankReads />
+                  </Grid>
+                  <Grid item lg={12} xs={12}>
+                    <DankNews />
+                  </Grid>
+                </Grid>
               </Grid>
             </Grid>
-          </Grid>
-          <Grid item lg={3} xs={12}>
-            <TrendAuthors />
           </Grid>
         </Grid>
       </Container>

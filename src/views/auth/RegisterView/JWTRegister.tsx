@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import { useHistory } from 'react-router';
 import clsx from 'clsx';
 import * as Yup from 'yup';
@@ -12,8 +12,12 @@ import {
   TextField,
   Typography,
   Link,
+  InputAdornment,
+  IconButton,
   makeStyles
 } from '@material-ui/core';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import useAuth from 'src/hooks/useAuth';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 
@@ -30,6 +34,9 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
   const history = useHistory();
   const { register } = useAuth() as any;
   const isMountedRef = useIsMountedRef();
+  const [show, setShow] = useState<boolean>(false);
+
+  const handleClick = (): void => setShow(!show);
 
   return (
     <Formik
@@ -52,8 +59,8 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
           .max(255)
           .required('Password is required')
           .matches(
-            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
-            "Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character"
+            /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d-_,./()@$!%*#?&]{8,}$/,
+            'Must Contain 8 Characters, One Uppercase, One Lowercase, One Number and one special case Character'
           ),
         policy: Yup.boolean().oneOf([true], 'This field must be checked')
       })}
@@ -125,9 +132,18 @@ const JWTRegister: FC<JWTRegisterProps> = ({ className, ...rest }) => {
             name="password"
             onBlur={handleBlur}
             onChange={handleChange}
-            type="password"
+            type={show ? 'text' : 'password'}
             value={values.password}
             variant="outlined"
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton name="password" onClick={handleClick} edge="end">
+                    {!show ? <Visibility /> : <VisibilityOff />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
           />
           <Box alignItems="center" display="flex" mt={2} ml={-1}>
             <Checkbox

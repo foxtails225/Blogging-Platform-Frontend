@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, FC } from 'react';
+import React, { ReactNode, FC } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
@@ -12,9 +12,9 @@ import {
   SvgIcon,
   Divider,
   Button,
-  Link
+  Link,
+  colors
 } from '@material-ui/core';
-import { grey } from '@material-ui/core/colors';
 import { Menu as MenuIcon } from 'react-feather';
 import Logo from 'src/components/Logo';
 import { THEMES } from 'src/constants';
@@ -25,8 +25,6 @@ import Notifications from './Notifications';
 import Settings from './Settings';
 import SearchMobile from './SearchMobile';
 import Search from './Search';
-import { sections } from '../Sections';
-import NavItem from './NavItem';
 
 interface TopBarProps {
   className?: string;
@@ -68,9 +66,9 @@ const useStyles = makeStyles((theme: Theme) => ({
       theme.name === THEMES.ONE_DARK ? theme.palette.divider : '#546e7a'
   },
   button: {
-    backgroundColor: theme.name === THEMES.ONE_DARK ? '#8a85ff' : '#e6e5e8',
+    backgroundColor: colors.green[800],
     '&:hover': {
-      backgroundColor: theme.name === THEMES.ONE_DARK ? '#3d38a5' : grey[400]
+      backgroundColor: colors.green[500]
     }
   },
   link: {
@@ -82,65 +80,9 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const reduceChildRoutes: React.FC<any> = ({
-  item,
-  depth,
-  anchorEl,
-  onAnchorEl
-}: {
-  item: Item;
-  depth: number;
-  anchorEl?: any;
-  onAnchorEl?: (val: any) => void;
-}) => {
-  const key = item.title + depth;
-
-  if (item.items) {
-    return (
-      <div key={key}>
-        <NavItem
-          depth={depth}
-          icon={item.icon}
-          info={item.info}
-          title={item.title}
-          anchorEl={anchorEl}
-          onAnchorEl={onAnchorEl}
-          href={item.href}
-        >
-          {item.items.map(subsection => {
-            return reduceChildRoutes({
-              item: subsection,
-              depth: depth + 1,
-              anchorEl,
-              onAnchorEl
-            });
-          })}
-        </NavItem>
-      </div>
-    );
-  } else {
-    return (
-      <div key={key}>
-        <NavItem
-          depth={depth}
-          href={item.href}
-          icon={item.icon}
-          info={item.info}
-          title={item.title}
-        />
-      </div>
-    );
-  }
-};
-
 const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
   const { isAuthenticated } = useAuth();
-  const [anchorEl, setAnchorEl] = useState(null);
   const classes = useStyles();
-
-  const handleAnchorEl = (el: any): void => {
-    setAnchorEl(el);
-  };
 
   return (
     <AppBar className={clsx(classes.root, className)} {...rest}>
@@ -158,13 +100,13 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
           </RouterLink>
         </Hidden>
         <Hidden mdDown>
+          <Box flexGrow={1} />
           <Search />
         </Hidden>
 
         {/* TODO: activate icons justify-content */}
         {/* <Box ml={2} flexGrow={1} /> */}
-        
-        <Hidden mdDown>
+        {/* <Hidden mdDown>
           {sections
             .filter(section => section.href !== '/account')
             .map(section => (
@@ -177,7 +119,7 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
                 })}
               </Box>
             ))}
-        </Hidden>
+        </Hidden> */}
         <Box ml={2} flexGrow={1} />
         <Settings />
         <Box ml={2} />
