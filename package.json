@@ -76,7 +76,7 @@
     "@types/uuid": "^7.0.4",
     "@types/yup": "^0.28.3",
     "apexcharts": "^3.19.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.2",
     "axios-mock-adapter": "^1.18.2",
     "babel-eslint": "^10.1.0",
     "babel-loader": "8.1.0",
