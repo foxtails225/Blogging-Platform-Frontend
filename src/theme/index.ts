@@ -121,10 +121,10 @@ const themesOptions: ThemeOptions[] = [
         paper: '#282C34'
       },
       primary: {
-        main: '#8a85ff'
+        main: '#2e7d32'
       },
       secondary: {
-        main: '#8a85ff'
+        main: '#2e7d32'
       },
       text: {
         primary: '#e6e5e8',
