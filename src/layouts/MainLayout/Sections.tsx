@@ -1,5 +1,4 @@
-import React, { FC, ReactNode } from 'react';
-import { Chip } from '@material-ui/core';
+import { FC, ReactNode } from 'react';
 import { User as UserIcon } from 'react-feather';
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 
@@ -63,8 +62,7 @@ export const sections: Section[] = [
       },
       {
         title: 'Profile',
-        href: '/account/profile',
-        info: () => <Chip color="secondary" size="small" label="Updated" />
+        href: '/account/profile'
       },
       {
         title: 'Dashboard',

@@ -98,7 +98,9 @@ const DankStocks: FC<TrendStocksProps> = ({ className, ...rest }) => {
                 >
                   {`$${quote.latestPrice} ${
                     quote.changePercent > 0 ? '+' : ''
-                  }${quote.change} (${quote.changePercent}%)`}
+                  }${quote.change} (${quote.changePercent &&
+                    // @ts-ignore
+                    (parseFloat(quote.changePercent) * 100).toFixed(3)}%)`}
                 </Typography>
               }
             />

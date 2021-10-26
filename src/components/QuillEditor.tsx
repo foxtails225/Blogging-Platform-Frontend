@@ -81,7 +81,7 @@ const QuillEditor: FC<QuillEditorProps> = ({
   ...rest
 }) => {
   const classes = useStyles();
-  console.log(forwardRef);
+
   return (
     /* @ts-ignore */
     <ReactQuill

@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     ...(theme.name === THEMES.LIGHT
       ? {
           boxShadow: 'none',
-          backgroundColor: theme.palette.primary.main
+          backgroundColor: '#3949ab'
         }
       : {}),
     ...(theme.name === THEMES.ONE_DARK

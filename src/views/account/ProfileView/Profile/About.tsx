@@ -133,7 +133,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
               </ListItem>
               <ListItem disableGutters divider>
                 <ListItemAvatar>
-                  <Avatar className={classes.redAvatar}>
+                  <Avatar className={classes.blueAvatar}>
                     <MessageCircleIcon />
                   </Avatar>
                 </ListItemAvatar>
@@ -147,7 +147,7 @@ const About: FC<AboutProps> = ({ className, profile, ...rest }) => {
               </ListItem>
               <ListItem disableGutters divider>
                 <ListItemAvatar>
-                  <Avatar className={classes.redAvatar}>
+                  <Avatar className={classes.blueAvatar}>
                     <HashIcon size={22} />
                   </Avatar>
                 </ListItemAvatar>

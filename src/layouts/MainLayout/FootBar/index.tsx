@@ -40,7 +40,8 @@ const WhiteTextTypography = withStyles({
 
 const SecondaryTypography = withStyles({
   root: {
-    color: '#fff'
+    color: '#fff',
+    textAlign: 'center'
   }
 })(Typography);
 
@@ -50,37 +51,37 @@ const FootBar: FC = () => {
   return (
     <div className={classes.root}>
       <Container maxWidth="lg">
-        <Grid container spacing={3} component="dl">
-          <Grid item xs={12} md={12}>
+        <Grid container spacing={3} justify="center">
+          <Grid item xs={12} md={2} style={{ textAlign: 'center' }}>
             <SecondaryTypography variant="overline">
               <Link
                 component={RouterLink}
                 to="/docs/policy"
-                variant="h5"
+                variant="h6"
                 color="textPrimary"
               >
                 Privacy Policy
               </Link>
             </SecondaryTypography>
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={3} style={{ textAlign: 'center' }}>
             <SecondaryTypography variant="overline">
               <Link
                 component={RouterLink}
                 to="/docs/terms"
-                variant="h5"
+                variant="h6"
                 color="textPrimary"
               >
                 Terms and Conditions
               </Link>
             </SecondaryTypography>
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={2} style={{ textAlign: 'center' }}>
             <SecondaryTypography variant="overline">
               <Link
                 component={RouterLink}
                 to="/contact"
-                variant="h5"
+                variant="h6"
                 color="textPrimary"
               >
                 Contact Us

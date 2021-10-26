@@ -40,6 +40,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       padding: theme.spacing(3)
     }
+  },
+  link: {
+    color: '#fff'
+  },
+  more: {
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    fontWeight: 'bold'
   }
 }));
 
@@ -89,7 +96,7 @@ const ProfileGlance: FC<ProfileGlanceProps> = ({
                     >
                       {profile.description}
                     </Typography>
-                    <Link onClick={handleExpand}>
+                    <Link onClick={handleExpand} className={classes.more}>
                       Read {expanded ? 'less' : 'more'}
                     </Link>
                   </Grid>
@@ -194,8 +201,12 @@ const ProfileGlance: FC<ProfileGlanceProps> = ({
                 </Grid>
               </Box>
               <Box mt={2}>
-                <Typography gutterBottom variant="h5" color="textPrimary">
-                  <Link href={profile.website ?? '#'} target="blank">
+                <Typography gutterBottom variant="h5">
+                  <Link
+                    href={profile.website ?? '#'}
+                    target="blank"
+                    className={classes.link}
+                  >
                     {profile.website}
                   </Link>
                 </Typography>

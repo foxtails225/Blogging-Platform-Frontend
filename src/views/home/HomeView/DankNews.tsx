@@ -23,7 +23,14 @@ interface TrendAuthorsProps {
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
-  root: {}
+  root: {},
+  text: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': '2'
+  }
 }));
 
 const DankNews: FC<TrendAuthorsProps> = ({ className, ...rest }) => {
@@ -71,8 +78,12 @@ const DankNews: FC<TrendAuthorsProps> = ({ className, ...rest }) => {
                 </Link>
               }
               secondary={
-                <Typography variant="body2" color="textSecondary">
-                  {result.text.substring(0, 30)}...
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  className={classes.text}
+                >
+                  {result.text && result.text}
                 </Typography>
               }
             />
