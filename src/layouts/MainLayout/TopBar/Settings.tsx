@@ -5,14 +5,15 @@ import {
   FormControlLabel,
   Switch,
   colors,
-  makeStyles,
-  Theme
+  makeStyles
 } from '@material-ui/core';
 import useSettings from 'src/hooks/useSettings';
 import { THEMES } from 'src/constants';
+import { Theme } from 'src/theme';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
+    color: theme.name === THEMES.ONE_DARK ? '#fff' : '#000',
     '& .MuiSwitch-track': {
       backgroundColor: `${colors.green[800]} !important`
     }

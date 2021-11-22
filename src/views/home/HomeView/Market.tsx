@@ -8,14 +8,15 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemText,
-  Typography,
-  colors,
-  makeStyles
+  ButtonGroup,
+  Button,
+  makeStyles,
+  useMediaQuery,
+  useTheme
 } from '@material-ui/core';
 import axios from 'src/utils/axios';
 import { Theme } from 'src/theme';
-import HighchartsWrapper from './HighchartsWrapper';
+import VisxWrapper from 'src/components/VisxWrapper';
 import useIsMountedRef from 'src/hooks/useIsMountedRef';
 import { Quote } from 'src/types/stock';
 
@@ -24,6 +25,16 @@ interface MarketProps {
 }
 
 const initialStocks = ['SPY', 'DIA', 'IWM'];
+
+const buttons = [
+  { name: 'dynamic', label: '1D', visible: true },
+  { name: '5d', label: '5D', visible: true },
+  { name: '1m', label: '1M', visible: true },
+  { name: '3m', label: '3M', visible: false },
+  { name: '1y', label: '1Y', visible: true },
+  { name: '5y', label: '5Y', visible: false },
+  { name: 'max', label: 'ALL', visible: true }
+];
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -38,30 +49,24 @@ const useStyles = makeStyles((theme: Theme) => ({
   list: {
     display: 'flex',
     flexDirection: 'row',
-    padding: 0
+    padding: 0,
+    marginBottom: theme.spacing(3)
   },
-  typography: {
-    marginLeft: 10
-  },
-  listItemText: {
-    whiteSpace: 'nowrap'
-  },
-  listItemSecondaryText: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1)
-  },
-  item: {
-    width: '10vw',
-    [theme.breakpoints.down('sm')]: {
-      width: '35vw'
+  scrollbar: {
+    '& .ps__rail-x': {
+      display: 'block',
+      minWidth: 400
     }
   }
 }));
 
 const Market: FC<MarketProps> = ({ className, ...rest }) => {
   const classes = useStyles();
+  const theme = useTheme();
   const isMountedRef = useIsMountedRef();
   const [quotes, setQuotes] = useState<Quote[]>([]);
+  const [period, setPeriod] = useState<string>('dynamic');
+  const mobileDevice = useMediaQuery(theme.breakpoints.down('sm'));
 
   const getQuotes = useCallback(async () => {
     try {
@@ -96,49 +101,45 @@ const Market: FC<MarketProps> = ({ className, ...rest }) => {
     getQuotes();
   }, [getQuotes]);
 
+  const handleClick = (event): void => setPeriod(event.currentTarget.name);
+
   return (
     <Card className={clsx(classes.root, className)} {...rest}>
-      <CardHeader title="Market" />
+      <CardHeader
+        title="Market"
+        action={
+          <ButtonGroup color="primary" size="small">
+            {buttons
+              .filter(
+                button => (mobileDevice && button.visible) || !mobileDevice
+              )
+              .map(button => (
+                <Button
+                  key={button.name}
+                  name={button.name}
+                  onClick={handleClick}
+                  variant={period === button.name ? 'contained' : 'outlined'}
+                >
+                  {button.label}
+                </Button>
+              ))}
+          </ButtonGroup>
+        }
+      />
       <Divider />
-      <PerfectScrollbar options={{ suppressScrollY: true }}>
+      <PerfectScrollbar className={classes.scrollbar}>
         <List disablePadding className={classes.list}>
-          {quotes.map((quote, i) => {
-            const color = {
-              color:
-                quote.changePercent > 0 ? colors.green[300] : colors.red[300]
-            };
-            return (
-              <ListItem key={quote.symbol}>
-                <ListItemText
-                  primary={quote.symbol}
-                  primaryTypographyProps={{ variant: 'body2' }}
-                  secondary={quote.latestPrice}
-                  className={classes.listItemText}
-                />
-                <ListItemText
-                  primary={
-                    <Typography style={color} variant="body2">
-                      {quote.change >= 0 ? '+' : '-'}$
-                      {typeof quote.change === 'number'
-                        ? Math.abs(quote.change)
-                        : quote.change}{' '}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography style={color} variant="body2">
-                      {quote.changePercent >= 0 && '+'}
-                      {quote.changePercent}%
-                    </Typography>
-                  }
-                  className={classes.listItemSecondaryText}
-                />
-
-                <div className={classes.item}>
-                  <HighchartsWrapper path={quote.symbol} />
-                </div>
-              </ListItem>
-            );
-          })}
+          {quotes.map((quote, i) => (
+            <ListItem key={quote.symbol}>
+              <VisxWrapper
+                quote={quote}
+                period={period}
+                path={quote.symbol}
+                width={350}
+                ratio={0.5}
+              />
+            </ListItem>
+          ))}
         </List>
       </PerfectScrollbar>
     </Card>

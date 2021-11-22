@@ -13,6 +13,8 @@ import {
   makeStyles
 } from '@material-ui/core';
 import useAuth from 'src/hooks/useAuth';
+import useSettings from 'src/hooks/useSettings';
+import { THEMES } from 'src/constants';
 
 const useStyles = makeStyles(theme => ({
   avatar: {
@@ -32,6 +34,7 @@ const Account: FC = () => {
   const { user, logout } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
   const [isOpen, setOpen] = useState<boolean>(false);
+  const { settings } = useSettings();
 
   const handleOpen = (): void => {
     setOpen(true);
@@ -65,7 +68,12 @@ const Account: FC = () => {
       >
         <Avatar alt="User" className={classes.avatar} src={user.avatar} />
         <Hidden smDown>
-          <Typography variant="h6" color="inherit">
+          <Typography
+            variant="h6"
+            style={{
+              color: settings.theme === THEMES.ONE_DARK ? '#fff' : '#000'
+            }}
+          >
             {user.name}
           </Typography>
         </Hidden>

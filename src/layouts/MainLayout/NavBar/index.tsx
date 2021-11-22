@@ -20,6 +20,7 @@ import Logo from 'src/components/Logo';
 import useAuth from 'src/hooks/useAuth';
 import NavItem from './NavItem';
 import { sections } from '../Sections';
+import Settings from '../TopBar/Settings';
 
 interface NavBarProps {
   onMobileClose: () => void;
@@ -167,6 +168,9 @@ const NavBar: FC<NavBarProps> = ({ onMobileClose, openMobile }) => {
         </Box>
         <Divider />
       </PerfectScrollbar>
+      <Box m={3}>
+        <Settings />
+      </Box>
     </Box>
   );
 

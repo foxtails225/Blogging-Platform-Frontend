@@ -93,7 +93,7 @@ const Notifications: FC = () => {
   return (
     <>
       <Tooltip title="Notifications">
-        <IconButton color="inherit" ref={ref} onClick={handleOpen}>
+        <IconButton color="primary" ref={ref} onClick={handleOpen}>
           {count > 0 ? (
             <Badge badgeContent={count} color="error">
               <SvgIcon>

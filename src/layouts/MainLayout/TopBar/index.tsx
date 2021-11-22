@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     ...(theme.name === THEMES.LIGHT
       ? {
           boxShadow: 'none',
-          backgroundColor: '#3949ab'
+          backgroundColor: '#fff'
         }
       : {}),
     ...(theme.name === THEMES.ONE_DARK
@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   link: {
     fontWeight: theme.typography.fontWeightMedium,
-    color: theme.name === THEMES.ONE_DARK ? '#e6e5e8' : '#3949ab',
+    color: '#e6e5e8',
     '& + &': {
       marginLeft: theme.spacing(2)
     }
@@ -88,7 +88,7 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
     <AppBar className={clsx(classes.root, className)} {...rest}>
       <Toolbar className={classes.toolbar}>
         <Hidden lgUp>
-          <IconButton color="inherit" onClick={onMobileNavOpen}>
+          <IconButton color="primary" onClick={onMobileNavOpen}>
             <SvgIcon fontSize="small">
               <MenuIcon />
             </SvgIcon>
@@ -96,7 +96,7 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
         </Hidden>
         <Hidden mdDown>
           <RouterLink to="/">
-            <Logo static="true" />
+            <Logo />
           </RouterLink>
         </Hidden>
         <Hidden mdDown>
@@ -121,7 +121,9 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
             ))}
         </Hidden> */}
         <Box ml={2} flexGrow={1} />
-        <Settings />
+        <Hidden mdDown>
+          <Settings />
+        </Hidden>
         <Box ml={2} />
         <Hidden lgUp>
           <SearchMobile />
@@ -138,13 +140,13 @@ const TopBar: FC<TopBarProps> = ({ className, onMobileNavOpen, ...rest }) => {
             >
               <Link
                 className={classes.link}
-                color="textPrimary"
+                color="primary"
                 component={RouterLink}
                 to="/login"
                 underline="none"
                 variant="body2"
               >
-                Log In / Sign Up
+                Log In
               </Link>
             </Button>
           </>
